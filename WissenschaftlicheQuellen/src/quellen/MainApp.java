@@ -1,6 +1,8 @@
 package quellen;
 
 import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import javafx.application.Application;
 import javafx.collections.FXCollections;
@@ -10,6 +12,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import quellen.model.Datenbank;
 import quellen.model.Quelle;
 import quellen.model.Zitat;
 import quellen.view.QuellenOverviewController;
@@ -26,13 +29,21 @@ public class MainApp extends Application {
 
     /**
      * Constructor
+     * @throws SQLException 
      */
-    public MainApp() {
-        // Add some sample data
-        Quelle testQuelle = new Quelle("Test", "Goethe", "1888");
-        testQuelle.addZitat(new Zitat("This is a test."));
-        
-        quellenData.add(testQuelle);
+    public MainApp() throws SQLException {
+    	String sql = "SELECT * FROM Quellen";
+    	ResultSet rs = null;
+			rs = Datenbank.getInstance().queryWithReturn(sql);
+    	try {
+			while(rs.next()) {
+				// Add some sample data
+				Quelle testQuelle = new Quelle(rs.getString("autor"),rs.getString("titel"),rs.getString("jahr"));
+				testQuelle.addZitat(new Zitat("This is a test."));
+				quellenData.add(testQuelle);
+			}
+		} catch (SQLException e) {
+		}    
     }
 
     @Override
