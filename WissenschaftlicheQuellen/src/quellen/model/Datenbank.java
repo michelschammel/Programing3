@@ -37,7 +37,7 @@ public class Datenbank {
 		 if(c != null) {
 			 return;
 		 }
-		 String path = "jdbc:sqlite:datenbank.sqlite";
+		 String path = "jdbc:sqlite:WissenschaftlicheQuellen/datenbank.sqlite";
 	     c = DriverManager.getConnection(path);
 	}
 	
