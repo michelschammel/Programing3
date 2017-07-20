@@ -14,5 +14,17 @@ public class Zitat {
         this.text = new SimpleStringProperty(text);
         this.tag = FXCollections.observableArrayList();
     }
+    
+    public String getText() {
+        return text.get();
+    }
+
+    public void setText(String text) {
+        this.text.set(text);
+    }
+
+    public StringProperty textProperty() {
+        return text;
+    }
 
 }
