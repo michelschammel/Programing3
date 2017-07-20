@@ -1,7 +1,5 @@
 package quellen.model;
 
-import java.util.List;
-
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
@@ -16,30 +14,27 @@ public class Quelle {
     private final StringProperty autor;
     private final StringProperty titel;
     private final StringProperty jahr;
-    private ObservableList<Zitat> zitate;
+    private ObservableList<Zitat> zitatData;
 
     /**
-     * Constructor with some initial data.
+     * The Constructor.
      * 
      * @param autor
      * @param titel
-     * ...
+     * @param jahr
      * 
      */
     public Quelle(String titel, String autor, String jahr) {
         this.autor = new SimpleStringProperty(autor);
         this.titel = new SimpleStringProperty(titel);
         this.jahr = new SimpleStringProperty(jahr);
-        this.zitate = FXCollections.observableArrayList();
-        
+        zitatData= FXCollections.observableArrayList();
     }
     
     public void addZitat (Zitat z) {
-        zitate.add(z);    
+        zitatData.add(z);    
     }
     
-    
-
     public String getTitel() {
         return titel.get();
     }
@@ -74,5 +69,9 @@ public class Quelle {
 
     public StringProperty jahrProperty() {
         return jahr;
+    }
+    
+    public ObservableList<Zitat> getZitatList() {
+        return this.zitatData;
     }
 }
