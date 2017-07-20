@@ -12,9 +12,9 @@ import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import quellen.model.Datenbank;
 import quellen.model.Quelle;
 import quellen.model.Zitat;
+import quellen.model.Datenbank;
 import quellen.view.QuellenOverviewController;
 
 public class MainApp extends Application {
@@ -23,27 +23,43 @@ public class MainApp extends Application {
     private BorderPane rootLayout;
     
     /**
-     * The data as an observable list of Zitate.
+     * The data as an observable list of Quelle.
      */
     private ObservableList<Quelle> quellenData= FXCollections.observableArrayList();
-
+    
     /**
-     * Constructor
-     * @throws SQLException 
+     * The Constructor.
+     * @throws SQL Exception
      */
     public MainApp() throws SQLException {
-    	String sql = "SELECT * FROM Quellen";
-    	ResultSet rs = null;
-			rs = Datenbank.getInstance().queryWithReturn(sql);
-    	try {
-			while(rs.next()) {
-				// Add some sample data
-				Quelle testQuelle = new Quelle(rs.getString("autor"),rs.getString("titel"),rs.getString("jahr"));
-				testQuelle.addZitat(new Zitat("This is a test."));
-				quellenData.add(testQuelle);
-			}
-		} catch (SQLException e) {
-		}    
+        /*String sql = "SELECT * FROM Quellen";
+        ResultSet rs = null;
+            rs = Datenbank.getInstance().queryWithReturn(sql);
+        try {
+            while(rs.next()) {
+                // Add some sample data
+                Quelle testQuelle = new Quelle(rs.getString("autor"),rs.getString("titel"),rs.getString("jahr"));
+                testQuelle.addZitat(new Zitat("This is a test."));
+                quellenData.add(testQuelle);
+
+            }
+        } catch (SQLException e) {
+        }*/    
+        // Add some sample data
+        Quelle testQuelle = new Quelle("Test", "Goethe", "1888");
+        Quelle testQuelle2 = new Quelle("Test2", "Schiller", "1919");
+        Quelle testQuelle3 = new Quelle("Test3", "Marx", "1901");
+        Quelle testQuelle4 = new Quelle("Test4", "Müller", "2005s");
+        testQuelle.addZitat(new Zitat("This is a test."));
+        testQuelle.addZitat(new Zitat("What happens when you have 2 zitate"));
+        testQuelle2.addZitat(new Zitat("This is also a test."));
+        testQuelle3.addZitat(new Zitat("This is a third test."));
+        testQuelle4.addZitat(new Zitat("This is a fourth test."));
+        
+        quellenData.add(testQuelle);
+        quellenData.add(testQuelle2);
+        quellenData.add(testQuelle3);
+        quellenData.add(testQuelle4);
     }
 
     @Override
@@ -83,12 +99,12 @@ public class MainApp extends Application {
      */
     public void showQuellenOverview() {
         try {
-            // Load person overview.
+            // Load quellen overview.
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(MainApp.class.getResource("view/quellenOverview.fxml"));
             AnchorPane quellenOverview = (AnchorPane) loader.load();
 
-            // Set person overview into the center of root layout.
+            // Set quellen overview into the center of root layout.
             rootLayout.setCenter(quellenOverview);
 
             // Give the controller access to the main app.
@@ -112,8 +128,7 @@ public class MainApp extends Application {
         launch(args);
     }
 
-    public ObservableList<Quelle> getQuellenList() {
-        
+    public ObservableList<Quelle> getQuellenList() {        
         return this.quellenData;
     }
 }
