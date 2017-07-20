@@ -102,6 +102,44 @@ public class QuellenOverviewController {
             alert.showAndWait();
         }
     }
+    
+    /**
+     * Called when the user clicks the new button. Opens a dialog to edit
+     * details for a new quelle.
+     */
+    @FXML
+    private void handleNewQuelle() {
+        Quelle tempQuelle = new Quelle("","","");
+        boolean okClicked = mainApp.showQuellenEditDialog(tempQuelle);
+        if (okClicked) {
+            mainApp.getQuellenList().add(tempQuelle);
+        }
+    }
+
+    /**
+     * Called when the user clicks the edit button. Opens a dialog to edit
+     * details for the selected quelle.
+     */
+    @FXML
+    private void handleEditQuelle() {
+        Quelle selectedQuelle = quellenTable.getSelectionModel().getSelectedItem();
+        if (selectedQuelle != null) {
+            boolean okClicked = mainApp.showQuellenEditDialog(selectedQuelle);
+            if (okClicked) {
+                showQuellenDetails(selectedQuelle);
+            }
+
+        } else {
+            // Nothing selected.
+            Alert alert = new Alert(AlertType.WARNING);
+            alert.initOwner(mainApp.getPrimaryStage());
+            alert.setTitle("No Selection");
+            alert.setHeaderText("No Quelle Selected");
+            alert.setContentText("Please select a quelle in the table.");
+
+            alert.showAndWait();
+        }
+    }
 
     /**
      * Is called by the main application to give a reference back to itself.
