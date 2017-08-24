@@ -16,25 +16,27 @@ import javafx.stage.Stage;
 import quellen.model.Quelle;
 import quellen.model.Zitat;
 import quellen.model.Datenbank;
+import quellen.view.BarChartController;
 import quellen.view.QuellenEditDialogController;
 import quellen.view.QuellenOverviewController;
+import quellen.view.RootLayoutController;
 
 public class MainApp extends Application {
 
     private Stage primaryStage;
     private BorderPane rootLayout;
-    
+
     /**
      * The data as an observable list of Quelle.
      */
     private ObservableList<Quelle> quellenData= FXCollections.observableArrayList();
-    
+
     /**
      * The Constructor.
      * @throws SQL Exception
      */
     public MainApp() throws SQLException {
-        /*String sql = "SELECT * FROM Quellen";
+        String sql = "SELECT * FROM Quellen";
         ResultSet rs = null;
             rs = Datenbank.getInstance().queryWithReturn(sql);
         try {
@@ -46,7 +48,7 @@ public class MainApp extends Application {
 
             }
         } catch (SQLException e) {
-        }*/    
+        }
         // Add some sample data
         Quelle testQuelle = new Quelle("Test", "Goethe", "1888");
         Quelle testQuelle2 = new Quelle("Test2", "Schiller", "1919");
@@ -57,7 +59,7 @@ public class MainApp extends Application {
         testQuelle2.addZitat(new Zitat("This is also a test."));
         testQuelle3.addZitat(new Zitat("This is a third test."));
         testQuelle4.addZitat(new Zitat("This is a fourth test."));
-        
+
         quellenData.add(testQuelle);
         quellenData.add(testQuelle2);
         quellenData.add(testQuelle3);
@@ -73,9 +75,9 @@ public class MainApp extends Application {
 
         showQuellenOverview();
     }
-    
-    
-    
+
+
+
 
     /**
      * Initializes the root layout.
@@ -86,6 +88,8 @@ public class MainApp extends Application {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(MainApp.class.getResource("view/RootLayout.fxml"));
             rootLayout = (BorderPane) loader.load();
+            RootLayoutController rootLayoutController = loader.getController();
+            rootLayoutController.setMainApp(this);
 
             // Show the scene containing the root layout.
             Scene scene = new Scene(rootLayout);
@@ -95,7 +99,7 @@ public class MainApp extends Application {
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Shows the quellen overview inside the root layout.
      */
@@ -117,12 +121,12 @@ public class MainApp extends Application {
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Opens a dialog to edit details for the specified quelle. If the user
      * clicks OK, the changes are saved into the provided quellen object and true
      * is returned.
-     * 
+     *
      * @param quelle the quelle object to be edited
      * @return true if the user clicked OK, false otherwise.
      */
@@ -168,7 +172,53 @@ public class MainApp extends Application {
         launch(args);
     }
 
-    public ObservableList<Quelle> getQuellenList() {        
+    public ObservableList<Quelle> getQuellenList() {
         return this.quellenData;
+    }
+
+    public void showBarChart() {
+        try {
+            // Load the fxml file and create a new stage for the popup.
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(MainApp.class.getResource("view/BarChart.fxml"));
+            AnchorPane page = (AnchorPane) loader.load();
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("BarChart");
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            dialogStage.initOwner(primaryStage);
+            Scene scene = new Scene(page);
+            dialogStage.setScene(scene);
+
+            // Set the persons into the controller.
+            //BarChartController controller = loader.getController();
+
+            dialogStage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void showPieChart() {
+        try {
+            // Load the fxml file and create a new stage for the popup.
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(MainApp.class.getResource("view/PieChart.fxml"));
+            AnchorPane page = (AnchorPane) loader.load();
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("PieChart");
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            dialogStage.initOwner(primaryStage);
+            Scene scene = new Scene(page);
+            dialogStage.setScene(scene);
+
+            // Set the persons into the controller.
+            //BarChartController controller = loader.getController();
+
+            dialogStage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

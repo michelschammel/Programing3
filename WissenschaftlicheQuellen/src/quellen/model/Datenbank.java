@@ -37,16 +37,18 @@ public class Datenbank {
 		 if(c != null) {
 			 return;
 		 }
-		 String path = "jdbc:sqlite:WissenschaftlicheQuellen/datenbank.sqlite";
+		 String path = "jdbc:sqlite:datenbank.sqlite";
 	     c = DriverManager.getConnection(path);
 	}
 	
-	public void queryWithoutReturn(String sql) throws SQLException {
+	public static void queryWithoutReturn(String sql) throws SQLException {
 		Statement stmt  = c.createStatement();
         stmt.executeQuery(sql);
 	}
 	
-	public ResultSet queryWithReturn(String sql) throws SQLException {
+	public static ResultSet queryWithReturn(String sql) throws SQLException {
+		//needed type but not working with sqlite
+		//Statement stmt = c.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
 		Statement stmt  = c.createStatement();
         ResultSet rs    = stmt.executeQuery(sql);
         return rs;

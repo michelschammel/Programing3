@@ -50,20 +50,20 @@ public class QuellenOverviewController {
         autorColumn.setCellValueFactory(cellData -> cellData.getValue().autorProperty());
         // Initialize the zitat table with the column.
         zitatColumn.setCellValueFactory(cellData -> cellData.getValue().textProperty());
-        
+
         // Clear quellen details.
         showQuellenDetails(null);
 
         // Listen for selection changes and show the quelle details when changed.
         quellenTable.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> showQuellenDetails(newValue));
-        
+
     }
-    
+
     /**
      * Fills all text fields to show details about the quelle.
      * If the specified quelle is null, all text fields are cleared.
-     * 
+     *
      * @param quelle the quelle or null
      */
     private void showQuellenDetails(Quelle quelle) {
@@ -72,7 +72,7 @@ public class QuellenOverviewController {
             titelLabel.setText(quelle.getTitel());
             autorLabel.setText(quelle.getAutor());
             //jahrLabel.setText(quelle.getJahr());
-            
+
             //Add observable list date to zitat table for every quelle.
             zitatTable.setItems(quelle.getZitatList());
         } else {
@@ -82,7 +82,7 @@ public class QuellenOverviewController {
             //jahrLabel.setText("");
         }
     }
-    
+
     /**
      * Called when the user clicks on the delete button.
      */
@@ -102,7 +102,7 @@ public class QuellenOverviewController {
             alert.showAndWait();
         }
     }
-    
+
     /**
      * Called when the user clicks the new button. Opens a dialog to edit
      * details for a new quelle.
@@ -143,14 +143,28 @@ public class QuellenOverviewController {
 
     /**
      * Is called by the main application to give a reference back to itself.
-     * 
+     *
      * @param mainApp
      */
     public void setMainApp(MainApp mainApp) {
         this.mainApp = mainApp;
-        
+
         // Add observable list data to the quellen table.
         quellenTable.setItems(mainApp.getQuellenList());
     }
+
+	@FXML
+	private void handleShowBarChart() {
+	      mainApp.showBarChart();
+	}
+
+	@FXML
+	private void handleShowPieChart() {
+	      mainApp.showPieChart();
+	}
+
+
+
+
 }
 
