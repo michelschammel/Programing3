@@ -16,7 +16,6 @@ import javafx.stage.Stage;
 import quellen.model.Quelle;
 import quellen.model.Zitat;
 import quellen.model.Datenbank;
-import quellen.view.BarChartController;
 import quellen.view.QuellenEditDialogController;
 import quellen.view.QuellenOverviewController;
 import quellen.view.RootLayoutController;
@@ -33,12 +32,12 @@ public class MainApp extends Application {
 
     /**
      * The Constructor.
-     * @throws SQL Exception
+     * @throws SQLException
      */
     public MainApp() throws SQLException {
         String sql = "SELECT * FROM Quellen";
         ResultSet rs = null;
-            rs = Datenbank.getInstance().queryWithReturn(sql);
+           rs = Datenbank.getInstance().queryWithReturn(sql);
         try {
             while(rs.next()) {
                 // Add some sample data
@@ -174,6 +173,13 @@ public class MainApp extends Application {
 
     public ObservableList<Quelle> getQuellenList() {
         return this.quellenData;
+    }
+    /**
+     * Search for Tag/Author/Source/Quote
+     *
+     */
+    public void search(String searchText, boolean searchAuthor, boolean searchTag, boolean searchSource, boolean searchQuote) {
+
     }
 
     public void showBarChart() {

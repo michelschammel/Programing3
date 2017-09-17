@@ -25,12 +25,12 @@
                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                      </columnResizePolicy>
                   </TableView>
-                  <TextField layoutX="14.0" layoutY="8.0" prefHeight="26.0" prefWidth="193.0" />
-                  <CheckBox layoutX="14.0" layoutY="42.0" mnemonicParsing="false" prefHeight="16.0" prefWidth="86.0" text="Tag" />
-                  <CheckBox layoutX="69.0" layoutY="42.0" mnemonicParsing="false" text="Autor" />
-                  <CheckBox layoutX="134.0" layoutY="42.0" mnemonicParsing="false" text="Quelle" />
-                  <Button layoutX="220.0" layoutY="8.0" mnemonicParsing="false" text="Search" />
-                  <CheckBox layoutX="207.0" layoutY="42.0" mnemonicParsing="false" text="Zitat" />
+                  <TextField layoutX="14.0" layoutY="8.0" prefHeight="26.0" prefWidth="193.0" fx:id="searchTextField"/>
+                  <CheckBox layoutX="14.0" layoutY="42.0" mnemonicParsing="false" prefHeight="16.0" prefWidth="86.0" text="Tag" fx:id="checkBoxTag"/>
+                  <CheckBox layoutX="69.0" layoutY="42.0" mnemonicParsing="false" text="Autor" fx:id="checkBoxAuthor"/>
+                  <CheckBox layoutX="134.0" layoutY="42.0" mnemonicParsing="false" text="Quelle" fx:id="checkBoxSource"/>
+                  <CheckBox layoutX="207.0" layoutY="42.0" mnemonicParsing="false" text="Zitat" fx:id="checkBoxQuote"/>
+                  <Button layoutX="220.0" layoutY="8.0" mnemonicParsing="false" text="Search" onAction="#handleSearch" />
                </children>
             </AnchorPane>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
