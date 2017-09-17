@@ -1,11 +1,9 @@
 package quellen.view;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
+import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
 import quellen.MainApp;
 import quellen.model.Quelle;
 import quellen.model.Zitat;
@@ -28,6 +26,17 @@ public class QuellenOverviewController {
     private Label autorLabel;
     @FXML
     private Label jahrLabel;
+    @FXML
+    private TextField searchTextField;
+
+    @FXML
+    private CheckBox checkBoxTag;
+    @FXML
+    private CheckBox checkBoxSource;
+    @FXML
+    private CheckBox checkBoxAuthor;
+    @FXML
+    private CheckBox checkBoxQuote;
 
     // Reference to the main application.
     private MainApp mainApp;
@@ -92,14 +101,7 @@ public class QuellenOverviewController {
         if (selectedIndex >= 0) {
             quellenTable.getItems().remove(selectedIndex);
         } else {
-            // Nothing selected.
-            Alert alert = new Alert(AlertType.WARNING);
-            alert.initOwner(mainApp.getPrimaryStage());
-            alert.setTitle("No Selection");
-            alert.setHeaderText("No Quelle Selected");
-            alert.setContentText("Please select a quelle in the table.");
-
-            alert.showAndWait();
+            nothingSelected("No Selection", "No Quelle Selected", "Please select a quelle in the table.");
         }
     }
 
@@ -130,15 +132,19 @@ public class QuellenOverviewController {
             }
 
         } else {
-            // Nothing selected.
-            Alert alert = new Alert(AlertType.WARNING);
-            alert.initOwner(mainApp.getPrimaryStage());
-            alert.setTitle("No Selection");
-            alert.setHeaderText("No Quelle Selected");
-            alert.setContentText("Please select a quelle in the table.");
-
-            alert.showAndWait();
+            nothingSelected("No Selection", "No Quelle Selected", "Please select a quelle in the table.");
         }
+    }
+
+    private void nothingSelected(String title, String header, String content) {
+        // Nothing selected.
+        Alert alert = new Alert(AlertType.WARNING);
+        alert.initOwner(mainApp.getPrimaryStage());
+        alert.setTitle(title);
+        alert.setHeaderText(header);
+        alert.setContentText(content);
+
+        alert.showAndWait();
     }
 
     /**
@@ -163,7 +169,19 @@ public class QuellenOverviewController {
 	      mainApp.showPieChart();
 	}
 
+    @FXML
+    private void handleSearch() {
+        boolean searchAuthor = checkBoxAuthor.isSelected();
+        boolean searchSource = checkBoxSource.isSelected();
+        boolean searchQuote = checkBoxQuote.isSelected();
+        boolean searchTag = checkBoxTag.isSelected();
+        String searchText = searchTextField.getCharacters().toString();
+        if(searchText.isEmpty()) {
+            nothingSelected("No Search Text", "No search possible", "Please enter a text to search for");
+        }
 
+        this.mainApp.search(searchText, searchAuthor, searchTag, searchSource, searchQuote);
+    }
 
 
 }
