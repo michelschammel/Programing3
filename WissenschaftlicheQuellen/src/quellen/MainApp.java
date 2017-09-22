@@ -53,11 +53,21 @@ public class MainApp extends Application {
         Quelle testQuelle2 = new Quelle("Test2", "Schiller", "1919");
         Quelle testQuelle3 = new Quelle("Test3", "Marx", "1901");
         Quelle testQuelle4 = new Quelle("Test4", "Müller", "2005s");
-        testQuelle.addZitat(new Zitat("This is a test."));
-        testQuelle.addZitat(new Zitat("What happens when you have 2 zitate"));
-        testQuelle2.addZitat(new Zitat("This is also a test."));
-        testQuelle3.addZitat(new Zitat("This is a third test."));
-        testQuelle4.addZitat(new Zitat("This is a fourth test."));
+        Zitat zitat1 = new Zitat("This is a test.");
+        Zitat zitat2 = new Zitat("What happens when you have 2 zitate");
+        Zitat zitat3 = new Zitat("This is also a test.");
+        Zitat zitat4 = new Zitat("This is a third test.");
+        Zitat zitat5 = new Zitat("This is a fourth test.");
+        zitat1.addTag("first Tag");
+        zitat1.addTag("second Tag");
+        zitat1.addTag("third Tag");
+        zitat2.addTag("first tag of second zitat");
+        zitat2.addTag("second tag of sedond zitat");
+        testQuelle.addZitat(zitat1);
+        testQuelle.addZitat(zitat2);
+        testQuelle2.addZitat(zitat3);
+        testQuelle3.addZitat(zitat4);
+        testQuelle4.addZitat(zitat5);
 
         quellenData.add(testQuelle);
         quellenData.add(testQuelle2);

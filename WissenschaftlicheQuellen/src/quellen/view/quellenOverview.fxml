@@ -47,6 +47,7 @@
                   <Label fx:id="autorLabel" layoutX="84.0" layoutY="36.0" text="Autor" />
                   <Label layoutX="51.0" layoutY="36.0" text="von" />
                   <TableView fx:id="zitatTable" layoutX="23.0" layoutY="72.0" prefHeight="345.0" prefWidth="494.0">
+                      <placeholder><Label>No Source selected</Label></placeholder>
                     <columns>
                       <TableColumn fx:id="zitatColumn" prefWidth="475.0" />
                     </columns>
@@ -57,9 +58,10 @@
             </AnchorPane>
             <AnchorPane maxWidth="527.0" minWidth="210.0" prefHeight="478.0" prefWidth="250.0" SplitPane.resizableWithParent="false">
                <children>
-                  <TableView prefHeight="478.0" prefWidth="210.0">
+                  <TableView fx:id="tagTable" prefHeight="478.0" prefWidth="210.0">
+                      <placeholder><Label>No Tags found</Label></placeholder>
                     <columns>
-                      <TableColumn minWidth="30.0" prefWidth="209.0" text="Tags" />
+                      <TableColumn fx:id="tagColumn" minWidth="30.0" prefWidth="209.0" text="Tags" />
                     </columns>
                   </TableView>
                </children>

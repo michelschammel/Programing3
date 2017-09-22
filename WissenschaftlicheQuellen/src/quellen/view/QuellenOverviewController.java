@@ -1,5 +1,7 @@
 package quellen.view;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -7,6 +9,7 @@ import javafx.scene.control.Alert.AlertType;
 import quellen.MainApp;
 import quellen.model.Quelle;
 import quellen.model.Zitat;
+import quellen.model.Tag;
 
 public class QuellenOverviewController {
     @FXML
@@ -19,6 +22,10 @@ public class QuellenOverviewController {
     private TableColumn<Quelle, String> autorColumn;
     @FXML
     private TableColumn<Zitat, String> zitatColumn;
+    @FXML
+    private TableView<Tag> tagTable;
+    @FXML
+    private TableColumn<Tag, String> tagColumn;
 
     @FXML
     private Label titelLabel;
@@ -59,6 +66,9 @@ public class QuellenOverviewController {
         autorColumn.setCellValueFactory(cellData -> cellData.getValue().autorProperty());
         // Initialize the zitat table with the column.
         zitatColumn.setCellValueFactory(cellData -> cellData.getValue().textProperty());
+        // Initialize the tag table with the column.
+        tagColumn.setCellValueFactory(cellData -> cellData.getValue().textProperty());
+
 
         // Clear quellen details.
         showQuellenDetails(null);
@@ -76,6 +86,7 @@ public class QuellenOverviewController {
      * @param quelle the quelle or null
      */
     private void showQuellenDetails(Quelle quelle) {
+        ObservableList<Tag> tagList = FXCollections.observableArrayList();
         if (quelle != null) {
             // Fill the labels with info from the person object.
             titelLabel.setText(quelle.getTitel());
@@ -84,6 +95,14 @@ public class QuellenOverviewController {
 
             //Add observable list date to zitat table for every quelle.
             zitatTable.setItems(quelle.getZitatList());
+
+            //Iterate over the quelle list because every quelle can have multiple zitate
+            //Add all tags to a new observable
+            quelle.getZitatList().forEach((zitat) ->
+                tagList.addAll(zitat.getTagList())
+            );
+            //Add the new observable to the tagTable
+            tagTable.setItems(tagList);
         } else {
             // Person is null, remove all the text.
             titelLabel.setText("");
@@ -169,18 +188,24 @@ public class QuellenOverviewController {
 	      mainApp.showPieChart();
 	}
 
+    /**
+     * Is called when the user clicks the search Button
+     */
     @FXML
     private void handleSearch() {
+        //get the values of the checkboxes
         boolean searchAuthor = checkBoxAuthor.isSelected();
         boolean searchSource = checkBoxSource.isSelected();
         boolean searchQuote = checkBoxQuote.isSelected();
         boolean searchTag = checkBoxTag.isSelected();
+        //Get the text to search for
         String searchText = searchTextField.getCharacters().toString();
+        //if the text is empty throw a message
         if(searchText.isEmpty()) {
             nothingSelected("No Search Text", "No search possible", "Please enter a text to search for");
+        } else {
+            this.mainApp.search(searchText, searchAuthor, searchTag, searchSource, searchQuote);
         }
-
-        this.mainApp.search(searchText, searchAuthor, searchTag, searchSource, searchQuote);
     }
 
 
