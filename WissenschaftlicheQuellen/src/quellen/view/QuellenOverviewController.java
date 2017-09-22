@@ -2,10 +2,10 @@ package quellen.view;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.cell.TextFieldTableCell;
 import quellen.MainApp;
 import quellen.model.Quelle;
 import quellen.model.Zitat;
@@ -66,10 +66,13 @@ public class QuellenOverviewController {
         autorColumn.setCellValueFactory(cellData -> cellData.getValue().autorProperty());
         // Initialize the zitat table with the column.
         zitatColumn.setCellValueFactory(cellData -> cellData.getValue().textProperty());
+        //Add a Cell Factory to be able to edit a column
+        zitatColumn.setCellFactory(TextFieldTableCell.forTableColumn());
         // Initialize the tag table with the column.
         tagColumn.setCellValueFactory(cellData -> cellData.getValue().textProperty());
 
 
+       // tagColumn.setCellFactory(TextFieldTreeTableCell.forTreeTableColumn());
         // Clear quellen details.
         showQuellenDetails(null);
 
@@ -88,6 +91,7 @@ public class QuellenOverviewController {
     private void showQuellenDetails(Quelle quelle) {
         ObservableList<Tag> tagList = FXCollections.observableArrayList();
         if (quelle != null) {
+            zitatTable.setEditable(true);
             // Fill the labels with info from the person object.
             titelLabel.setText(quelle.getTitel());
             autorLabel.setText(quelle.getAutor());
@@ -177,6 +181,16 @@ public class QuellenOverviewController {
 
         // Add observable list data to the quellen table.
         quellenTable.setItems(mainApp.getQuellenList());
+    }
+
+    /**
+     * Gets called after the user double clicks on a Cell
+     * The value that the user typed in gets saved in the zitat
+     * @param editedCell cell that got edited
+     */
+    public void editSelectedColumnEvent(TableColumn.CellEditEvent editedCell) {
+        Zitat selectedZitat = this.zitatTable.getSelectionModel().getSelectedItem();
+        selectedZitat.setText(editedCell.getNewValue().toString());
     }
 
 	@FXML
