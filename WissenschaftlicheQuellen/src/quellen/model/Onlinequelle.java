@@ -5,12 +5,12 @@ import javafx.beans.property.StringProperty;
 
 public class Onlinequelle extends Quelle{
     private StringProperty aufrufdatum;
-    private StringProperty einrichtung;
+    private StringProperty url;
 
-    public Onlinequelle (String titel, String autor, String jahr, String aufrufdatum, String einrichtung) {
+    public Onlinequelle (String titel, String autor, String jahr, String aufrufdatum, String url) {
         super(titel, autor, jahr);
         this.aufrufdatum = new SimpleStringProperty(aufrufdatum);
-        this. einrichtung = new SimpleStringProperty(einrichtung);
+        this.url = new SimpleStringProperty(url);
     }
 
     public String getAufrufdatum() {
@@ -25,15 +25,15 @@ public class Onlinequelle extends Quelle{
         this.aufrufdatum.set(aufrufdatum);
     }
 
-    public String getEinrichtung() {
-        return einrichtung.get();
+    public String getUrl() {
+        return url.get();
     }
 
-    public StringProperty einrichtungProperty() {
-        return einrichtung;
+    public StringProperty urlProperty() {
+        return url;
     }
 
-    public void setEinrichtung(String einrichtung) {
-        this.einrichtung.set(einrichtung);
+    public void setUrl(String url) {
+        this.url.set(url);
     }
 }

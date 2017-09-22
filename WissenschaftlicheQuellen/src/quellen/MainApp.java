@@ -182,20 +182,6 @@ public class MainApp extends Application {
             controller.setDialogStage(dialogStage);
             controller.setQuelle(quelle);
 
-            //check what quelle it is exactly
-            //the editdialog gets adjusted for every sort of Source
-            if (quelle instanceof Buch) {
-                System.out.println("Buch");
-            } else if (quelle instanceof Artikel){
-                System.out.println("Artikel");
-            } else if (quelle instanceof Onlinequelle){
-                System.out.println("Quelle");
-            } else if (quelle instanceof Anderes) {
-                System.out.println("Anderes");
-            } else if (quelle instanceof  WissenschaftlicheArbeit) {
-                System.out.println("Wissenschaftliche Quelle");
-            }
-
             // Show the dialog and wait until the user closes it
             dialogStage.showAndWait();
 
