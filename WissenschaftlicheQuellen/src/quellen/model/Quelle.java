@@ -11,9 +11,9 @@ import javafx.collections.ObservableList;
  */
 public class Quelle {
 
-    private final StringProperty autor;
-    private final StringProperty titel;
-    private final StringProperty jahr;
+    private StringProperty autor;
+    private StringProperty titel;
+    private StringProperty jahr;
     private ObservableList<Zitat> zitatData;
 
     /**

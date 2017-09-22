@@ -13,9 +13,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import quellen.model.Quelle;
-import quellen.model.Zitat;
-import quellen.model.Datenbank;
+import quellen.model.*;
 import quellen.view.QuellenEditDialogController;
 import quellen.view.QuellenOverviewController;
 import quellen.view.RootLayoutController;
@@ -55,7 +53,7 @@ public class MainApp extends Application {
         Quelle testQuelle4 = new Quelle("Test4", "Müller", "2005s");
         Zitat zitat1 = new Zitat("This is a test.");
         Zitat zitat2 = new Zitat("What happens when you have 2 zitate");
-        Zitat zitat3 = new Zitat("This is also a test.");
+        Zitat zitat3 = new Zitat("This is also a test. EXTRA LONG sadhaskljdhaksljdkjasdhjsakdjhkasjdjklaskjjksdjalsldasdjalsdjklashsakjd");
         Zitat zitat4 = new Zitat("This is a third test.");
         Zitat zitat5 = new Zitat("This is a fourth test.");
         zitat1.addTag("first Tag");
@@ -69,10 +67,35 @@ public class MainApp extends Application {
         testQuelle3.addZitat(zitat4);
         testQuelle4.addZitat(zitat5);
 
+        // Add sample for Buch
+        Buch buch = new Buch("BuchTest", "Müller", "2001", "Hubert Burda", "1", "Juli", "2344414663");
+        buch.addZitat(zitat1);
+
+        //Add sample of Artikel
+        Artikel artikel = new Artikel("ArtikelTex", "Müller", "1997", "3.");
+        artikel.addZitat(zitat2);
+
+        //Add sample of Anderes
+        Anderes anderes = new Anderes("AnderesTest", "Müller", "2010", "Hubert Burda", "1.", "2.");
+        anderes.addZitat(zitat1);
+
+        //Add sample Onlinequelle
+        Onlinequelle onlinequelle = new Onlinequelle("OnlineQuelleTest", "Olbertz", "2014", "2017", "HTW Saar");
+        onlinequelle.addZitat(zitat1);
+
+        //Add sample WissenschaftlicheArbeit
+        WissenschaftlicheArbeit wissenschaftlicheArbeit = new WissenschaftlicheArbeit("Wissenschaftilche Quelle Test", "Müller", "2017", "Test", "HTW");
+        wissenschaftlicheArbeit.addZitat(zitat2);
+
         quellenData.add(testQuelle);
         quellenData.add(testQuelle2);
         quellenData.add(testQuelle3);
         quellenData.add(testQuelle4);
+        quellenData.add(buch);
+        quellenData.add(artikel);
+        quellenData.add(anderes);
+        quellenData.add(onlinequelle);
+        quellenData.add(wissenschaftlicheArbeit);
     }
 
     @Override
@@ -158,6 +181,20 @@ public class MainApp extends Application {
             QuellenEditDialogController controller = loader.getController();
             controller.setDialogStage(dialogStage);
             controller.setQuelle(quelle);
+
+            //check what quelle it is exactly
+            //the editdialog gets adjusted for every sort of Source
+            if (quelle instanceof Buch) {
+                System.out.println("Buch");
+            } else if (quelle instanceof Artikel){
+                System.out.println("Artikel");
+            } else if (quelle instanceof Onlinequelle){
+                System.out.println("Quelle");
+            } else if (quelle instanceof Anderes) {
+                System.out.println("Anderes");
+            } else if (quelle instanceof  WissenschaftlicheArbeit) {
+                System.out.println("Wissenschaftliche Quelle");
+            }
 
             // Show the dialog and wait until the user closes it
             dialogStage.showAndWait();

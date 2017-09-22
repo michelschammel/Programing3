@@ -49,7 +49,7 @@
                   <TableView fx:id="zitatTable" layoutX="23.0" layoutY="72.0" prefHeight="345.0" prefWidth="494.0">
                       <placeholder><Label>No Source selected</Label></placeholder>
                     <columns>
-                      <TableColumn fx:id="zitatColumn" prefWidth="475.0" />
+                      <TableColumn fx:id="zitatColumn" minWidth="-1.0" prefWidth="492.0" resizable="false" />
                     </columns>
                   </TableView>
                   <Button layoutX="25.0" layoutY="432.0" mnemonicParsing="false" onAction="#handleShowBarChart" text="BarChart" />
@@ -61,7 +61,7 @@
                   <TableView fx:id="tagTable" prefHeight="478.0" prefWidth="210.0">
                       <placeholder><Label>No Tags found</Label></placeholder>
                     <columns>
-                      <TableColumn fx:id="tagColumn" minWidth="30.0" prefWidth="209.0" text="Tags" />
+                      <TableColumn fx:id="tagColumn" minWidth="30.0" prefWidth="209.0" text="Tags"/>
                     </columns>
                   </TableView>
                </children>
