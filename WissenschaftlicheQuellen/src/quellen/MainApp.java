@@ -22,6 +22,7 @@ public class MainApp extends Application {
 
     private Stage primaryStage;
     private BorderPane rootLayout;
+    private Quelle updatedQuelle;
 
     /**
      * The data as an observable list of Quelle.
@@ -185,6 +186,9 @@ public class MainApp extends Application {
             // Show the dialog and wait until the user closes it
             dialogStage.showAndWait();
 
+            //get the updateded Quelle
+            this.updatedQuelle = controller.getUpdatedQuelle();
+
             return controller.isOkClicked();
         } catch (IOException e) {
             e.printStackTrace();
@@ -198,6 +202,10 @@ public class MainApp extends Application {
      */
     public Stage getPrimaryStage() {
         return primaryStage;
+    }
+
+    public Quelle getUpdatedQuelle() {
+        return this.updatedQuelle;
     }
 
     public static void main(String[] args) {

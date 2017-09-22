@@ -13,8 +13,6 @@ import javafx.scene.layout.RowConstraints;
 import javafx.stage.Stage;
 import quellen.model.*;
 
-import javax.xml.soap.Text;
-
 /**
  * Dialog to edit details of a quelle.
  * 
@@ -40,6 +38,17 @@ public class QuellenEditDialogController {
     private Quelle quelle;
     private boolean okClicked = false;
 
+    //all custom textFields
+    private TextField herausgeberTextField;
+    private TextField auflageTextField;
+    private TextField monatTextField;
+    private TextField isbnTextField;
+    private TextField ausgabeTextField;
+    private TextField aufrufDatumTextField;
+    private TextField urlTextField;
+    private TextField herausgeberTextLabel;
+    private TextField einrichtungsTextLabel;
+
     /**
      * Initializes the controller class. This method is automatically called
      * after the fxml file has been loaded.
@@ -56,6 +65,39 @@ public class QuellenEditDialogController {
      */
     public void setDialogStage(Stage dialogStage) {
         this.dialogStage = dialogStage;
+    }
+
+    public Quelle getUpdatedQuelle() {
+        if (okClicked) {
+            //update die Quelle
+            this.quelle.setAutor(this.autorField.getText());
+            this.quelle.setJahr(this.jahrField.getText());
+            this.quelle.setTitel(this.titelField.getText());
+            if (quelle instanceof Buch) {
+                ((Buch) quelle).setAuflage(this.auflageTextField.getText());
+                ((Buch) quelle).setHerausgeber(this.herausgeberTextField.getText());
+                ((Buch) quelle).setMonat(this.monatTextField.getText());
+                ((Buch) quelle).setIsbn(this.isbnTextField.getText());
+                return this.quelle;
+            } else if (quelle instanceof Artikel){
+                ((Artikel) quelle).setAusgabe(this.ausgabeTextField.getText());
+                return this.quelle;
+            } else if (quelle instanceof Onlinequelle){
+                ((Onlinequelle) quelle).setUrl(this.urlTextField.getText());
+                ((Onlinequelle) quelle).setAufrufdatum(this.aufrufDatumTextField.getText());
+                return this.quelle;
+            } else if (quelle instanceof Anderes) {
+                ((Anderes) quelle).setAuflage(this.auflageTextField.getText());
+                ((Anderes) quelle).setAusgabe(this.ausgabeTextField.getText());
+                ((Anderes) quelle).setHerausgeber(this.herausgeberTextField.getText());
+                return this.quelle;
+            } else if (quelle instanceof  WissenschaftlicheArbeit) {
+                ((WissenschaftlicheArbeit) quelle).setEinrichtung(this.einrichtungsTextLabel.getText());
+                ((WissenschaftlicheArbeit) quelle).setHerausgeber(this.herausgeberTextField.getText());
+                return this.quelle;
+            }
+        }
+        return this.quelle;
     }
 
     /**
@@ -129,16 +171,16 @@ public class QuellenEditDialogController {
         Label isbnLabel = new Label("ISBN");
 
         //create all needed textfields for Buch
-        TextField herausgeberTextField = new TextField(buch.getHerausgeber());
-        TextField auflageTextField = new TextField(buch.getAuflage());
-        TextField monatTextField = new TextField(buch.getMonat());
-        TextField isbnTextField = new TextField(buch.getIsbn());
+        this.herausgeberTextField = new TextField(buch.getHerausgeber());
+        this.auflageTextField = new TextField(buch.getAuflage());
+        this.monatTextField = new TextField(buch.getMonat());
+        this.isbnTextField = new TextField(buch.getIsbn());
 
         //Add the content to the Gridpane
-        addContentTOGridPane(rowConstraint, herausgeberLabel, herausgeberTextField, 3,0);
-        addContentTOGridPane(rowConstraint, auflageLabel, auflageTextField, 4,0);
-        addContentTOGridPane(rowConstraint, monatLabel, monatTextField, 5,0);
-        addContentTOGridPane(rowConstraint, isbnLabel, isbnTextField, 6,0);
+        addContentTOGridPane(rowConstraint, herausgeberLabel, this.herausgeberTextField, 3,0);
+        addContentTOGridPane(rowConstraint, auflageLabel, this.auflageTextField, 4,0);
+        addContentTOGridPane(rowConstraint, monatLabel, this.monatTextField, 5,0);
+        addContentTOGridPane(rowConstraint, isbnLabel, this.isbnTextField, 6,0);
     }
 
     /**
@@ -152,10 +194,10 @@ public class QuellenEditDialogController {
         Label ausgabeLabel = new Label("Ausgabe");
 
         //Create all needed textfields for Artikel
-        TextField ausgabeTextField = new TextField(artikel.getAusgabe());
+        this.ausgabeTextField = new TextField(artikel.getAusgabe());
 
         //Add the content to the Gridpane
-        addContentTOGridPane(rowConstraint, ausgabeLabel, ausgabeTextField, 3, 0);
+        addContentTOGridPane(rowConstraint, ausgabeLabel, this.ausgabeTextField, 3, 0);
     }
 
     /**
@@ -175,12 +217,12 @@ public class QuellenEditDialogController {
         Label urlLabel = new Label("URL");
 
         //Create all  needed textfields for Onlinequelle
-        TextField aufrufDatumTextField = new TextField(onlinequelle.getAufrufdatum());
-        TextField urlTextField = new TextField(onlinequelle.getUrl());
+        this.aufrufDatumTextField = new TextField(onlinequelle.getAufrufdatum());
+        this.urlTextField = new TextField(onlinequelle.getUrl());
 
         //Add the content to the Gridpane
-        addContentTOGridPane(rowConstraint, aufrufDatumLabel, aufrufDatumTextField, 3, 0);
-        addContentTOGridPane(rowConstraint, urlLabel, urlTextField, 4, 0);
+        addContentTOGridPane(rowConstraint, aufrufDatumLabel, this.aufrufDatumTextField, 3, 0);
+        addContentTOGridPane(rowConstraint, urlLabel, this.urlTextField, 4, 0);
     }
 
     /**
@@ -201,14 +243,14 @@ public class QuellenEditDialogController {
         Label ausgabeLabel = new Label("Ausgabe");
 
         //create all needed textfields for Buch
-        TextField herausgeberTextField = new TextField(anderes.getHerausgeber());
-        TextField auflageTextField = new TextField(anderes.getAuflage());
-        TextField ausgabeTextField = new TextField(anderes.getAusgabe());
+        this.herausgeberTextField = new TextField(anderes.getHerausgeber());
+        this.auflageTextField = new TextField(anderes.getAuflage());
+        this.ausgabeTextField = new TextField(anderes.getAusgabe());
 
         //Add the content to the Gridpane
-        addContentTOGridPane(rowConstraint, herausgeberLabel, herausgeberTextField, 3,0);
-        addContentTOGridPane(rowConstraint, auflageLabel, auflageTextField, 4,0);
-        addContentTOGridPane(rowConstraint, ausgabeLabel, ausgabeTextField, 5,0);
+        addContentTOGridPane(rowConstraint, herausgeberLabel, this.herausgeberTextField, 3,0);
+        addContentTOGridPane(rowConstraint, auflageLabel, this.auflageTextField, 4,0);
+        addContentTOGridPane(rowConstraint, ausgabeLabel, this.ausgabeTextField, 5,0);
     }
 
     /**
@@ -228,12 +270,12 @@ public class QuellenEditDialogController {
         Label einrichtungsLabel = new Label("Einrichtung");
 
         //Create all  needed textfields for Onlinequelle
-        TextField herausgeberTextLabel = new TextField(wissenschaftlicheArbeit.getHerausgeber());
-        TextField einrichtungsTextLabel = new TextField(wissenschaftlicheArbeit.getEinrichtung());
+        this.herausgeberTextLabel = new TextField(wissenschaftlicheArbeit.getHerausgeber());
+        this.einrichtungsTextLabel = new TextField(wissenschaftlicheArbeit.getEinrichtung());
 
         //Add the content to the Gridpane
-        addContentTOGridPane(rowConstraint, herausgeberLabel, herausgeberTextLabel, 3, 0);
-        addContentTOGridPane(rowConstraint, einrichtungsLabel, einrichtungsTextLabel, 4, 0);
+        addContentTOGridPane(rowConstraint, herausgeberLabel, this.herausgeberTextLabel, 3, 0);
+        addContentTOGridPane(rowConstraint, einrichtungsLabel, this.einrichtungsTextLabel, 4, 0);
     }
 
     /**

@@ -147,6 +147,7 @@ public class QuellenOverviewController {
         if (selectedQuelle != null) {
             boolean okClicked = mainApp.showQuellenEditDialog(selectedQuelle);
             if (okClicked) {
+                selectedQuelle =  mainApp.getUpdatedQuelle();
                 showQuellenDetails(selectedQuelle);
             }
 
