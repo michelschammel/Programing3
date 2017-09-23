@@ -3,9 +3,9 @@ package quellen.view;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.cell.TextFieldTableCell;
 import quellen.MainApp;
 import quellen.model.Quelle;
 import quellen.model.Zitat;
@@ -69,8 +69,6 @@ public class QuellenOverviewController {
         // Initialize the tag table with the column.
         tagColumn.setCellValueFactory(cellData -> cellData.getValue().textProperty());
 
-
-       // tagColumn.setCellFactory(TextFieldTreeTableCell.forTreeTableColumn());
         // Clear quellen details.
         showQuellenDetails(null);
 

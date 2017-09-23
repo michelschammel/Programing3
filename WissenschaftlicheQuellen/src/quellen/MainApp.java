@@ -23,6 +23,7 @@ public class MainApp extends Application {
     private Stage primaryStage;
     private BorderPane rootLayout;
     private Quelle updatedQuelle;
+    private Quelle selectedQuelleForEdit;
 
     /**
      * The data as an observable list of Quelle.
@@ -183,6 +184,9 @@ public class MainApp extends Application {
             controller.setDialogStage(dialogStage);
             controller.setQuelle(quelle);
 
+            //set selectedQuelle for the edit dialig
+            this.selectedQuelleForEdit = quelle;
+
             // Show the dialog and wait until the user closes it
             dialogStage.showAndWait();
 
@@ -206,6 +210,10 @@ public class MainApp extends Application {
 
     public Quelle getUpdatedQuelle() {
         return this.updatedQuelle;
+    }
+
+    public Quelle getSelectedQuelle() {
+        return this.selectedQuelleForEdit;
     }
 
     public static void main(String[] args) {

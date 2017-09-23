@@ -1,5 +1,7 @@
 package quellen.view;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
@@ -31,7 +33,13 @@ public class QuellenEditDialogController {
     @FXML
     private Button cancelButton;
     @FXML
-    private TableView zitatTable;
+    private TableView<Zitat> zitatTable;
+    @FXML
+    private TableView<Tag> tagTable;
+    @FXML
+    private TableColumn<Zitat, String> zitatColumn;
+    @FXML
+    private TableColumn<Tag, String> tagColumn;
 
     private Stage dialogStage;
     private Quelle quelle;
@@ -54,7 +62,49 @@ public class QuellenEditDialogController {
      */
     @FXML
     private void initialize() {
+        // Initialize the zitat table with the two columns.
+        this.zitatColumn.setCellValueFactory(cellData -> cellData.getValue().textProperty());
+        this.tagColumn.setCellValueFactory(cellData -> cellData.getValue().textProperty());
 
+        // Clear zitat details.
+        showZitatDeatils(null);
+
+        // Listen for selection changes and show the quelle details when changed.
+        zitatTable.getSelectionModel().selectedItemProperty().addListener(
+                (observable, oldValue, newValue) -> showZitatDeatils(newValue));
+    }
+
+    /**
+     * Fills all text fields to show details about the quelle.
+     * If the specified quelle is null, all text fields are cleared.
+     *
+     * @param zitat the zitat or null
+     */
+    private void showZitatDeatils(Zitat zitat) {
+        ObservableList<Tag> tagList = FXCollections.observableArrayList();
+        if (quelle != null) {
+            zitatTable.setEditable(true);
+            // Fill the labels with info from the quelle object.
+            //titelLabel.setText(quelle.getTitel());
+            //autorLabel.setText(quelle.getAutor());
+            //jahrLabel.setText(quelle.getJahr());
+            tagTable.setItems(zitat.getTagList());
+
+            //Add observable list date to zitat table for every quelle.
+
+            //Iterate over the quelle list because every quelle can have multiple zitate
+            //Add all tags to a new observable
+            //quelle.getZitatList().forEach((zitat) ->
+            //        tagList.addAll(zitat.getTagList())
+            //);
+            //Add the new observable to the tagTable
+            //tagTable.setItems(tagList);
+        } else {
+            // Person is null, remove all the text.
+            //titelLabel.setText("");
+            //autorLabel.setText("");
+            //jahrLabel.setText("");
+        }
     }
 
     /**
@@ -107,6 +157,7 @@ public class QuellenEditDialogController {
      */
     public void setQuelle(Quelle quelle) {
         this.quelle = quelle;
+        this.zitatTable.setItems(quelle.getZitatList());
 
         autorField.setText(quelle.getAutor());
         titelField.setText(quelle.getTitel());
@@ -135,8 +186,9 @@ public class QuellenEditDialogController {
             adjustDialogForWissenschaftlicheArbeit(rowConstraint);
         } else {
             //normal quelle
-            //set zitat Table position new
+            //set zitat and tag Table position new
             zitatTable.setLayoutY(13);
+            tagTable.setLayoutY(13);
         }
     }
 
@@ -168,6 +220,7 @@ public class QuellenEditDialogController {
         this.okButton.setLayoutY(255);
         this.cancelButton.setLayoutY(255);
         this.zitatTable.setPrefHeight(273);
+        this.tagTable.setPrefHeight(273);
 
         //Create all needed labels for Buch
         Label herausgeberLabel = new Label("Herausgeber");
@@ -200,6 +253,7 @@ public class QuellenEditDialogController {
         this.okButton.setLayoutY(185);
         this.cancelButton.setLayoutY(185);
         this.zitatTable.setPrefHeight(203);
+        this.tagTable.setPrefHeight(203);
 
         //Create all needed labels for Artikel
         Label ausgabeLabel = new Label("Ausgabe");
@@ -226,6 +280,7 @@ public class QuellenEditDialogController {
         this.okButton.setLayoutY(185);
         this.cancelButton.setLayoutY(185);
         this.zitatTable.setPrefHeight(203);
+        this.tagTable.setPrefHeight(203);
 
         //Create all needed labels for Onlinequelle
         Label aufrufDatumLabel = new Label("Aufrufdatum");
@@ -252,6 +307,7 @@ public class QuellenEditDialogController {
         this.okButton.setLayoutY(220);
         this.cancelButton.setLayoutY(220);
         this.zitatTable.setPrefHeight(238);
+        this.tagTable.setPrefHeight(238);
 
         //Create all needed labels for Buch
         Label herausgeberLabel = new Label("Herausgeber");
@@ -281,6 +337,7 @@ public class QuellenEditDialogController {
         this.okButton.setLayoutY(185);
         this.cancelButton.setLayoutY(185);
         this.zitatTable.setPrefHeight(203);
+        this.tagTable.setPrefHeight(203);
 
         //Create all needed labels for Onlinequelle
         Label herausgeberLabel = new Label("Herausgeber");
