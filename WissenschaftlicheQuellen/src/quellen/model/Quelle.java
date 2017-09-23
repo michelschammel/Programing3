@@ -39,7 +39,20 @@ public class Quelle {
         this.jahr = new SimpleStringProperty(jahr);
         zitatData= FXCollections.observableArrayList();
     }
-    
+
+    /**
+     *
+     * @param quelle
+     */
+    public Quelle(Quelle quelle) {
+        this.autor = new SimpleStringProperty(quelle.getAutor());
+        this.titel = new SimpleStringProperty(quelle.getTitel());
+        this.jahr = new SimpleStringProperty(quelle.getJahr());
+        this.id = quelle.getId();
+        this.zitatData = FXCollections.observableArrayList();
+        quelle.getZitatList().forEach(zitat -> zitatData.add(new Zitat(zitat)));
+    }
+
     public void addZitat (Zitat z) {
         zitatData.add(z);    
     }
@@ -82,6 +95,10 @@ public class Quelle {
     
     public ObservableList<Zitat> getZitatList() {
         return this.zitatData;
+    }
+
+    public void setZitatListe(ObservableList<Zitat> zitatListe) {
+        this.zitatData = zitatListe;
     }
 
     public int getId() {

@@ -19,6 +19,12 @@ public class Artikel extends Quelle{
         this.magazin = new SimpleStringProperty(magazin);
     }
 
+    public Artikel (Artikel artikel) {
+        super(artikel);
+        this.ausgabe = new SimpleStringProperty(artikel.getAusgabe());
+        this.magazin = new SimpleStringProperty(artikel.getMagazin());
+    }
+
     public String getAusgabe() {
         return ausgabe.get();
     }

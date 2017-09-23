@@ -9,10 +9,24 @@ public class Zitat {
     
     private final StringProperty text;
     private ObservableList<Tag> tag;
+    private int quellenId;
     
     public Zitat (String text) {
         this.text = new SimpleStringProperty(text);
         this.tag = FXCollections.observableArrayList();
+    }
+
+    public Zitat (String text, int id) {
+        this.text = new SimpleStringProperty(text);
+        this.quellenId = id;
+        this.tag = FXCollections.observableArrayList();
+    }
+
+    public Zitat (Zitat zitat) {
+        this.text = new SimpleStringProperty(zitat.getText());
+        this.quellenId = zitat.getQuellenId();
+        this.tag = FXCollections.observableArrayList();
+        zitat.getTagList().forEach(tag -> this.tag.add(new Tag(tag.getText())));
     }
     
     public String getText() {
@@ -35,4 +49,11 @@ public class Zitat {
         return this.tag;
     }
 
+    public int getQuellenId() {
+        return quellenId;
+    }
+
+    public void setQuellenId(int quellenId) {
+        this.quellenId = quellenId;
+    }
 }

@@ -33,13 +33,13 @@
       </GridPane>
       <Button fx:id="okButton" layoutX="287.0" layoutY="149.0" mnemonicParsing="false" onAction="#handleOk" text="OK" />
       <Button fx:id="cancelButton" layoutX="350.0" layoutY="149.0" mnemonicParsing="false" onAction="#handleCancel" text="Cancel" />
-      <TableView fx:id="zitatTable" layoutX="409.0" layoutY="7.0" prefHeight="161.0" prefWidth="426.0">
+      <TableView fx:id="zitatTable" editable="true" layoutX="409.0" layoutY="7.0" prefHeight="161.0" prefWidth="426.0">
           <placeholder><Label>No Quotes found</Label></placeholder>
         <columns>
           <TableColumn fx:id="zitatColumn" prefWidth="426.0" text="Zitate" />
         </columns>
       </TableView>
-      <TableView fx:id="tagTable" layoutX="835.0" layoutY="7.0" prefHeight="161.0" prefWidth="208.0">
+      <TableView fx:id="tagTable" editable="true" layoutX="835.0" layoutY="7.0" prefHeight="161.0" prefWidth="208.0">
           <placeholder><Label>No Tags Found</Label></placeholder>
         <columns>
           <TableColumn fx:id="tagColumn" prefWidth="207.0" text="Tags" />

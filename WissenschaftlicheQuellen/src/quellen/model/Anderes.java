@@ -22,6 +22,13 @@ public class Anderes extends Quelle{
         this.ausgabe = new SimpleStringProperty(ausgabe);
     }
 
+    public Anderes (Anderes anderes) {
+        super(anderes);
+        this.herausgeber = new SimpleStringProperty(anderes.getHerausgeber());
+        this.auflage = new SimpleStringProperty(anderes.getAuflage());
+        this.ausgabe = new SimpleStringProperty(anderes.getAusgabe());
+    }
+
     public String getHerausgeber() {
         return herausgeber.get();
     }

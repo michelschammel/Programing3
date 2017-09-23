@@ -18,6 +18,11 @@ public class WissenschaftlicheArbeit extends Quelle{
         this.einrichtung = new SimpleStringProperty(einrichtung);
     }
 
+    public WissenschaftlicheArbeit (WissenschaftlicheArbeit wissenschaftlicheArbeit) {
+        super(wissenschaftlicheArbeit);
+        this.herausgeber = new SimpleStringProperty(wissenschaftlicheArbeit.getHerausgeber());
+        this.einrichtung = new SimpleStringProperty(wissenschaftlicheArbeit.getEinrichtung());
+    }
 
     public String getHerausgeber() {
         return herausgeber.get();

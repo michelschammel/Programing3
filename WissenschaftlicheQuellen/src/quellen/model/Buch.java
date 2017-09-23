@@ -26,6 +26,14 @@ public class Buch extends Quelle{
         this.isbn = new SimpleStringProperty(isbn);
     }
 
+    public Buch (Buch buch) {
+        super(buch);
+        this.herausgeber = new SimpleStringProperty(buch.getHerausgeber());
+        this.auflage = new SimpleStringProperty(buch.getAuflage());
+        this.monat = new SimpleStringProperty(buch.getMonat());
+        this.isbn = new SimpleStringProperty(buch.getIsbn());
+    }
+
     public String getHerausgeber() {
         return herausgeber.get();
     }

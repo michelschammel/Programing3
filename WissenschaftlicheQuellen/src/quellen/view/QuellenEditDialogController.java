@@ -1,15 +1,18 @@
 package quellen.view;
 
+import com.sun.org.apache.xpath.internal.operations.And;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
 import javafx.stage.Stage;
+import jdk.nashorn.internal.ir.annotations.Ignore;
 import quellen.model.*;
 
 /**
@@ -43,6 +46,7 @@ public class QuellenEditDialogController {
 
     private Stage dialogStage;
     private Quelle quelle;
+    private Quelle quelleEdited;
     private boolean okClicked = false;
 
     //all custom textFields
@@ -66,11 +70,15 @@ public class QuellenEditDialogController {
         this.zitatColumn.setCellValueFactory(cellData -> cellData.getValue().textProperty());
         this.tagColumn.setCellValueFactory(cellData -> cellData.getValue().textProperty());
 
+        //Add a Cell Factory to be able to edit a column
+        this.zitatColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+        this.tagColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+
         // Clear zitat details.
         showZitatDeatils(null);
 
         // Listen for selection changes and show the quelle details when changed.
-        zitatTable.getSelectionModel().selectedItemProperty().addListener(
+        this.zitatTable.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> showZitatDeatils(newValue));
     }
 
@@ -81,29 +89,8 @@ public class QuellenEditDialogController {
      * @param zitat the zitat or null
      */
     private void showZitatDeatils(Zitat zitat) {
-        ObservableList<Tag> tagList = FXCollections.observableArrayList();
-        if (quelle != null) {
-            zitatTable.setEditable(true);
-            // Fill the labels with info from the quelle object.
-            //titelLabel.setText(quelle.getTitel());
-            //autorLabel.setText(quelle.getAutor());
-            //jahrLabel.setText(quelle.getJahr());
+        if (zitat != null) {
             tagTable.setItems(zitat.getTagList());
-
-            //Add observable list date to zitat table for every quelle.
-
-            //Iterate over the quelle list because every quelle can have multiple zitate
-            //Add all tags to a new observable
-            //quelle.getZitatList().forEach((zitat) ->
-            //        tagList.addAll(zitat.getTagList())
-            //);
-            //Add the new observable to the tagTable
-            //tagTable.setItems(tagList);
-        } else {
-            // Person is null, remove all the text.
-            //titelLabel.setText("");
-            //autorLabel.setText("");
-            //jahrLabel.setText("");
         }
     }
 
@@ -118,35 +105,30 @@ public class QuellenEditDialogController {
 
     public Quelle getUpdatedQuelle() {
         if (okClicked) {
-            //update die Quelle
-            this.quelle.setAutor(this.autorField.getText());
-            this.quelle.setJahr(this.jahrField.getText());
-            this.quelle.setTitel(this.titelField.getText());
             if (quelle instanceof Buch) {
-                ((Buch) quelle).setAuflage(this.auflageTextField.getText());
-                ((Buch) quelle).setHerausgeber(this.herausgeberTextField.getText());
-                ((Buch) quelle).setMonat(this.monatTextField.getText());
-                ((Buch) quelle).setIsbn(this.isbnTextField.getText());
-                return this.quelle;
+                ((Buch) quelleEdited).setAuflage(this.auflageTextField.getText());
+                ((Buch) quelleEdited).setHerausgeber(this.herausgeberTextField.getText());
+                ((Buch) quelleEdited).setMonat(this.monatTextField.getText());
+                ((Buch) quelleEdited).setIsbn(this.isbnTextField.getText());
+                return this.quelleEdited;
             } else if (quelle instanceof Artikel){
-                ((Artikel) quelle).setAusgabe(this.ausgabeTextField.getText());
-                ((Artikel) quelle).setMagazin(this.magazinTextField.getText());
-                return this.quelle;
+                ((Artikel) quelleEdited).setAusgabe(this.ausgabeTextField.getText());
+                ((Artikel) quelleEdited).setMagazin(this.magazinTextField.getText());
             } else if (quelle instanceof Onlinequelle){
-                ((Onlinequelle) quelle).setUrl(this.urlTextField.getText());
-                ((Onlinequelle) quelle).setAufrufdatum(this.aufrufDatumTextField.getText());
-                return this.quelle;
+                ((Onlinequelle) quelleEdited).setUrl(this.urlTextField.getText());
+                ((Onlinequelle) quelleEdited).setAufrufdatum(this.aufrufDatumTextField.getText());
             } else if (quelle instanceof Anderes) {
-                ((Anderes) quelle).setAuflage(this.auflageTextField.getText());
-                ((Anderes) quelle).setAusgabe(this.ausgabeTextField.getText());
-                ((Anderes) quelle).setHerausgeber(this.herausgeberTextField.getText());
-                return this.quelle;
+                ((Anderes) quelleEdited).setAuflage(this.auflageTextField.getText());
+                ((Anderes) quelleEdited).setAusgabe(this.ausgabeTextField.getText());
+                ((Anderes) quelleEdited).setHerausgeber(this.herausgeberTextField.getText());
             } else if (quelle instanceof  WissenschaftlicheArbeit) {
-                ((WissenschaftlicheArbeit) quelle).setEinrichtung(this.einrichtungsTextField.getText());
-                ((WissenschaftlicheArbeit) quelle).setHerausgeber(this.herausgeberTextField.getText());
-                return this.quelle;
+                ((WissenschaftlicheArbeit) quelleEdited).setEinrichtung(this.einrichtungsTextField.getText());
+                ((WissenschaftlicheArbeit) quelleEdited).setHerausgeber(this.herausgeberTextField.getText());
             }
+            return this.quelleEdited;
         }
+
+        //the user canceld, but in quelle is the edited zitatList
         return this.quelle;
     }
 
@@ -157,7 +139,21 @@ public class QuellenEditDialogController {
      */
     public void setQuelle(Quelle quelle) {
         this.quelle = quelle;
-        this.zitatTable.setItems(quelle.getZitatList());
+        //create a copy of quelle to work with
+        if (quelle instanceof Buch) {
+            this.quelleEdited = new Buch((Buch)quelle);
+        } else if (quelle instanceof Artikel){
+            this.quelleEdited = new Artikel((Artikel) quelle);
+        } else if (quelle instanceof Onlinequelle){
+            this.quelleEdited = new Onlinequelle((Onlinequelle)quelle);
+        } else if (quelle instanceof Anderes) {
+            this.quelleEdited = new Anderes((Anderes)quelle);
+        } else if (quelle instanceof  WissenschaftlicheArbeit) {
+            this.quelleEdited = new WissenschaftlicheArbeit((WissenschaftlicheArbeit)quelle);
+        } else {
+            this.quelleEdited = new Quelle(quelle);
+        }
+        this.zitatTable.setItems(this.quelleEdited.getZitatList());
 
         autorField.setText(quelle.getAutor());
         titelField.setText(quelle.getTitel());
@@ -168,9 +164,6 @@ public class QuellenEditDialogController {
         rowConstraint.setMinHeight(30);
         rowConstraint.setPrefHeight(30);
         rowConstraint.setVgrow(Priority.SOMETIMES);
-
-        //Set Vertical Gap between rows
-        //this.gridPane.setVgap(22);
 
         //check what quelle it is exactly
         //the editdialog gets adjusted for every sort of Source
@@ -201,8 +194,6 @@ public class QuellenEditDialogController {
      * @param col col to insert
      */
     private void addContentTOGridPane(RowConstraints constraints, Label label, TextField textField, int row, int col) {
-        //add new RowConstraint
-        //this.gridPane.getRowConstraints().add(constraints);
         //add content to the Gridpane
         this.gridPane.add(label, col,row);
         this.gridPane.add(textField, col + 1,row);

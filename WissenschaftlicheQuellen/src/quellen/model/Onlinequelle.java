@@ -19,6 +19,12 @@ public class Onlinequelle extends Quelle{
         this.url = new SimpleStringProperty(url);
     }
 
+    public Onlinequelle (Onlinequelle onlinequelle) {
+        super(onlinequelle);
+        this.aufrufdatum = new SimpleStringProperty(onlinequelle.getAufrufdatum());
+        this.url = new SimpleStringProperty(onlinequelle.getUrl());
+    }
+
     public String getAufrufdatum() {
         return aufrufdatum.get();
     }
