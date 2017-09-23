@@ -12,6 +12,12 @@ public class WissenschaftlicheArbeit extends Quelle{
         this.herausgeber = new SimpleStringProperty(herausgeber);
         this.einrichtung = new SimpleStringProperty(einrichtung);
     }
+    public WissenschaftlicheArbeit (int id, String titel, String autor, String jahr, String herausgeber, String einrichtung) {
+        super(id, titel, autor, jahr);
+        this.herausgeber = new SimpleStringProperty(herausgeber);
+        this.einrichtung = new SimpleStringProperty(einrichtung);
+    }
+
 
     public String getHerausgeber() {
         return herausgeber.get();

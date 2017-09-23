@@ -15,6 +15,7 @@ public class Quelle {
     private StringProperty titel;
     private StringProperty jahr;
     private ObservableList<Zitat> zitatData;
+    private int id;
 
     /**
      * The Constructor.
@@ -24,6 +25,14 @@ public class Quelle {
      * @param jahr
      * 
      */
+    public Quelle(int id, String titel, String autor, String jahr) {
+        this.autor = new SimpleStringProperty(autor);
+        this.titel = new SimpleStringProperty(titel);
+        this.jahr = new SimpleStringProperty(jahr);
+        this.id = id;
+        zitatData= FXCollections.observableArrayList();
+    }
+
     public Quelle(String titel, String autor, String jahr) {
         this.autor = new SimpleStringProperty(autor);
         this.titel = new SimpleStringProperty(titel);
@@ -73,5 +82,9 @@ public class Quelle {
     
     public ObservableList<Zitat> getZitatList() {
         return this.zitatData;
+    }
+
+    public int getId() {
+        return id;
     }
 }

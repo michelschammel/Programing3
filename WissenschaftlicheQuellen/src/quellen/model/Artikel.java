@@ -11,6 +11,11 @@ public class Artikel extends Quelle{
         this.ausgabe = new SimpleStringProperty(ausgabe);
     }
 
+    public Artikel (int id, String titel, String autor, String jahr, String ausgabe) {
+        super(id, titel, autor, jahr);
+        this.ausgabe = new SimpleStringProperty(ausgabe);
+    }
+
     public String getAusgabe() {
         return ausgabe.get();
     }

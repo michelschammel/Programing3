@@ -15,6 +15,13 @@ public class Anderes extends Quelle{
         this.ausgabe = new SimpleStringProperty(ausgabe);
     }
 
+    public Anderes (int id, String titel, String autor, String jahr, String herausgeber, String auflage, String ausgabe) {
+        super (id, titel, autor, jahr);
+        this.herausgeber = new SimpleStringProperty(herausgeber);
+        this.auflage = new SimpleStringProperty(auflage);
+        this.ausgabe = new SimpleStringProperty(ausgabe);
+    }
+
     public String getHerausgeber() {
         return herausgeber.get();
     }
