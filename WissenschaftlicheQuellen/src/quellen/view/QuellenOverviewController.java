@@ -144,10 +144,13 @@ public class QuellenOverviewController {
     @FXML
     private void handleEditQuelle() {
         Quelle selectedQuelle = quellenTable.getSelectionModel().getSelectedItem();
+
         if (selectedQuelle != null) {
             boolean okClicked = mainApp.showQuellenEditDialog(selectedQuelle);
             if (okClicked) {
                 selectedQuelle =  mainApp.getUpdatedQuelle();
+                //update the Zitat table
+                this.quellenTable.getSelectionModel().getSelectedItem().setZitatListe(selectedQuelle.getZitatList());
                 showQuellenDetails(selectedQuelle);
             }
 

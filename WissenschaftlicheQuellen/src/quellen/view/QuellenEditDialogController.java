@@ -1,8 +1,7 @@
 package quellen.view;
 
-import com.sun.org.apache.xpath.internal.operations.And;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
@@ -12,8 +11,9 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
 import javafx.stage.Stage;
-import jdk.nashorn.internal.ir.annotations.Ignore;
 import quellen.model.*;
+
+import java.awt.event.MouseEvent;
 
 /**
  * Dialog to edit details of a quelle.
@@ -92,6 +92,40 @@ public class QuellenEditDialogController {
         if (zitat != null) {
             tagTable.setItems(zitat.getTagList());
         }
+    }
+
+    /**
+     * gets called if the user requests a context Menuz
+     */
+    public void contextMenuZitatTable() {
+        //Create a new Contextmenu
+        ContextMenu contextMenu = new ContextMenu();
+
+        //create needed menuitems for the contextmenu
+        MenuItem newRowItem = new MenuItem("new Zitat");
+        MenuItem deleteRowItem = new MenuItem("delete Zitat");
+
+        //add the menuitems to the contextmenu
+        contextMenu.getItems().addAll(newRowItem, deleteRowItem);
+
+        //add the contextmenu to the table
+        this.zitatTable.setContextMenu(contextMenu);
+
+        //add eventlistener for both menuitems
+        newRowItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                System.out.println("new Zitat");
+                quelleEdited.getZitatList().add(new Zitat("edit me!"));
+            }
+        });
+
+        deleteRowItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                System.out.println("delete Zitat");
+            }
+        });
     }
 
     /**
