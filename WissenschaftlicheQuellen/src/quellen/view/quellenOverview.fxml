@@ -46,10 +46,10 @@
                   <Label fx:id="titelLabel" layoutX="85.0" layoutY="14.0" text="Quelle" />
                   <Label fx:id="autorLabel" layoutX="84.0" layoutY="36.0" text="Autor" />
                   <Label layoutX="51.0" layoutY="36.0" text="von" />
-                  <TableView fx:id="zitatTable" editable="true" layoutX="23.0" layoutY="72.0" prefHeight="345.0" prefWidth="494.0">
+                  <TableView fx:id="zitatTable" layoutX="23.0" layoutY="72.0" prefHeight="345.0" prefWidth="494.0">
                       <placeholder><Label>No Source selected</Label></placeholder>
                     <columns>
-                      <TableColumn fx:id="zitatColumn" minWidth="-1.0" onEditCommit="#editSelectedColumnEvent" prefWidth="492.0" resizable="false" />
+                      <TableColumn fx:id="zitatColumn" minWidth="-1.0" prefWidth="492.0" resizable="false" />
                     </columns>
                   </TableView>
                   <Button layoutX="25.0" layoutY="432.0" mnemonicParsing="false" onAction="#handleShowBarChart" text="BarChart" />

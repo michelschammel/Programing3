@@ -36,8 +36,8 @@ public class MainApp extends Application {
     public MainApp() throws SQLException {
         String sql = "SELECT * FROM Quellen";
         ResultSet rs = null;
-           rs = Datenbank.getInstance().queryWithReturn(sql);
         try {
+            rs = Datenbank.getInstance().queryWithReturn(sql);
             while(rs.next()) {
                 // Add some sample data
                 Quelle testQuelle = new Quelle(rs.getString("autor"),rs.getString("titel"),rs.getString("jahr"));
@@ -73,7 +73,7 @@ public class MainApp extends Application {
         buch.addZitat(zitat1);
 
         //Add sample of Artikel
-        Artikel artikel = new Artikel("ArtikelTex", "Müller", "1997", "3.");
+        Artikel artikel = new Artikel("ArtikelTex", "Müller", "1997", "3.", "Bild");
         artikel.addZitat(zitat2);
 
         //Add sample of Anderes

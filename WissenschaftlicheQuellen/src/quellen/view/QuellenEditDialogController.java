@@ -1,11 +1,8 @@
 package quellen.view;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
+import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
@@ -33,6 +30,8 @@ public class QuellenEditDialogController {
     private Button okButton;
     @FXML
     private Button cancelButton;
+    @FXML
+    private TableView zitatTable;
 
     private Stage dialogStage;
     private Quelle quelle;
@@ -46,8 +45,8 @@ public class QuellenEditDialogController {
     private TextField ausgabeTextField;
     private TextField aufrufDatumTextField;
     private TextField urlTextField;
-    private TextField herausgeberTextLabel;
-    private TextField einrichtungsTextLabel;
+    private TextField einrichtungsTextField;
+    private TextField magazinTextField;
 
     /**
      * Initializes the controller class. This method is automatically called
@@ -81,6 +80,7 @@ public class QuellenEditDialogController {
                 return this.quelle;
             } else if (quelle instanceof Artikel){
                 ((Artikel) quelle).setAusgabe(this.ausgabeTextField.getText());
+                ((Artikel) quelle).setMagazin(this.magazinTextField.getText());
                 return this.quelle;
             } else if (quelle instanceof Onlinequelle){
                 ((Onlinequelle) quelle).setUrl(this.urlTextField.getText());
@@ -92,7 +92,7 @@ public class QuellenEditDialogController {
                 ((Anderes) quelle).setHerausgeber(this.herausgeberTextField.getText());
                 return this.quelle;
             } else if (quelle instanceof  WissenschaftlicheArbeit) {
-                ((WissenschaftlicheArbeit) quelle).setEinrichtung(this.einrichtungsTextLabel.getText());
+                ((WissenschaftlicheArbeit) quelle).setEinrichtung(this.einrichtungsTextField.getText());
                 ((WissenschaftlicheArbeit) quelle).setHerausgeber(this.herausgeberTextField.getText());
                 return this.quelle;
             }
@@ -114,12 +114,12 @@ public class QuellenEditDialogController {
 
         //Create a RowContraints
         RowConstraints rowConstraint = new RowConstraints();
-        rowConstraint.setMinHeight(10);
+        rowConstraint.setMinHeight(30);
         rowConstraint.setPrefHeight(30);
         rowConstraint.setVgrow(Priority.SOMETIMES);
 
         //Set Vertical Gap between rows
-        this.gridPane.setVgap(22);
+        //this.gridPane.setVgap(22);
 
         //check what quelle it is exactly
         //the editdialog gets adjusted for every sort of Source
@@ -133,6 +133,10 @@ public class QuellenEditDialogController {
             adjustDialogForAnderes(rowConstraint);
         } else if (quelle instanceof  WissenschaftlicheArbeit) {
             adjustDialogForWissenschaftlicheArbeit(rowConstraint);
+        } else {
+            //normal quelle
+            //set zitat Table position new
+            zitatTable.setLayoutY(13);
         }
     }
 
@@ -146,7 +150,7 @@ public class QuellenEditDialogController {
      */
     private void addContentTOGridPane(RowConstraints constraints, Label label, TextField textField, int row, int col) {
         //add new RowConstraint
-        this.gridPane.getRowConstraints().add(constraints);
+        //this.gridPane.getRowConstraints().add(constraints);
         //add content to the Gridpane
         this.gridPane.add(label, col,row);
         this.gridPane.add(textField, col + 1,row);
@@ -160,9 +164,10 @@ public class QuellenEditDialogController {
         Buch buch = (Buch)this.quelle;
 
         //adjust anchorPane and Buttons for Dialog
-        this.anchorPane.setPrefHeight(260);
-        this.okButton.setLayoutY(225);
-        this.cancelButton.setLayoutY(225);
+        this.anchorPane.setPrefHeight(290);
+        this.okButton.setLayoutY(255);
+        this.cancelButton.setLayoutY(255);
+        this.zitatTable.setPrefHeight(273);
 
         //Create all needed labels for Buch
         Label herausgeberLabel = new Label("Herausgeber");
@@ -190,14 +195,23 @@ public class QuellenEditDialogController {
     private void adjustDialogForArtikel(RowConstraints rowConstraint) {
         Artikel artikel = (Artikel)this.quelle;
 
+        //adjust anchorPane and Buttons for Dialog
+        this.anchorPane.setPrefHeight(220);
+        this.okButton.setLayoutY(185);
+        this.cancelButton.setLayoutY(185);
+        this.zitatTable.setPrefHeight(203);
+
         //Create all needed labels for Artikel
         Label ausgabeLabel = new Label("Ausgabe");
+        Label magazinLabel = new Label("Magazin");
 
         //Create all needed textfields for Artikel
         this.ausgabeTextField = new TextField(artikel.getAusgabe());
+        this.magazinTextField = new TextField(artikel.getMagazin());
 
         //Add the content to the Gridpane
         addContentTOGridPane(rowConstraint, ausgabeLabel, this.ausgabeTextField, 3, 0);
+        addContentTOGridPane(rowConstraint, magazinLabel, this.magazinTextField, 4, 0);
     }
 
     /**
@@ -208,9 +222,10 @@ public class QuellenEditDialogController {
         Onlinequelle onlinequelle = (Onlinequelle)this.quelle;
 
         //adjust anchorPane and Buttons for Dialog
-        this.anchorPane.setPrefHeight(200);
-        this.okButton.setLayoutY(165);
-        this.cancelButton.setLayoutY(165);
+        this.anchorPane.setPrefHeight(220);
+        this.okButton.setLayoutY(185);
+        this.cancelButton.setLayoutY(185);
+        this.zitatTable.setPrefHeight(203);
 
         //Create all needed labels for Onlinequelle
         Label aufrufDatumLabel = new Label("Aufrufdatum");
@@ -233,9 +248,10 @@ public class QuellenEditDialogController {
         Anderes anderes = (Anderes)this.quelle;
 
         //adjust anchorPane and Buttons for Dialog
-        this.anchorPane.setPrefHeight(230);
-        this.okButton.setLayoutY(195);
-        this.cancelButton.setLayoutY(195);
+        this.anchorPane.setPrefHeight(255);
+        this.okButton.setLayoutY(220);
+        this.cancelButton.setLayoutY(220);
+        this.zitatTable.setPrefHeight(238);
 
         //Create all needed labels for Buch
         Label herausgeberLabel = new Label("Herausgeber");
@@ -261,21 +277,22 @@ public class QuellenEditDialogController {
         WissenschaftlicheArbeit wissenschaftlicheArbeit = (WissenschaftlicheArbeit)this.quelle;
 
         //adjust anchorPane and Buttons for Dialog
-        this.anchorPane.setPrefHeight(200);
-        this.okButton.setLayoutY(165);
-        this.cancelButton.setLayoutY(165);
+        this.anchorPane.setPrefHeight(220);
+        this.okButton.setLayoutY(185);
+        this.cancelButton.setLayoutY(185);
+        this.zitatTable.setPrefHeight(203);
 
         //Create all needed labels for Onlinequelle
         Label herausgeberLabel = new Label("Herausgeber");
         Label einrichtungsLabel = new Label("Einrichtung");
 
         //Create all  needed textfields for Onlinequelle
-        this.herausgeberTextLabel = new TextField(wissenschaftlicheArbeit.getHerausgeber());
-        this.einrichtungsTextLabel = new TextField(wissenschaftlicheArbeit.getEinrichtung());
+        this.herausgeberTextField= new TextField(wissenschaftlicheArbeit.getHerausgeber());
+        this.einrichtungsTextField = new TextField(wissenschaftlicheArbeit.getEinrichtung());
 
         //Add the content to the Gridpane
-        addContentTOGridPane(rowConstraint, herausgeberLabel, this.herausgeberTextLabel, 3, 0);
-        addContentTOGridPane(rowConstraint, einrichtungsLabel, this.einrichtungsTextLabel, 4, 0);
+        addContentTOGridPane(rowConstraint, herausgeberLabel, this.herausgeberTextField, 3, 0);
+        addContentTOGridPane(rowConstraint, einrichtungsLabel, this.einrichtungsTextField, 4, 0);
     }
 
     /**

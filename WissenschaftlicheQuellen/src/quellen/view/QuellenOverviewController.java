@@ -66,8 +66,6 @@ public class QuellenOverviewController {
         autorColumn.setCellValueFactory(cellData -> cellData.getValue().autorProperty());
         // Initialize the zitat table with the column.
         zitatColumn.setCellValueFactory(cellData -> cellData.getValue().textProperty());
-        //Add a Cell Factory to be able to edit a column
-        zitatColumn.setCellFactory(TextFieldTableCell.forTableColumn());
         // Initialize the tag table with the column.
         tagColumn.setCellValueFactory(cellData -> cellData.getValue().textProperty());
 
@@ -181,16 +179,6 @@ public class QuellenOverviewController {
 
         // Add observable list data to the quellen table.
         quellenTable.setItems(mainApp.getQuellenList());
-    }
-
-    /**
-     * Gets called after the user double clicks on a Cell
-     * The value that the user typed in gets saved in the zitat
-     * @param editedCell cell that got edited
-     */
-    public void editSelectedColumnEvent(TableColumn.CellEditEvent editedCell) {
-        Zitat selectedZitat = this.zitatTable.getSelectionModel().getSelectedItem();
-        selectedZitat.setText(editedCell.getNewValue().toString());
     }
 
 	@FXML
