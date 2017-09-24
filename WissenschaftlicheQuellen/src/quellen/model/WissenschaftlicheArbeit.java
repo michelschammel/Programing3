@@ -17,7 +17,10 @@ public class WissenschaftlicheArbeit extends Quelle{
         this.herausgeber = new SimpleStringProperty(herausgeber);
         this.einrichtung = new SimpleStringProperty(einrichtung);
     }
-
+    /**
+     * Creates a copy of an existing Object
+     * @param wissenschaftlicheArbeit quelle to copy
+     */
     public WissenschaftlicheArbeit (WissenschaftlicheArbeit wissenschaftlicheArbeit) {
         super(wissenschaftlicheArbeit);
         this.herausgeber = new SimpleStringProperty(wissenschaftlicheArbeit.getHerausgeber());

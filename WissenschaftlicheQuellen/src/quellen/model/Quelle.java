@@ -41,8 +41,8 @@ public class Quelle {
     }
 
     /**
-     *
-     * @param quelle
+     * Creates a copy of an existing Object
+     * @param quelle quelle to copy
      */
     public Quelle(Quelle quelle) {
         this.autor = new SimpleStringProperty(quelle.getAutor());

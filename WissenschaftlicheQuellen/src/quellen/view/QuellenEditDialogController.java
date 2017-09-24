@@ -95,35 +95,76 @@ public class QuellenEditDialogController {
     }
 
     /**
-     * gets called if the user requests a context Menuz
+     * gets called if the user requests a context Menu
+     */
+    public void contextMenuTagTable() {
+        //Create a new Contextmenu
+        ContextMenu contextMenu = new ContextMenu();
+
+        //create needed menuitems for the contextmenu
+        MenuItem newTagItem = new MenuItem("new Tag");
+        MenuItem deleteTagItem = new MenuItem("delete Tag");
+        MenuItem addTag = new MenuItem("add Tag");
+
+        //add the menuitems to the contextmenu
+        contextMenu.getItems().addAll(newTagItem, deleteTagItem, addTag);
+
+        //add the contextmenu to the table
+        this.tagTable.setContextMenu(contextMenu);
+
+        //add eventlistener for all menuitems
+        newTagItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                if (zitatTable.getSelectionModel().getSelectedItem() != null) {
+                    //1. get zitatList of quelle
+                    //2. get the selected itemindex of zitattable
+                    //3. get the taglist of the selected zitat
+                    //4. add a new tag to the zitat
+                    quelleEdited.getZitatList().get(zitatTable.getSelectionModel().getSelectedIndex()).getTagList().add(new Tag("new"));
+                }
+            }
+        });
+
+        deleteTagItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Tag tag = tagTable.getSelectionModel().getSelectedItem();
+                quelleEdited.getZitatList().get(zitatTable.getSelectionModel().getSelectedIndex()).getTagList().remove(tag);
+            }
+        });
+    }
+
+    /**
+     * gets called if the user requests a context Menu
      */
     public void contextMenuZitatTable() {
         //Create a new Contextmenu
         ContextMenu contextMenu = new ContextMenu();
 
         //create needed menuitems for the contextmenu
-        MenuItem newRowItem = new MenuItem("new Zitat");
-        MenuItem deleteRowItem = new MenuItem("delete Zitat");
+        MenuItem newZitatItem = new MenuItem("new Zitat");
+        MenuItem deleteZitatItem = new MenuItem("delete Zitat");
 
         //add the menuitems to the contextmenu
-        contextMenu.getItems().addAll(newRowItem, deleteRowItem);
+        contextMenu.getItems().addAll(newZitatItem, deleteZitatItem);
 
         //add the contextmenu to the table
         this.zitatTable.setContextMenu(contextMenu);
 
         //add eventlistener for both menuitems
-        newRowItem.setOnAction(new EventHandler<ActionEvent>() {
+        newZitatItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                System.out.println("new Zitat");
                 quelleEdited.getZitatList().add(new Zitat("edit me!"));
             }
         });
 
-        deleteRowItem.setOnAction(new EventHandler<ActionEvent>() {
+        deleteZitatItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                System.out.println("delete Zitat");
+                Zitat zitat = zitatTable.getSelectionModel().getSelectedItem();
+                quelleEdited.getZitatList().remove(zitat);
             }
         });
     }

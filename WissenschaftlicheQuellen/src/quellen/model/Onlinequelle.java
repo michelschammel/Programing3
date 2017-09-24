@@ -19,6 +19,10 @@ public class Onlinequelle extends Quelle{
         this.url = new SimpleStringProperty(url);
     }
 
+    /**
+     * Creates a copy of an existing Object
+     * @param onlinequelle quelle to copy
+     */
     public Onlinequelle (Onlinequelle onlinequelle) {
         super(onlinequelle);
         this.aufrufdatum = new SimpleStringProperty(onlinequelle.getAufrufdatum());

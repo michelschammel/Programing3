@@ -26,6 +26,10 @@ public class Buch extends Quelle{
         this.isbn = new SimpleStringProperty(isbn);
     }
 
+    /**
+     * Creates a copy of an existing Object
+     * @param buch quelle to copy
+     */
     public Buch (Buch buch) {
         super(buch);
         this.herausgeber = new SimpleStringProperty(buch.getHerausgeber());

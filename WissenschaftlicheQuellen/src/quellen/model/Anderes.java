@@ -22,6 +22,10 @@ public class Anderes extends Quelle{
         this.ausgabe = new SimpleStringProperty(ausgabe);
     }
 
+    /**
+     * Creates a copy of an existing Object
+     * @param anderes quelle to copy
+     */
     public Anderes (Anderes anderes) {
         super(anderes);
         this.herausgeber = new SimpleStringProperty(anderes.getHerausgeber());

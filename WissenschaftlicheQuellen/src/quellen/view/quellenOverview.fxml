@@ -12,14 +12,14 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="480.0" prefWidth="1050.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="quellen.view.QuellenOverviewController">
    <children>
-      <SplitPane dividerPositions="0.19239543726235742, 0.596958174904943" layoutX="200.0" layoutY="71.0" prefHeight="480.0" prefWidth="921.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <SplitPane dividerPositions="0.2870722433460076, 0.7946768060836502" layoutX="200.0" layoutY="71.0" prefHeight="480.0" prefWidth="921.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <items>
           <AnchorPane maxWidth="300.0" minHeight="0.0" minWidth="300.0" prefHeight="473.0" prefWidth="300.0">
                <children>
-                  <TableView fx:id="quellenTable" layoutY="69.0" prefHeight="409.0" prefWidth="650.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="69.0">
+                  <TableView fx:id="quellenTable" layoutY="69.0" prefHeight="409.0" prefWidth="300.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="69.0">
                     <columns>
                       <TableColumn fx:id="autorColumn" prefWidth="140.0" text="Autor" />
-                      <TableColumn fx:id="titelColumn" prefWidth="150.0" text="Quelle" />
+                      <TableColumn fx:id="titelColumn" prefWidth="103.0" text="Quelle" />
                     </columns>
                      <columnResizePolicy>
                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -46,7 +46,7 @@
                   <Label fx:id="titelLabel" layoutX="85.0" layoutY="14.0" text="Quelle" />
                   <Label fx:id="autorLabel" layoutX="84.0" layoutY="36.0" text="Autor" />
                   <Label layoutX="51.0" layoutY="36.0" text="von" />
-                  <TableView fx:id="zitatTable" layoutX="23.0" layoutY="72.0" prefHeight="345.0" prefWidth="494.0">
+                  <TableView fx:id="zitatTable" layoutX="23.0" layoutY="69.0" prefHeight="348.0" prefWidth="494.0">
                       <placeholder><Label>No Source selected</Label></placeholder>
                     <columns>
                       <TableColumn fx:id="zitatColumn" minWidth="-1.0" prefWidth="492.0" resizable="false" />

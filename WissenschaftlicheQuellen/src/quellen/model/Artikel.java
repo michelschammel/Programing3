@@ -19,6 +19,10 @@ public class Artikel extends Quelle{
         this.magazin = new SimpleStringProperty(magazin);
     }
 
+    /**
+     * Creates a copy of an existing Object
+     * @param artikel quelle to copy
+     */
     public Artikel (Artikel artikel) {
         super(artikel);
         this.ausgabe = new SimpleStringProperty(artikel.getAusgabe());
