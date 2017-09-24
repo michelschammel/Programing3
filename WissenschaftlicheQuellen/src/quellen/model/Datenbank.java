@@ -3,6 +3,7 @@ package quellen.model;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import java.io.IOException;
 import java.sql.*;
 
 import static quellen.constants.DB_Constants.*;
@@ -61,52 +62,119 @@ public class Datenbank {
 	}
 
 	public ObservableList<Quelle> getQuellenFromDataBase() {
-		ResultSet rsAnders;
-		ResultSet rsZitate;
-		ResultSet rsTags;
+		ResultSet rsQuellen;
 		try {
 			//Create a new Observablelist
 			ObservableList<Quelle> quelleList = FXCollections.observableArrayList();
 			ObservableList<Zitat> zitatList = FXCollections.observableArrayList();
 
 			//Step 1: Get all different types of quellen from the DB
-			//First get all Anderes
+			//First get all "anderes"
 			Statement statement = connection.createStatement();
-			rsAnders = statement.executeQuery(S_GET_ANDERES);
+            rsQuellen = statement.executeQuery(S_GET_ANDERES);
 			Anderes anderes;
-			Zitat zitat;
-			Tag tag;
-			while (rsAnders.next()) {
-				anderes = new Anderes(rsAnders.getInt("quellenId"),
-						rsAnders.getString("titel"),
-						rsAnders.getString("autor"),
-						rsAnders.getString("jahr"),
-						rsAnders.getString("herausgeber"),
-						rsAnders.getString("auflage"),
-						rsAnders.getString("ausgabe"));
-
-				//Now we need to get all Zitate from the quelle
-				PreparedStatement preparedStatementZitat = connection.prepareStatement(PS_GET_ZITATTE);
-				preparedStatementZitat.setInt(1, anderes.getId());
-				rsZitate = preparedStatementZitat.executeQuery();
-				while(rsZitate.next()) {
-					zitat = new Zitat(rsZitate.getString("text"),
-							rsZitate.getInt("quellenId"),
-							rsZitate.getInt("zitatId"));
-
-					//Now we need to get for the Zitat all Tags
-					PreparedStatement preparedStatementTags = connection.prepareStatement(PS_GET_TAGS);
-					preparedStatementTags.setInt(1, zitat.getZitatId());
-					rsTags = preparedStatementTags.executeQuery();
-					while(rsTags.next()) {
-						tag = new Tag(rsTags.getString("name"),
-								rsTags.getInt("tagId"));
-						zitat.addTag(tag);
-					}
-					anderes.addZitat(zitat);
-				}
+			while (rsQuellen.next()) {
+				anderes = new Anderes(rsQuellen.getInt("quellenId"),
+                        rsQuellen.getString("titel"),
+                        rsQuellen.getString("autor"),
+                        rsQuellen.getString("jahr"),
+                        rsQuellen.getString("herausgeber"),
+                        rsQuellen.getString("auflage"),
+                        rsQuellen.getString("ausgabe"));
 				quelleList.add(anderes);
 			}
+
+			//get all "artikel"
+			rsQuellen = statement.executeQuery(S_GET_ARTIKEl);
+			Artikel artikel;
+			while (rsQuellen.next()) {
+			    artikel = new Artikel(rsQuellen.getInt("quellenId"),
+                        rsQuellen.getString("titel"),
+                        rsQuellen.getString("autor"),
+                        rsQuellen.getString("jahr"),
+                        rsQuellen.getString("ausgabe"),
+                        rsQuellen.getString("magazin"));
+			    quelleList.add(artikel);
+            }
+
+            //get all "buecher"
+            rsQuellen = statement.executeQuery(S_GET_BUECHER);
+			Buch buch;
+			while (rsQuellen.next()) {
+			    buch = new Buch(rsQuellen.getInt("quellenId"),
+                        rsQuellen.getString("titel"),
+                        rsQuellen.getString("autor"),
+                        rsQuellen.getString("jahr"),
+                        rsQuellen.getString("Verlag"),
+                        rsQuellen.getString("Auflage"),
+                        rsQuellen.getString("Monat"),
+                        rsQuellen.getString("ISBN"));
+			    quelleList.add(buch);
+            }
+
+            //get all "onlinequellen"
+            rsQuellen = statement.executeQuery(S_GET_ONLINEQUELLEN);
+			Onlinequelle onlinequelle;
+            while (rsQuellen.next()) {
+                onlinequelle = new Onlinequelle(rsQuellen.getInt("quellenId"),
+                        rsQuellen.getString("titel"),
+                        rsQuellen.getString("autor"),
+                        rsQuellen.getString("jahr"),
+                        rsQuellen.getString("abrufdatum"),
+                        rsQuellen.getString("url"));
+                quelleList.add(onlinequelle);
+            }
+
+            //get all "wissenschaftliche arbeiten"
+            rsQuellen = statement.executeQuery(S_GET_WISSENSCHAFTLICHE_ARBEITEN);
+            WissenschaftlicheArbeit wissenschaftlicheArbeit;
+            while (rsQuellen.next()) {
+                wissenschaftlicheArbeit = new WissenschaftlicheArbeit(rsQuellen.getInt("quellenId"),
+                        rsQuellen.getString("titel"),
+                        rsQuellen.getString("autor"),
+                        rsQuellen.getString("jahr"),
+                        rsQuellen.getString("herausgeber"),
+                        rsQuellen.getString("hochschule"));
+                quelleList.add(wissenschaftlicheArbeit);
+            }
+
+            //Step 2: Get all Zitate of all quellen
+            quelleList.forEach( quelle -> {
+                final ResultSet rsZitate;
+                Zitat zitat;
+                try {
+                    PreparedStatement preparedStatement = connection.prepareStatement(PS_GET_ZITATTE);
+                    preparedStatement.setInt(1, quelle.getId());
+                    rsZitate = preparedStatement.executeQuery();
+                    while (rsZitate.next()) {
+                        zitat = new Zitat(rsZitate.getString("text"),
+                                rsZitate.getInt("quellenId"),
+                                rsZitate.getInt("zitatId"));
+                        quelle.addZitat(zitat);
+                    }
+                } catch (SQLException e) {
+                    System.out.println(e.getMessage());
+                }
+            });
+
+            //Step 3: Get all Tags for a Zitat
+            quelleList.forEach( quelle -> quelle.getZitatList().forEach( zitat -> {
+                final  ResultSet rsTags;
+                Tag tag;
+                try {
+                    PreparedStatement preparedStatement = connection.prepareStatement(PS_GET_TAGS);
+                    preparedStatement.setInt(1, zitat.getZitatId());
+                    rsTags = preparedStatement.executeQuery();
+                    while (rsTags.next()) {
+                        tag = new Tag(rsTags.getString("name"),
+                                rsTags.getInt("tagId"));
+                        zitat.addTag(tag);
+                    }
+                } catch (SQLException e) {
+                    System.out.println(e.getMessage());
+                }
+            }));
+
 			return quelleList;
 
 		} catch (SQLException e) {
