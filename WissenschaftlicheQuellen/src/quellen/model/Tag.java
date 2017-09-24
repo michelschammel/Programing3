@@ -4,10 +4,16 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 public class Tag {
-    private final StringProperty text;
+    private StringProperty text;
+    private int tagId;
 
     public Tag(String text){
         this.text = new SimpleStringProperty(text);
+    }
+
+    public Tag(String text, int tagId) {
+        this.text = new SimpleStringProperty(text);
+        this.tagId = tagId;
     }
 
     public String getText() {
@@ -20,5 +26,9 @@ public class Tag {
 
     public StringProperty textProperty() {
         return text;
+    }
+
+    public int getTagId() {
+        return tagId;
     }
 }

@@ -35,6 +35,7 @@ public class MainApp extends Application {
      * @throws SQLException
      */
     public MainApp() throws SQLException {
+        /*
         String sql = "SELECT * FROM Quellen";
         ResultSet rs = null;
         try {
@@ -98,6 +99,8 @@ public class MainApp extends Application {
         quellenData.add(anderes);
         quellenData.add(onlinequelle);
         quellenData.add(wissenschaftlicheArbeit);
+        */
+        quellenData = Datenbank.getInstance().getQuellenFromDataBase();
     }
 
     @Override
@@ -173,7 +176,7 @@ public class MainApp extends Application {
 
             // Create the dialog Stage.
             Stage dialogStage = new Stage();
-            dialogStage.setTitle("Edit Person");
+            dialogStage.setTitle("Edit Zitat");
             dialogStage.initModality(Modality.WINDOW_MODAL);
             dialogStage.initOwner(primaryStage);
             Scene scene = new Scene(page);
