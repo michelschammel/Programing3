@@ -1,5 +1,8 @@
 package quellen.model;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
 import java.sql.*;
 
 import static quellen.constants.DB_Constants.*;
@@ -52,8 +55,80 @@ public class Datenbank {
         return stmt.executeQuery(sql);
 	}
 
-	public static boolean updateQuery(Quelle quelle) {
-		try (PreparedStatement pStatementQuelle = connection.prepareStatement(PS_UPDATA_QUELLE)){
+	public static void updateDatabase(String sql) throws SQLException {
+		Statement stmt = connection.createStatement();
+		stmt.executeUpdate(sql);
+	}
+
+	public ObservableList<Quelle> getQuellenFromDataBase() {
+		ResultSet rsAnders;
+		ResultSet rsZitate;
+		ResultSet rsTags;
+		try {
+			//Create a new Observablelist
+			ObservableList<Quelle> quelleList = FXCollections.observableArrayList();
+			ObservableList<Zitat> zitatList = FXCollections.observableArrayList();
+
+			//Step 1: Get all different types of quellen from the DB
+			//First get all Anderes
+			Statement statement = connection.createStatement();
+			rsAnders = statement.executeQuery(S_GET_ANDERES);
+			Anderes anderes;
+			Zitat zitat;
+			Tag tag;
+			while (rsAnders.next()) {
+				anderes = new Anderes(rsAnders.getInt("quellenId"),
+						rsAnders.getString("titel"),
+						rsAnders.getString("autor"),
+						rsAnders.getString("jahr"),
+						rsAnders.getString("herausgeber"),
+						rsAnders.getString("auflage"),
+						rsAnders.getString("ausgabe"));
+
+				//Now we need to get all Zitate from the quelle
+				PreparedStatement preparedStatementZitat = connection.prepareStatement(PS_GET_ZITATTE);
+				preparedStatementZitat.setInt(1, anderes.getId());
+				rsZitate = preparedStatementZitat.executeQuery();
+				while(rsZitate.next()) {
+					zitat = new Zitat(rsZitate.getString("text"),
+							rsZitate.getInt("quellenId"),
+							rsZitate.getInt("zitatId"));
+
+					//Now we need to get for the Zitat all Tags
+					PreparedStatement preparedStatementTags = connection.prepareStatement(PS_GET_TAGS);
+					preparedStatementTags.setInt(1, zitat.getZitatId());
+					rsTags = preparedStatementTags.executeQuery();
+					while(rsTags.next()) {
+						tag = new Tag(rsTags.getString("name"),
+								rsTags.getInt("tagId"));
+						zitat.addTag(tag);
+					}
+					anderes.addZitat(zitat);
+				}
+				quelleList.add(anderes);
+			}
+			return quelleList;
+
+		} catch (SQLException e) {
+			try {
+				connection.rollback();
+				return null;
+			} catch (SQLException error) {
+				System.out.println();
+				return null;
+			}
+		}
+	}
+
+	/**
+	 * gets called to update a quelle in the DB
+	 * @param quelle quelle to update
+	 * @return boolean (worken/failed)
+	 */
+	public boolean updateQuery(Quelle quelle) {
+		try {
+			//Preparestatemt for the update
+			PreparedStatement pStatementQuelle = connection.prepareStatement(PS_UPDATA_QUELLE);
 			//Deactivate autoCommit, without this we can commit both statements at the same time and if a error occurs
 			//we can just do a rollback
 			connection.setAutoCommit(false);

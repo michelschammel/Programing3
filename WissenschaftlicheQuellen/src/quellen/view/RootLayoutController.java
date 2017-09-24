@@ -27,8 +27,6 @@ public class RootLayoutController {
 
     //TODO and this aswell
     @FXML
-    private void handleShowPieChart() {
-    	mainApp.showBarChart();
-    }
+    private void handleShowPieChart() { mainApp.showPieChart(); }
 
 }

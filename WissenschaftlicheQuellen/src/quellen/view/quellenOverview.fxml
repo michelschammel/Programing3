@@ -52,8 +52,6 @@
                       <TableColumn fx:id="zitatColumn" minWidth="-1.0" prefWidth="492.0" resizable="false" />
                     </columns>
                   </TableView>
-                  <Button layoutX="25.0" layoutY="432.0" mnemonicParsing="false" onAction="#handleShowBarChart" text="BarChart" />
-                  <Button layoutX="103.0" layoutY="432.0" mnemonicParsing="false" onAction="#handleShowPieChart" text="PieChart" />
                </children>
             </AnchorPane>
             <AnchorPane maxWidth="527.0" minWidth="210.0" prefHeight="478.0" prefWidth="250.0" SplitPane.resizableWithParent="false">

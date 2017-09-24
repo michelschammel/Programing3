@@ -7,6 +7,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
 import quellen.MainApp;
+import quellen.model.Datenbank;
 import quellen.model.Quelle;
 import quellen.model.Zitat;
 import quellen.model.Tag;
@@ -130,10 +131,15 @@ public class QuellenOverviewController {
      */
     @FXML
     private void handleNewQuelle() {
-        Quelle tempQuelle = new Quelle("","","");
+        Quelle tempQuelle = new Quelle("", "", "");
         boolean okClicked = mainApp.showQuellenEditDialog(tempQuelle);
-        if (okClicked) {
-            mainApp.getQuellenList().add(tempQuelle);
+        try {
+            if (okClicked) {
+                Datenbank.updateDatabase("INSERT INTO Quellen(Autor, Titel, Jahr) VALUES ('" + tempQuelle.getAutor() + "', '" + tempQuelle.getTitel() + "', '" + tempQuelle.getJahr() + "')");
+                mainApp.getQuellenList().add(tempQuelle);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

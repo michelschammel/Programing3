@@ -3,6 +3,8 @@ package quellen.view;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.cell.TextFieldTableCell;
@@ -10,10 +12,13 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import quellen.MainApp;
 import quellen.model.*;
 
 import java.awt.event.MouseEvent;
+import java.io.IOException;
 
 /**
  * Dialog to edit details of a quelle.
@@ -131,6 +136,34 @@ public class QuellenEditDialogController {
             public void handle(ActionEvent event) {
                 Tag tag = tagTable.getSelectionModel().getSelectedItem();
                 quelleEdited.getZitatList().get(zitatTable.getSelectionModel().getSelectedIndex()).getTagList().remove(tag);
+            }
+        });
+
+        addTag.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                try {
+                    // Load the fxml file and create a new stage for the popup dialog.
+                    FXMLLoader loader = new FXMLLoader();
+                    loader.setLocation(MainApp.class.getResource("view/AddTags.fxml"));
+                    AnchorPane page = (AnchorPane) loader.load();
+
+                    // Create the addTag Stage.
+                    Stage addTagStage = new Stage();
+                    addTagStage.setTitle("Add Tag");
+                    addTagStage.initModality(Modality.WINDOW_MODAL);
+                    Scene scene = new Scene(page);
+                    addTagStage.setScene(scene);
+                    addTagStage.initOwner(dialogStage);
+
+                    // Set the quelle into the controller.
+                    AddTagsController controller = loader.getController();
+
+                    // Show the dialog and wait until the user closes it
+                    addTagStage.showAndWait();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
