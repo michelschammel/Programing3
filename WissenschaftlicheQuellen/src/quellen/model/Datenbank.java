@@ -191,7 +191,7 @@ public class Datenbank {
 	/**
 	 * gets called to update a quelle in the DB
 	 * @param quelle quelle to update
-	 * @return boolean (worken/failed)
+	 * @return boolean (worked/failed)
 	 */
 	public boolean updateQuery(Quelle quelle) {
 		try {
@@ -277,6 +277,29 @@ public class Datenbank {
 				pStatementWissenschaftlicheArbeit.setInt(3, wissenschaftlicheArbeit.getId());
 				pStatementWissenschaftlicheArbeit.executeUpdate();
 			}
+			//We just updated the Quelle without zitate/tags
+            //Update zitate
+            quelle.getZitatList().forEach( zitat -> {
+                try {
+                    if (zitat.getZitatId() != 0) {
+                        //Zitat exists in the DB
+                        PreparedStatement preparedStatement = connection.prepareStatement(PS_UPDATE_ZITAT);
+                        preparedStatement.setString(1, zitat.getText());
+                        preparedStatement.setInt(2, zitat.getZitatId());
+                        preparedStatement.executeUpdate();
+                    } else {
+                        //Insert Zitat into DB
+                        PreparedStatement preparedStatemen = connection.prepareStatement(PS_INSERT_ZITAT);
+                        preparedStatemen.setString(1, zitat.getText());
+                        preparedStatemen.setInt(2, zitat.getQuellenId());
+                        preparedStatemen.execute();
+                    }
+                }catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            });
+
+
 			//Commit both statements
 			connection.commit();
 			//turn autocommit on

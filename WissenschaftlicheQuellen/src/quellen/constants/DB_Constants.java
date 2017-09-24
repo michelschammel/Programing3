@@ -8,6 +8,7 @@ public class DB_Constants {
     public static final String PS_UPDATE_BUCH = "UPDATE Bücher SET ISBN = ?, Verlag = ?, Auflage = ?, Monat = ? WHERE quellenId = ?";
     public static final String PS_UPDATE_ONLINEQUELLE = "UPDATE Onlinequellen SET url = ?, abrufdatum = ? WHERE quellenId = ?";
     public static final String PS_UPDATE_WISSENSCHAFTLICHEARBEIT = "UPDATE WissenschaftlicheArbeiten SET hochschule = ?, herausgeber = ? WHERE quellenId = ?";
+    public static final String PS_UPDATE_ZITAT = "UPDATE Zitate SET text = ? WHERE zitatId = ? ";
 
     //Statements to get all quelle
     public static final String S_GET_ANDERES = "SELECT * FROM Quellen NATURAL JOIN Anderes";
@@ -21,4 +22,7 @@ public class DB_Constants {
 
     //Prepared Statements to get all tags of a zitat
     public static final String PS_GET_TAGS = "SELECT * FROM Zitate NATURAL JOIN TagsZitate NATURAL JOIN Tags WHERE zitatId = ?";
+
+    //Statement to insert new zitat
+    public static final String PS_INSERT_ZITAT = "INSERT INTO Zitate (text, quellenId) VALUES (?, ?)";
 }

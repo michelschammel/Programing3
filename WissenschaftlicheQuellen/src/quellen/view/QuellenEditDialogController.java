@@ -189,7 +189,7 @@ public class QuellenEditDialogController {
         newZitatItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                quelleEdited.getZitatList().add(new Zitat("edit me!"));
+                quelleEdited.getZitatList().add(new Zitat("edit me!", quelleEdited.getId()));
             }
         });
 
@@ -213,6 +213,9 @@ public class QuellenEditDialogController {
 
     public Quelle getUpdatedQuelle() {
         if (okClicked) {
+            quelleEdited.setTitel(this.titelField.getText());
+            quelleEdited.setAutor(this.autorField.getText());
+            quelleEdited.setJahr(this.jahrField.getText());
             if (quelle instanceof Buch) {
                 ((Buch) quelleEdited).setAuflage(this.auflageTextField.getText());
                 ((Buch) quelleEdited).setHerausgeber(this.herausgeberTextField.getText());
@@ -236,7 +239,7 @@ public class QuellenEditDialogController {
             return this.quelleEdited;
         }
 
-        //the user canceld, but in quelle is the edited zitatList
+        //the user canceld return the unchanged quelle
         return this.quelle;
     }
 

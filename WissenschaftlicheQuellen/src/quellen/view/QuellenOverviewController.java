@@ -12,6 +12,8 @@ import quellen.model.Quelle;
 import quellen.model.Zitat;
 import quellen.model.Tag;
 
+import java.sql.SQLException;
+
 public class QuellenOverviewController {
     @FXML
     private TableView<Quelle> quellenTable;
@@ -149,14 +151,26 @@ public class QuellenOverviewController {
      */
     @FXML
     private void handleEditQuelle() {
+        //index is needed to insert the new Object at the same place
+        int index;
         Quelle selectedQuelle = quellenTable.getSelectionModel().getSelectedItem();
+        index = quellenTable.getSelectionModel().getSelectedIndex();
 
         if (selectedQuelle != null) {
             boolean okClicked = mainApp.showQuellenEditDialog(selectedQuelle);
             if (okClicked) {
+                //remove the old quelle
+                this.mainApp.getQuellenList().remove(selectedQuelle);
                 selectedQuelle =  mainApp.getUpdatedQuelle();
-                //update the Zitat table
-                this.quellenTable.getSelectionModel().getSelectedItem().setZitatListe(selectedQuelle.getZitatList());
+                //add the edited version into table
+                this.mainApp.getQuellenList().add(index, selectedQuelle);
+                //because the selected quelle was deleted we have to set the selection on the new quelle
+                this.quellenTable.getSelectionModel().select(index);
+                try {
+                    Datenbank.getInstance().updateQuery(selectedQuelle);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
                 showQuellenDetails(selectedQuelle);
             }
 

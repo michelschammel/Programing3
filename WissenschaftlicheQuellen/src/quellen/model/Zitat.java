@@ -12,7 +12,8 @@ public class Zitat {
     private int quellenId;
     private int zitatId;
     
-    public Zitat (String text) {
+    public Zitat (String text, int quellenId) {
+        this.quellenId = quellenId;
         this.text = new SimpleStringProperty(text);
         this.tag = FXCollections.observableArrayList();
     }
