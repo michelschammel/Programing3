@@ -30,7 +30,7 @@ public class Zitat {
         this.quellenId = zitat.getQuellenId();
         this.tag = FXCollections.observableArrayList();
         this.zitatId = zitat.getZitatId();
-        zitat.getTagList().forEach(tag -> this.tag.add(new Tag(tag.getText())));
+        zitat.getTagList().forEach(tag -> this.tag.add(new Tag(tag.getText(), tag.getTagId())));
     }
 
     public void addTag(Tag tag) {

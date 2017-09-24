@@ -293,12 +293,44 @@ public class Datenbank {
                         preparedStatemen.setString(1, zitat.getText());
                         preparedStatemen.setInt(2, zitat.getQuellenId());
                         preparedStatemen.execute();
+
+
                     }
                 }catch (SQLException e) {
                     e.printStackTrace();
                 }
             });
 
+			//Update all Tags
+            quelle.getZitatList().forEach( zitat -> zitat.getTagList().forEach( tag -> {
+                ResultSet rsZitatID;
+                try {
+                    if (tag.getTagId() != 0) {
+                        //Tag exists in the DB
+                        PreparedStatement preparedStatement = connection.prepareStatement(PS_UPDATE_TAG);
+                        preparedStatement.setString(1, tag.getText());
+                        preparedStatement.setInt(2, tag.getTagId());
+                        preparedStatement.executeUpdate();
+                    } else {
+                        //Insert Tag into DB
+                        PreparedStatement preparedStatement = connection.prepareStatement(PS_INSERT_TAG);
+                        preparedStatement.setString(1, tag.getText());
+
+                        //Get TagId
+                        Statement statement = connection.createStatement();
+                        rsZitatID = statement.executeQuery(PS_GET_TAG_ID);
+                        //Has only 1 value
+                        rsZitatID.next();
+
+                        PreparedStatement preparedStatementTag = connection.prepareStatement(PS_INSERT_TAG_ZITAT_CONNECTION);
+                        preparedStatementTag.setInt(1, rsZitatID.getInt("seq"));
+                        preparedStatementTag.setInt(2, zitat.getZitatId());
+                        preparedStatementTag.execute();
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }));
 
 			//Commit both statements
 			connection.commit();
