@@ -25,9 +25,7 @@ public class RootLayoutController {
     }
 
     @FXML
-    private void handleShowPieChart() {
-    	mainApp.showBarChart();
-    }
+    private void handleShowPieChart() { mainApp.showPieChart(); }
 
     @FXML
     private void handlePDFOpen () { mainApp.openPDF (); }

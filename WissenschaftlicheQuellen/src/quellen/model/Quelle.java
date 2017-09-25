@@ -11,10 +11,11 @@ import javafx.collections.ObservableList;
  */
 public class Quelle {
 
-    private final StringProperty autor;
-    private final StringProperty titel;
-    private final StringProperty jahr;
+    private StringProperty autor;
+    private StringProperty titel;
+    private StringProperty jahr;
     private ObservableList<Zitat> zitatData;
+    private int id;
 
     /**
      * The Constructor.
@@ -24,13 +25,34 @@ public class Quelle {
      * @param jahr
      * 
      */
+    public Quelle(int id, String titel, String autor, String jahr) {
+        this.autor = new SimpleStringProperty(autor);
+        this.titel = new SimpleStringProperty(titel);
+        this.jahr = new SimpleStringProperty(jahr);
+        this.id = id;
+        zitatData= FXCollections.observableArrayList();
+    }
+
     public Quelle(String titel, String autor, String jahr) {
         this.autor = new SimpleStringProperty(autor);
         this.titel = new SimpleStringProperty(titel);
         this.jahr = new SimpleStringProperty(jahr);
         zitatData= FXCollections.observableArrayList();
     }
-    
+
+    /**
+     * Creates a copy of an existing Object
+     * @param quelle quelle to copy
+     */
+    public Quelle(Quelle quelle) {
+        this.autor = new SimpleStringProperty(quelle.getAutor());
+        this.titel = new SimpleStringProperty(quelle.getTitel());
+        this.jahr = new SimpleStringProperty(quelle.getJahr());
+        this.id = quelle.getId();
+        this.zitatData = FXCollections.observableArrayList();
+        quelle.getZitatList().forEach(zitat -> zitatData.add(new Zitat(zitat)));
+    }
+
     public void addZitat (Zitat z) {
         zitatData.add(z);    
     }
@@ -73,5 +95,13 @@ public class Quelle {
     
     public ObservableList<Zitat> getZitatList() {
         return this.zitatData;
+    }
+
+    public void setZitatListe(ObservableList<Zitat> zitatListe) {
+        this.zitatData = zitatListe;
+    }
+
+    public int getId() {
+        return id;
     }
 }

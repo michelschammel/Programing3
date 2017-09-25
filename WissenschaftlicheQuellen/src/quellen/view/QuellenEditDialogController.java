@@ -1,11 +1,24 @@
 package quellen.view;
 
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.TextField;
+import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.RowConstraints;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
-import quellen.model.Quelle;
+import quellen.MainApp;
+import quellen.model.*;
+
+import java.awt.event.MouseEvent;
+import java.io.IOException;
 
 /**
  * Dialog to edit details of a quelle.
@@ -19,10 +32,38 @@ public class QuellenEditDialogController {
     private TextField titelField;
     @FXML
     private TextField jahrField;
+    @FXML
+    private GridPane gridPane;
+    @FXML
+    private AnchorPane anchorPane;
+    @FXML
+    private Button okButton;
+    @FXML
+    private Button cancelButton;
+    @FXML
+    private TableView<Zitat> zitatTable;
+    @FXML
+    private TableView<Tag> tagTable;
+    @FXML
+    private TableColumn<Zitat, String> zitatColumn;
+    @FXML
+    private TableColumn<Tag, String> tagColumn;
 
     private Stage dialogStage;
     private Quelle quelle;
+    private Quelle quelleEdited;
     private boolean okClicked = false;
+
+    //all custom textFields
+    private TextField herausgeberTextField;
+    private TextField auflageTextField;
+    private TextField monatTextField;
+    private TextField isbnTextField;
+    private TextField ausgabeTextField;
+    private TextField aufrufDatumTextField;
+    private TextField urlTextField;
+    private TextField einrichtungsTextField;
+    private TextField magazinTextField;
 
     /**
      * Initializes the controller class. This method is automatically called
@@ -30,6 +71,135 @@ public class QuellenEditDialogController {
      */
     @FXML
     private void initialize() {
+        // Initialize the zitat table with the two columns.
+        this.zitatColumn.setCellValueFactory(cellData -> cellData.getValue().textProperty());
+        this.tagColumn.setCellValueFactory(cellData -> cellData.getValue().textProperty());
+
+        //Add a Cell Factory to be able to edit a column
+        this.zitatColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+        this.tagColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+
+        // Clear zitat details.
+        showZitatDeatils(null);
+
+        // Listen for selection changes and show the quelle details when changed.
+        this.zitatTable.getSelectionModel().selectedItemProperty().addListener(
+                (observable, oldValue, newValue) -> showZitatDeatils(newValue));
+    }
+
+    /**
+     * Fills all text fields to show details about the quelle.
+     * If the specified quelle is null, all text fields are cleared.
+     *
+     * @param zitat the zitat or null
+     */
+    private void showZitatDeatils(Zitat zitat) {
+        if (zitat != null) {
+            tagTable.setItems(zitat.getTagList());
+        }
+    }
+
+    /**
+     * gets called if the user requests a context Menu
+     */
+    public void contextMenuTagTable() {
+        //Create a new Contextmenu
+        ContextMenu contextMenu = new ContextMenu();
+
+        //create needed menuitems for the contextmenu
+        MenuItem newTagItem = new MenuItem("new Tag");
+        MenuItem deleteTagItem = new MenuItem("delete Tag");
+        MenuItem addTag = new MenuItem("add Tag");
+
+        //add the menuitems to the contextmenu
+        contextMenu.getItems().addAll(newTagItem, deleteTagItem, addTag);
+
+        //add the contextmenu to the table
+        this.tagTable.setContextMenu(contextMenu);
+
+        //add eventlistener for all menuitems
+        newTagItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                if (zitatTable.getSelectionModel().getSelectedItem() != null) {
+                    //1. get zitatList of quelle
+                    //2. get the selected itemindex of zitattable
+                    //3. get the taglist of the selected zitat
+                    //4. add a new tag to the zitat
+                    quelleEdited.getZitatList().get(zitatTable.getSelectionModel().getSelectedIndex()).getTagList().add(new Tag("new"));
+                }
+            }
+        });
+
+        deleteTagItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Tag tag = tagTable.getSelectionModel().getSelectedItem();
+                quelleEdited.getZitatList().get(zitatTable.getSelectionModel().getSelectedIndex()).getTagList().remove(tag);
+            }
+        });
+
+        addTag.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                try {
+                    // Load the fxml file and create a new stage for the popup dialog.
+                    FXMLLoader loader = new FXMLLoader();
+                    loader.setLocation(MainApp.class.getResource("view/AddTags.fxml"));
+                    AnchorPane page = (AnchorPane) loader.load();
+
+                    // Create the addTag Stage.
+                    Stage addTagStage = new Stage();
+                    addTagStage.setTitle("Add Tag");
+                    addTagStage.initModality(Modality.WINDOW_MODAL);
+                    Scene scene = new Scene(page);
+                    addTagStage.setScene(scene);
+                    addTagStage.initOwner(dialogStage);
+
+                    // Set the quelle into the controller.
+                    AddTagsController controller = loader.getController();
+
+                    // Show the dialog and wait until the user closes it
+                    addTagStage.showAndWait();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    /**
+     * gets called if the user requests a context Menu
+     */
+    public void contextMenuZitatTable() {
+        //Create a new Contextmenu
+        ContextMenu contextMenu = new ContextMenu();
+
+        //create needed menuitems for the contextmenu
+        MenuItem newZitatItem = new MenuItem("new Zitat");
+        MenuItem deleteZitatItem = new MenuItem("delete Zitat");
+
+        //add the menuitems to the contextmenu
+        contextMenu.getItems().addAll(newZitatItem, deleteZitatItem);
+
+        //add the contextmenu to the table
+        this.zitatTable.setContextMenu(contextMenu);
+
+        //add eventlistener for both menuitems
+        newZitatItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                quelleEdited.getZitatList().add(new Zitat("edit me!", quelleEdited.getId()));
+            }
+        });
+
+        deleteZitatItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Zitat zitat = zitatTable.getSelectionModel().getSelectedItem();
+                quelleEdited.getZitatList().remove(zitat);
+            }
+        });
     }
 
     /**
@@ -41,6 +211,38 @@ public class QuellenEditDialogController {
         this.dialogStage = dialogStage;
     }
 
+    public Quelle getUpdatedQuelle() {
+        if (okClicked) {
+            quelleEdited.setTitel(this.titelField.getText());
+            quelleEdited.setAutor(this.autorField.getText());
+            quelleEdited.setJahr(this.jahrField.getText());
+            if (quelle instanceof Buch) {
+                ((Buch) quelleEdited).setAuflage(this.auflageTextField.getText());
+                ((Buch) quelleEdited).setHerausgeber(this.herausgeberTextField.getText());
+                ((Buch) quelleEdited).setMonat(this.monatTextField.getText());
+                ((Buch) quelleEdited).setIsbn(this.isbnTextField.getText());
+                return this.quelleEdited;
+            } else if (quelle instanceof Artikel){
+                ((Artikel) quelleEdited).setAusgabe(this.ausgabeTextField.getText());
+                ((Artikel) quelleEdited).setMagazin(this.magazinTextField.getText());
+            } else if (quelle instanceof Onlinequelle){
+                ((Onlinequelle) quelleEdited).setUrl(this.urlTextField.getText());
+                ((Onlinequelle) quelleEdited).setAufrufdatum(this.aufrufDatumTextField.getText());
+            } else if (quelle instanceof Anderes) {
+                ((Anderes) quelleEdited).setAuflage(this.auflageTextField.getText());
+                ((Anderes) quelleEdited).setAusgabe(this.ausgabeTextField.getText());
+                ((Anderes) quelleEdited).setHerausgeber(this.herausgeberTextField.getText());
+            } else if (quelle instanceof  WissenschaftlicheArbeit) {
+                ((WissenschaftlicheArbeit) quelleEdited).setEinrichtung(this.einrichtungsTextField.getText());
+                ((WissenschaftlicheArbeit) quelleEdited).setHerausgeber(this.herausgeberTextField.getText());
+            }
+            return this.quelleEdited;
+        }
+
+        //the user canceld return the unchanged quelle
+        return this.quelle;
+    }
+
     /**
      * Sets the quelle to be edited in the dialog.
      * 
@@ -48,10 +250,208 @@ public class QuellenEditDialogController {
      */
     public void setQuelle(Quelle quelle) {
         this.quelle = quelle;
+        //create a copy of quelle to work with
+        if (quelle instanceof Buch) {
+            this.quelleEdited = new Buch((Buch)quelle);
+        } else if (quelle instanceof Artikel){
+            this.quelleEdited = new Artikel((Artikel) quelle);
+        } else if (quelle instanceof Onlinequelle){
+            this.quelleEdited = new Onlinequelle((Onlinequelle)quelle);
+        } else if (quelle instanceof Anderes) {
+            this.quelleEdited = new Anderes((Anderes)quelle);
+        } else if (quelle instanceof  WissenschaftlicheArbeit) {
+            this.quelleEdited = new WissenschaftlicheArbeit((WissenschaftlicheArbeit)quelle);
+        } else {
+            this.quelleEdited = new Quelle(quelle);
+        }
+        this.zitatTable.setItems(this.quelleEdited.getZitatList());
 
         autorField.setText(quelle.getAutor());
         titelField.setText(quelle.getTitel());
         jahrField.setText(quelle.getJahr());
+
+        //Create a RowContraints
+        RowConstraints rowConstraint = new RowConstraints();
+        rowConstraint.setMinHeight(30);
+        rowConstraint.setPrefHeight(30);
+        rowConstraint.setVgrow(Priority.SOMETIMES);
+
+        //check what quelle it is exactly
+        //the editdialog gets adjusted for every sort of Source
+        if (quelle instanceof Buch) {
+            adjustDialogForBuch(rowConstraint);
+        } else if (quelle instanceof Artikel){
+            adjustDialogForArtikel(rowConstraint);
+        } else if (quelle instanceof Onlinequelle){
+            adjustDialogForOnlinequelle(rowConstraint);
+        } else if (quelle instanceof Anderes) {
+            adjustDialogForAnderes(rowConstraint);
+        } else if (quelle instanceof  WissenschaftlicheArbeit) {
+            adjustDialogForWissenschaftlicheArbeit(rowConstraint);
+        } else {
+            //normal quelle
+            //set zitat and tag Table position new
+            zitatTable.setLayoutY(13);
+            tagTable.setLayoutY(13);
+        }
+    }
+
+    /**
+     * Adds ne content to the GridPane
+     * @param constraints RowConstraint to add for the new Row
+     * @param label Label to add
+     * @param textField TextField to add
+     * @param row row to insert
+     * @param col col to insert
+     */
+    private void addContentTOGridPane(RowConstraints constraints, Label label, TextField textField, int row, int col) {
+        //add content to the Gridpane
+        this.gridPane.add(label, col,row);
+        this.gridPane.add(textField, col + 1,row);
+    }
+
+    /**
+     * Adjusts and adds components for the editDialog
+     * @param rowConstraint rowContraint for the Dialog
+     */
+    private void adjustDialogForBuch(RowConstraints rowConstraint) {
+        Buch buch = (Buch)this.quelle;
+
+        //adjust anchorPane and Buttons for Dialog
+        this.anchorPane.setPrefHeight(290);
+        this.okButton.setLayoutY(255);
+        this.cancelButton.setLayoutY(255);
+        this.zitatTable.setPrefHeight(273);
+        this.tagTable.setPrefHeight(273);
+
+        //Create all needed labels for Buch
+        Label herausgeberLabel = new Label("Herausgeber");
+        Label auflageLabel = new Label("Auflage");
+        Label monatLabel = new Label("Monat");
+        Label isbnLabel = new Label("ISBN");
+
+        //create all needed textfields for Buch
+        this.herausgeberTextField = new TextField(buch.getHerausgeber());
+        this.auflageTextField = new TextField(buch.getAuflage());
+        this.monatTextField = new TextField(buch.getMonat());
+        this.isbnTextField = new TextField(buch.getIsbn());
+
+        //Add the content to the Gridpane
+        addContentTOGridPane(rowConstraint, herausgeberLabel, this.herausgeberTextField, 3,0);
+        addContentTOGridPane(rowConstraint, auflageLabel, this.auflageTextField, 4,0);
+        addContentTOGridPane(rowConstraint, monatLabel, this.monatTextField, 5,0);
+        addContentTOGridPane(rowConstraint, isbnLabel, this.isbnTextField, 6,0);
+    }
+
+    /**
+     * Adjusts and adds components for the editDialog
+     * @param rowConstraint rowContraint for the Dialog
+     */
+    private void adjustDialogForArtikel(RowConstraints rowConstraint) {
+        Artikel artikel = (Artikel)this.quelle;
+
+        //adjust anchorPane and Buttons for Dialog
+        this.anchorPane.setPrefHeight(220);
+        this.okButton.setLayoutY(185);
+        this.cancelButton.setLayoutY(185);
+        this.zitatTable.setPrefHeight(203);
+        this.tagTable.setPrefHeight(203);
+
+        //Create all needed labels for Artikel
+        Label ausgabeLabel = new Label("Ausgabe");
+        Label magazinLabel = new Label("Magazin");
+
+        //Create all needed textfields for Artikel
+        this.ausgabeTextField = new TextField(artikel.getAusgabe());
+        this.magazinTextField = new TextField(artikel.getMagazin());
+
+        //Add the content to the Gridpane
+        addContentTOGridPane(rowConstraint, ausgabeLabel, this.ausgabeTextField, 3, 0);
+        addContentTOGridPane(rowConstraint, magazinLabel, this.magazinTextField, 4, 0);
+    }
+
+    /**
+     * Adjusts and adds components for the editDialog
+     * @param rowConstraint rowContraint for the Dialog
+     */
+    private void adjustDialogForOnlinequelle(RowConstraints rowConstraint) {
+        Onlinequelle onlinequelle = (Onlinequelle)this.quelle;
+
+        //adjust anchorPane and Buttons for Dialog
+        this.anchorPane.setPrefHeight(220);
+        this.okButton.setLayoutY(185);
+        this.cancelButton.setLayoutY(185);
+        this.zitatTable.setPrefHeight(203);
+        this.tagTable.setPrefHeight(203);
+
+        //Create all needed labels for Onlinequelle
+        Label aufrufDatumLabel = new Label("Aufrufdatum");
+        Label urlLabel = new Label("URL");
+
+        //Create all  needed textfields for Onlinequelle
+        this.aufrufDatumTextField = new TextField(onlinequelle.getAufrufdatum());
+        this.urlTextField = new TextField(onlinequelle.getUrl());
+
+        //Add the content to the Gridpane
+        addContentTOGridPane(rowConstraint, aufrufDatumLabel, this.aufrufDatumTextField, 3, 0);
+        addContentTOGridPane(rowConstraint, urlLabel, this.urlTextField, 4, 0);
+    }
+
+    /**
+     * Adjusts and adds components for the editDialog
+     * @param rowConstraint rowContraint for the Dialog
+     */
+    private void adjustDialogForAnderes(RowConstraints rowConstraint) {
+        Anderes anderes = (Anderes)this.quelle;
+
+        //adjust anchorPane and Buttons for Dialog
+        this.anchorPane.setPrefHeight(255);
+        this.okButton.setLayoutY(220);
+        this.cancelButton.setLayoutY(220);
+        this.zitatTable.setPrefHeight(238);
+        this.tagTable.setPrefHeight(238);
+
+        //Create all needed labels for Buch
+        Label herausgeberLabel = new Label("Herausgeber");
+        Label auflageLabel = new Label("Auflage");
+        Label ausgabeLabel = new Label("Ausgabe");
+
+        //create all needed textfields for Buch
+        this.herausgeberTextField = new TextField(anderes.getHerausgeber());
+        this.auflageTextField = new TextField(anderes.getAuflage());
+        this.ausgabeTextField = new TextField(anderes.getAusgabe());
+
+        //Add the content to the Gridpane
+        addContentTOGridPane(rowConstraint, herausgeberLabel, this.herausgeberTextField, 3,0);
+        addContentTOGridPane(rowConstraint, auflageLabel, this.auflageTextField, 4,0);
+        addContentTOGridPane(rowConstraint, ausgabeLabel, this.ausgabeTextField, 5,0);
+    }
+
+    /**
+     * Adjusts and adds components for the editDialog
+     * @param rowConstraint rowContraint for the Dialog
+     */
+    public void adjustDialogForWissenschaftlicheArbeit(RowConstraints rowConstraint) {
+        WissenschaftlicheArbeit wissenschaftlicheArbeit = (WissenschaftlicheArbeit)this.quelle;
+
+        //adjust anchorPane and Buttons for Dialog
+        this.anchorPane.setPrefHeight(220);
+        this.okButton.setLayoutY(185);
+        this.cancelButton.setLayoutY(185);
+        this.zitatTable.setPrefHeight(203);
+        this.tagTable.setPrefHeight(203);
+
+        //Create all needed labels for Onlinequelle
+        Label herausgeberLabel = new Label("Herausgeber");
+        Label einrichtungsLabel = new Label("Einrichtung");
+
+        //Create all  needed textfields for Onlinequelle
+        this.herausgeberTextField= new TextField(wissenschaftlicheArbeit.getHerausgeber());
+        this.einrichtungsTextField = new TextField(wissenschaftlicheArbeit.getEinrichtung());
+
+        //Add the content to the Gridpane
+        addContentTOGridPane(rowConstraint, herausgeberLabel, this.herausgeberTextField, 3, 0);
+        addContentTOGridPane(rowConstraint, einrichtungsLabel, this.einrichtungsTextField, 4, 0);
     }
 
     /**

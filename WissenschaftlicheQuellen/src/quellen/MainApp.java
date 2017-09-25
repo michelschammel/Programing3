@@ -13,9 +13,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import quellen.model.Quelle;
-import quellen.model.Zitat;
-import quellen.model.Datenbank;
+import quellen.model.*;
 import quellen.view.QuellenEditDialogController;
 import quellen.view.QuellenOverviewController;
 import quellen.view.RootLayoutController;
@@ -24,6 +22,8 @@ public class MainApp extends Application {
 
     private Stage primaryStage;
     private BorderPane rootLayout;
+    private Quelle updatedQuelle;
+    private Quelle selectedQuelleForEdit;
 
     /**
      * The data as an observable list of Quelle.
@@ -35,34 +35,7 @@ public class MainApp extends Application {
      * @throws SQLException
      */
     public MainApp() throws SQLException {
-        String sql = "SELECT * FROM Quellen";
-        ResultSet rs = null;
-           rs = Datenbank.getInstance().queryWithReturn(sql);
-        try {
-            while(rs.next()) {
-                // Add some sample data
-                Quelle testQuelle = new Quelle(rs.getString("autor"),rs.getString("titel"),rs.getString("jahr"));
-                testQuelle.addZitat(new Zitat("This is a test."));
-                quellenData.add(testQuelle);
-
-            }
-        } catch (SQLException e) {
-        }
-        // Add some sample data
-        Quelle testQuelle = new Quelle("Test", "Goethe", "1888");
-        Quelle testQuelle2 = new Quelle("Test2", "Schiller", "1919");
-        Quelle testQuelle3 = new Quelle("Test3", "Marx", "1901");
-        Quelle testQuelle4 = new Quelle("Test4", "Müller", "2005s");
-        testQuelle.addZitat(new Zitat("This is a test."));
-        testQuelle.addZitat(new Zitat("What happens when you have 2 zitate"));
-        testQuelle2.addZitat(new Zitat("This is also a test."));
-        testQuelle3.addZitat(new Zitat("This is a third test."));
-        testQuelle4.addZitat(new Zitat("This is a fourth test."));
-
-        quellenData.add(testQuelle);
-        quellenData.add(testQuelle2);
-        quellenData.add(testQuelle3);
-        quellenData.add(testQuelle4);
+        quellenData = Datenbank.getInstance().getQuellenFromDataBase();
     }
 
     @Override
@@ -138,7 +111,7 @@ public class MainApp extends Application {
 
             // Create the dialog Stage.
             Stage dialogStage = new Stage();
-            dialogStage.setTitle("Edit Person");
+            dialogStage.setTitle("Edit Zitat");
             dialogStage.initModality(Modality.WINDOW_MODAL);
             dialogStage.initOwner(primaryStage);
             Scene scene = new Scene(page);
@@ -149,8 +122,14 @@ public class MainApp extends Application {
             controller.setDialogStage(dialogStage);
             controller.setQuelle(quelle);
 
+            //set selectedQuelle for the edit dialig
+            this.selectedQuelleForEdit = quelle;
+
             // Show the dialog and wait until the user closes it
             dialogStage.showAndWait();
+
+            //get the updateded Quelle
+            this.updatedQuelle = controller.getUpdatedQuelle();
 
             return controller.isOkClicked();
         } catch (IOException e) {
@@ -165,6 +144,14 @@ public class MainApp extends Application {
      */
     public Stage getPrimaryStage() {
         return primaryStage;
+    }
+
+    public Quelle getUpdatedQuelle() {
+        return this.updatedQuelle;
+    }
+
+    public Quelle getSelectedQuelle() {
+        return this.selectedQuelleForEdit;
     }
 
     public static void main(String[] args) {
