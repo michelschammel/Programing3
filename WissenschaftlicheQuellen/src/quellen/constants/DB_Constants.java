@@ -8,7 +8,7 @@ public class DB_Constants {
     public static final String PS_UPDATE_BUCH = "UPDATE Bücher SET ISBN = ?, Verlag = ?, Auflage = ?, Monat = ? WHERE quellenId = ?";
     public static final String PS_UPDATE_ONLINEQUELLE = "UPDATE Onlinequellen SET url = ?, abrufdatum = ? WHERE quellenId = ?";
     public static final String PS_UPDATE_WISSENSCHAFTLICHEARBEIT = "UPDATE WissenschaftlicheArbeiten SET hochschule = ?, herausgeber = ? WHERE quellenId = ?";
-    public static final String PS_UPDATE_ZITAT = "UPDATE Zitate SET text = ? WHERE zitatId = ? ";
+    public static final String PS_UPDATE_ZITAT = "UPDATE Zitate SET text = ? WHERE zitatId = ?";
     public static final String PS_UPDATE_TAG = "UPDATE Tags SET name = ? WHERE tagId = ?";
 
     //Statements to get all quelle
@@ -29,6 +29,15 @@ public class DB_Constants {
     public static final String PS_INSERT_TAG = "INSERT INTO Tags (name) VALUES (?)";
     public static final String PS_INSERT_TAG_ZITAT_CONNECTION = "INSERT INTO TagsZitate VALUES (?, ?)";
 
+    //Statement to get the tagId
+    public static final String PS_GET_TAG_ID = "SELECT seq FROM sqlite_sequence WHERE name = 'Tags'";
+
     //Statement to get the zitatId
-    public static final String PS_GET_TAG_ID = "Select seq FROM sqlite_sequence WHERE name = 'Tags'";
+    public static final String PS_GET_ZITAT_ID = "SELECT seq FROM sqlite_sequence WHERE name = 'Zitate'";
+
+    //Delete Zitate
+    public static final String PS_DELETE_ZITAT = "DELETE FROM Zitate WHERE zitatId = ?";
+    public static final String PS_DELETE_TAG_ZITAT_CONNECTION = "DELETE FROM TagsZitate WHERE zitatId = ?";
+    public static final String PS_GET_TAG_ID_CONNECTION = "SELECT tagId FROM TagsZitate WHERE zitatId = ?";
+    public static final String PS_DELETE_TAG = "DELETE FROM Tags WHERE tagId = ?";
 }

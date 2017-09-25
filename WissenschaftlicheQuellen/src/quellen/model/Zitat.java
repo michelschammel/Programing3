@@ -68,4 +68,8 @@ public class Zitat {
     public int getZitatId() {
         return zitatId;
     }
+
+    public void setZitatId(int zitatId) {
+        this.zitatId = zitatId;
+    }
 }
