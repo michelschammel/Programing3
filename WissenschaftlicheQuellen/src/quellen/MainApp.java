@@ -1,7 +1,6 @@
 package quellen;
 
 import java.io.IOException;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import javafx.application.Application;
@@ -121,6 +120,14 @@ public class MainApp extends Application {
             QuellenEditDialogController controller = loader.getController();
             controller.setDialogStage(dialogStage);
             controller.setQuelle(quelle);
+
+            //
+
+            ObservableList<Zitat> zitatList = FXCollections.observableArrayList();
+            quellenData.forEach( quelleList ->
+                zitatList.addAll(quelleList.getZitatList())
+            );
+            controller.setZitatList(zitatList);
 
             //set selectedQuelle for the edit dialig
             this.selectedQuelleForEdit = quelle;
