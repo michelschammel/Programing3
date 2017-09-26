@@ -73,6 +73,7 @@ public class QuellenEditDialogController {
     private TextField urlTextField;
     private TextField einrichtungsTextField;
     private TextField magazinTextField;
+    private TextField subCategoryField;
 
     /**
      * Initializes the controller class. This method is automatically called
@@ -415,7 +416,6 @@ public class QuellenEditDialogController {
         addContentTOGridPane(rowConstraint, auflageLabel, this.auflageTextField, 5,0);
         addContentTOGridPane(rowConstraint, monatLabel, this.monatTextField, 6,0);
         addContentTOGridPane(rowConstraint, isbnLabel, this.isbnTextField, 7,0);
-        subCategory.setValue(SC_BUECHER);
         subCategory.setDisable(true);
     }
 
@@ -444,7 +444,6 @@ public class QuellenEditDialogController {
         //Add the content to the Gridpane
         addContentTOGridPane(rowConstraint, ausgabeLabel, this.ausgabeTextField, 4, 0);
         addContentTOGridPane(rowConstraint, magazinLabel, this.magazinTextField, 5, 0);
-        subCategory.setValue(SC_ARTIKEL);
         subCategory.setDisable(true);
     }
 
@@ -474,7 +473,6 @@ public class QuellenEditDialogController {
         //Add the content to the Gridpane
         addContentTOGridPane(rowConstraint, aufrufDatumLabel, this.aufrufDatumTextField, 4, 0);
         addContentTOGridPane(rowConstraint, urlLabel, this.urlTextField, 5, 0);
-        subCategory.setValue(SC_OQUELLEN);
         subCategory.setDisable(true);
     }
 
@@ -506,7 +504,6 @@ public class QuellenEditDialogController {
         addContentTOGridPane(rowConstraint, herausgeberLabel, this.herausgeberTextField, 4,0);
         addContentTOGridPane(rowConstraint, auflageLabel, this.auflageTextField, 5,0);
         addContentTOGridPane(rowConstraint, ausgabeLabel, this.ausgabeTextField, 6,0);
-        subCategory.setValue(SC_ANDERES);
         subCategory.setDisable(true);
     }
 
@@ -539,7 +536,6 @@ public class QuellenEditDialogController {
         //Add the content to the Gridpane
         addContentTOGridPane(rowConstraint, herausgeberLabel, this.herausgeberTextField, 4, 0);
         addContentTOGridPane(rowConstraint, einrichtungsLabel, this.einrichtungsTextField, 5, 0);
-        subCategory.setValue(SC_WARBEITEN);
         subCategory.setDisable(true);
     }
 

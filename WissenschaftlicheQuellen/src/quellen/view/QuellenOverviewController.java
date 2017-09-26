@@ -236,10 +236,6 @@ public class QuellenOverviewController {
         quellenTable.setItems(mainApp.getQuellenList());
     }
 
-	@FXML
-	private void handleShowBarChart() {
-	      mainApp.showBarChart();
-	}
 
 	@FXML
 	private void handleShowPieChart() {

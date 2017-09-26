@@ -20,11 +20,6 @@ public class RootLayoutController {
     }
 
 
-    @FXML
-    private void handleShowBarChart() {
-      mainApp.showBarChart();
-    }
-
 
     @FXML
     private void handleShowPieChart() { mainApp.showPieChart(); }
