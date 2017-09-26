@@ -30,14 +30,16 @@ public class DB_Constants {
     public static final String PS_INSERT_TAG_ZITAT_CONNECTION = "INSERT INTO TagsZitate VALUES (?, ?)";
 
     //Statement to get the tagId
-    public static final String PS_GET_TAG_ID = "SELECT seq FROM sqlite_sequence WHERE name = 'Tags'";
+    public static final String PS_GET_LAST_INSERTED_TAG_ID = "SELECT seq FROM sqlite_sequence WHERE name = 'Tags'";
 
     //Statement to get the zitatId
-    public static final String PS_GET_ZITAT_ID = "SELECT seq FROM sqlite_sequence WHERE name = 'Zitate'";
+    public static final String PS_GET_LAST_INSERTED_ZITAT_ID = "SELECT seq FROM sqlite_sequence WHERE name = 'Zitate'";
 
     //Delete Zitate
     public static final String PS_DELETE_ZITAT = "DELETE FROM Zitate WHERE zitatId = ?";
-    public static final String PS_DELETE_TAG_ZITAT_CONNECTION = "DELETE FROM TagsZitate WHERE zitatId = ?";
+    public static final String PS_DELETE_TAG_ZITAT_CONNECTION_WITH_ZITAT_ID = "DELETE FROM TagsZitate WHERE zitatId = ?";
+    public static final String PS_DELETE_TAG_ZITAT_CONNECTION_WITH_TAG_ID = "DELETE FROM TagsZitate WHERE tagId = ?";
     public static final String PS_GET_TAG_ID_CONNECTION = "SELECT tagId FROM TagsZitate WHERE zitatId = ?";
     public static final String PS_DELETE_TAG = "DELETE FROM Tags WHERE tagId = ?";
+    public static final String PS_GET_TAG_ID_OF_ZITAT = "SELECT tagId FROM TagsZitate NATURAL JOIN Tags WHERE zitatId = ?";
 }

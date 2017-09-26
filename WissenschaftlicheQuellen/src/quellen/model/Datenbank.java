@@ -3,6 +3,8 @@ package quellen.model;
 import com.sun.org.apache.regexp.internal.RE;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+
+import javax.xml.transform.Result;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -296,7 +298,7 @@ public class Datenbank {
                         preparedStatemenB.execute();
                         //Get ZitatId
                         Statement statement = connection.createStatement();
-                        rsZitatId = statement.executeQuery(PS_GET_ZITAT_ID);
+                        rsZitatId = statement.executeQuery(PS_GET_LAST_INSERTED_ZITAT_ID);
                         rsZitatId.next();
                         zitat.setZitatId(rsZitatId.getInt("seq"));
 
@@ -326,7 +328,7 @@ public class Datenbank {
 
                         //Get TagId
                         Statement statement = connection.createStatement();
-                        rsTagId = statement.executeQuery(PS_GET_TAG_ID);
+                        rsTagId = statement.executeQuery(PS_GET_LAST_INSERTED_TAG_ID);
                         //Has only 1 value
                         rsTagId.next();
 
@@ -340,6 +342,45 @@ public class Datenbank {
                     e.printStackTrace();
                 }
             }));
+
+            //Delete all tags in the db that were removed from a zitat
+            quelle.getZitatList().forEach( zitat -> {
+                try {
+                    ArrayList<Integer> arrayList = new ArrayList<>();
+                    ResultSet rsTagIds;
+                    PreparedStatement preparedStatementGetTagIds = connection.prepareStatement(PS_GET_TAG_ID_OF_ZITAT);
+                    preparedStatementGetTagIds.setInt(1, zitat.getZitatId());
+                    rsTagIds = preparedStatementGetTagIds.executeQuery();
+                    while(rsTagIds.next()) {
+                        arrayList.add(rsTagIds.getInt("tagId"));
+                    }
+                    zitat.getTagList().forEach( tag -> {
+                        for (int i = 0; i < arrayList.size(); i++) {
+                            if (arrayList.get(i) == tag.getTagId()) {
+                                //Tag is still used
+                                arrayList.remove(i);
+                            }
+                        }
+                    });
+                    arrayList.forEach( tagId -> {
+                        try {
+                            PreparedStatement preparedStatementDeleteTagZitatConnection = connection.prepareStatement(PS_DELETE_TAG_ZITAT_CONNECTION_WITH_TAG_ID);
+                            preparedStatementDeleteTagZitatConnection.setInt(1, tagId);
+                            preparedStatementDeleteTagZitatConnection.execute();
+                            PreparedStatement preparedStatementDeleteTag = connection.prepareStatement(PS_DELETE_TAG);
+                            preparedStatementDeleteTag.setInt(1, tagId);
+                            preparedStatementDeleteTag.execute();
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+                    });
+
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            });
+
+
 
             //Delete zitate that were removed from the quelle
             //Get all zitate
@@ -363,7 +404,7 @@ public class Datenbank {
 
             //arrayList contains all zitatIds that we need to delete
             arrayList.forEach( zitatId -> {
-                ResultSet rsTagIds;
+                ResultSet rsTagIdsLambda;
                 try {
                     //First delete zitat
                     PreparedStatement preparedStatementDeleteZitat = connection.prepareStatement(PS_DELETE_ZITAT);
@@ -373,15 +414,15 @@ public class Datenbank {
                     //get all tagIds that we need to delete
                     PreparedStatement preparedStatementGetTagId = connection.prepareStatement(PS_GET_TAG_ID_CONNECTION);
                     preparedStatementGetTagId.setInt(1, zitatId);
-                    rsTagIds = preparedStatementGetTagId.executeQuery();
-                    while(rsTagIds.next()) {
+                    rsTagIdsLambda = preparedStatementGetTagId.executeQuery();
+                    while(rsTagIdsLambda.next()) {
                         PreparedStatement preparedStatementDeleteTags = connection.prepareStatement(PS_DELETE_TAG);
-                        preparedStatementDeleteTags.setInt(1, rsTagIds.getInt("tagId"));
+                        preparedStatementDeleteTags.setInt(1, rsTagIdsLambda.getInt("tagId"));
                         preparedStatementDeleteTags.execute();
                     }
 
                     //Delete connection between tag and zitat
-                    PreparedStatement preparedStatementDeleteConnection = connection.prepareStatement(PS_DELETE_TAG_ZITAT_CONNECTION);
+                    PreparedStatement preparedStatementDeleteConnection = connection.prepareStatement(PS_DELETE_TAG_ZITAT_CONNECTION_WITH_ZITAT_ID);
                     preparedStatementDeleteConnection.setInt(1, zitatId);
                     preparedStatementDeleteConnection.execute();
                 } catch (SQLException error) {
