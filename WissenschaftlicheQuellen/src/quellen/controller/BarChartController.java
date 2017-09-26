@@ -1,4 +1,4 @@
-package quellen.view;
+package quellen.controller;
 
 
 import java.sql.ResultSet;
@@ -15,7 +15,7 @@ import java.util.*;
 
 
 public class BarChartController {
-		String[] DatabaseTypes = {"Anderes", "Artikel", "Bücher", "Onlinequellen", "Quellen", "Tags", "TagsZitate",
+		String[] DatabaseTypes = {"Anderes", "Artikel", "Bï¿½cher", "Onlinequellen", "Quellen", "Tags", "TagsZitate",
 				"WissenschaftlicheArbeiten", "Zitate"};
 
 
@@ -44,7 +44,7 @@ public class BarChartController {
 	    private void setStats1() {
 	    	try {
 	    		//set xAxis categories
-	    		String[] types = {"Anderes", "Artikel", "Bücher", "Onlinequellen", "Quellen", "Tags", "TagsZitate",
+	    		String[] types = {"Anderes", "Artikel", "Bï¿½cher", "Onlinequellen", "Quellen", "Tags", "TagsZitate",
 	    				"W. Arbeiten", "Zitate"};
 	    		quellen.addAll(Arrays.asList(types));
 	    		xAxis.setCategories(quellen);

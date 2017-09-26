@@ -12,10 +12,12 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import quellen.dao.SchnittstelleQuelle;
 import quellen.model.*;
-import quellen.view.QuellenEditDialogController;
-import quellen.view.QuellenOverviewController;
-import quellen.view.RootLayoutController;
+import quellen.controller.QuellenEditDialogController;
+import quellen.controller.QuellenOverviewController;
+import quellen.controller.RootLayoutController;
+import quellen.service.QuellenService;
 
 public class MainApp extends Application {
 
@@ -34,7 +36,9 @@ public class MainApp extends Application {
      * @throws SQLException
      */
     public MainApp() throws SQLException {
-        quellenData = Datenbank.getInstance().getQuellenFromDataBase();
+        //quellenData = Datenbank.getInstance().getQuellenFromDataBase();
+        QuellenService quellenService = new QuellenService();
+        quellenData = quellenService.getQuellenDataFromDB();
     }
 
     @Override

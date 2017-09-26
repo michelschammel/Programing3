@@ -1,4 +1,4 @@
-package quellen.view;
+package quellen.controller;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -7,6 +7,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
 import quellen.MainApp;
+import quellen.dao.SchnittstelleQuelle;
 import quellen.model.Datenbank;
 import quellen.model.Quelle;
 import quellen.model.Zitat;
@@ -201,8 +202,10 @@ public class QuellenOverviewController {
                 //because the selected quelle was deleted we have to set the selection on the new quelle
                 this.quellenTable.getSelectionModel().select(index);
                 try {
-                    Datenbank.getInstance().updateQuery(selectedQuelle);
-                } catch (SQLException e) {
+                    SchnittstelleQuelle schnittstelleQuelle = new SchnittstelleQuelle();
+                    schnittstelleQuelle.updateQuery(selectedQuelle);
+                    //Datenbank.getInstance().updateQuery(selectedQuelle);
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
                 showQuellenDetails(selectedQuelle);

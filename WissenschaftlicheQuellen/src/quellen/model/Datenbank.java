@@ -1,10 +1,7 @@
 package quellen.model;
 
-import com.sun.org.apache.regexp.internal.RE;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-
-import javax.xml.transform.Result;
 import java.sql.*;
 import java.util.ArrayList;
 

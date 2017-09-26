@@ -1,8 +1,5 @@
-package quellen.view;
+package quellen.controller;
 
-import javafx.beans.Observable;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -20,9 +17,10 @@ import javafx.scene.layout.RowConstraints;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import quellen.MainApp;
+import quellen.controller.AddTagsController;
+import quellen.controller.AddZitateController;
 import quellen.model.*;
 import java.io.IOException;
-import quellen.constants.*;
 
 import static quellen.constants.DB_Constants.*;
 

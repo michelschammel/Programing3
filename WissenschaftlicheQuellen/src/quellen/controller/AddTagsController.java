@@ -1,4 +1,4 @@
-package quellen.view;
+package quellen.controller;
 
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;

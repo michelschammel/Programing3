@@ -1,4 +1,4 @@
-package quellen.view;
+package quellen.controller;
 import java.sql.ResultSet;
 
 import javafx.collections.FXCollections;
