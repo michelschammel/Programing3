@@ -101,8 +101,19 @@ public class QuellenOverviewController {
 
             //Iterate over the quelle list because every quelle can have multiple zitate
             //Add all tags to a new observable
-            quelle.getZitatList().forEach((zitat) ->
-                tagList.addAll(zitat.getTagList())
+            //prevent duplicates in tagList
+            quelle.getZitatList().forEach( zitat ->
+                    zitat.getTagList().forEach(tag -> {
+                        boolean addTag = true;
+                        for (int i = 0; i < tagList.size(); i++) {
+                            if (tag.getText().equals(tagList.get(i).getText())) {
+                                addTag = false;
+                            }
+                        }
+                        if(addTag) {
+                            tagList.add(tag);
+                        }
+                    })
             );
             //Add the new observable to the tagTable
             tagTable.setItems(tagList);

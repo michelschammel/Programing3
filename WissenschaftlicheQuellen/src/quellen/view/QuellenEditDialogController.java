@@ -1,5 +1,7 @@
 package quellen.view;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -16,8 +18,6 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import quellen.MainApp;
 import quellen.model.*;
-
-import java.awt.event.MouseEvent;
 import java.io.IOException;
 
 /**
@@ -53,6 +53,7 @@ public class QuellenEditDialogController {
     private Quelle quelle;
     private Quelle quelleEdited;
     private boolean okClicked = false;
+    private ObservableList<Zitat> zitatList;
 
     //all custom textFields
     private TextField herausgeberTextField;
@@ -103,69 +104,89 @@ public class QuellenEditDialogController {
      * gets called if the user requests a context Menu
      */
     public void contextMenuTagTable() {
-        //Create a new Contextmenu
-        ContextMenu contextMenu = new ContextMenu();
+        if (this.zitatTable.getSelectionModel().getSelectedItem() != null) {
+            //Create a new Contextmenu
+            ContextMenu contextMenu = new ContextMenu();
 
-        //create needed menuitems for the contextmenu
-        MenuItem newTagItem = new MenuItem("new Tag");
-        MenuItem deleteTagItem = new MenuItem("delete Tag");
-        MenuItem addTag = new MenuItem("add Tag");
+            //create needed menuitems for the contextmenu
+            MenuItem newTagItem = new MenuItem("new Tag");
+            MenuItem deleteTagItem = new MenuItem("delete Tag");
+            MenuItem addTag = new MenuItem("add existing Tag");
 
-        //add the menuitems to the contextmenu
-        contextMenu.getItems().addAll(newTagItem, deleteTagItem, addTag);
+            //add the menuitems to the contextmenu
+            contextMenu.getItems().addAll(newTagItem, deleteTagItem, addTag);
 
-        //add the contextmenu to the table
-        this.tagTable.setContextMenu(contextMenu);
+            //add the contextmenu to the table
+            this.tagTable.setContextMenu(contextMenu);
 
-        //add eventlistener for all menuitems
-        newTagItem.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                if (zitatTable.getSelectionModel().getSelectedItem() != null) {
-                    //1. get zitatList of quelle
-                    //2. get the selected itemindex of zitattable
-                    //3. get the taglist of the selected zitat
-                    //4. add a new tag to the zitat
-                    quelleEdited.getZitatList().get(zitatTable.getSelectionModel().getSelectedIndex()).getTagList().add(new Tag("new"));
+            //add eventlistener for all menuitems
+            newTagItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    if (zitatTable.getSelectionModel().getSelectedItem() != null) {
+                        //1. get zitatList of quelle
+                        //2. get the selected itemindex of zitattable
+                        //3. get the taglist of the selected zitat
+                        //4. add a new tag to the zitat
+                        quelleEdited.getZitatList().get(zitatTable.getSelectionModel().getSelectedIndex()).getTagList().add(new Tag("new"));
+                        zitatList = quelleEdited.getZitatList();
+                    }
                 }
-            }
-        });
+            });
 
-        deleteTagItem.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                Tag tag = tagTable.getSelectionModel().getSelectedItem();
-                quelleEdited.getZitatList().get(zitatTable.getSelectionModel().getSelectedIndex()).getTagList().remove(tag);
-            }
-        });
-
-        addTag.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                try {
-                    // Load the fxml file and create a new stage for the popup dialog.
-                    FXMLLoader loader = new FXMLLoader();
-                    loader.setLocation(MainApp.class.getResource("view/AddTags.fxml"));
-                    AnchorPane page = (AnchorPane) loader.load();
-
-                    // Create the addTag Stage.
-                    Stage addTagStage = new Stage();
-                    addTagStage.setTitle("Add Tag");
-                    addTagStage.initModality(Modality.WINDOW_MODAL);
-                    Scene scene = new Scene(page);
-                    addTagStage.setScene(scene);
-                    addTagStage.initOwner(dialogStage);
-
-                    // Set the quelle into the controller.
-                    AddTagsController controller = loader.getController();
-
-                    // Show the dialog and wait until the user closes it
-                    addTagStage.showAndWait();
-                } catch (IOException e) {
-                    e.printStackTrace();
+            deleteTagItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    Tag tag = tagTable.getSelectionModel().getSelectedItem();
+                    quelleEdited.getZitatList().get(zitatTable.getSelectionModel().getSelectedIndex()).getTagList().remove(tag);
                 }
-            }
-        });
+            });
+
+            addTag.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    try {
+                        // Load the fxml file and create a new stage for the popup dialog.
+                        FXMLLoader loader = new FXMLLoader();
+                        loader.setLocation(MainApp.class.getResource("view/AddTags.fxml"));
+                        AnchorPane page = (AnchorPane) loader.load();
+
+                        // Create the addTag Stage.
+                        Stage addTagStage = new Stage();
+                        addTagStage.setTitle("Add Tag");
+                        addTagStage.initModality(Modality.WINDOW_MODAL);
+                        Scene scene = new Scene(page);
+                        addTagStage.setScene(scene);
+                        addTagStage.initOwner(dialogStage);
+
+                        // Set the quelle into the controller.
+                        AddTagsController controller = loader.getController();
+                        ObservableList<Tag> tagList = FXCollections.observableArrayList();
+                        controller.setZitat(zitatTable.getSelectionModel().getSelectedItem());
+                        //prevent duplicates
+                        zitatList.forEach(zitat ->
+                                zitat.getTagList().forEach(tag -> {
+                                    boolean addTag = true;
+                                    for (int i = 0; i < tagList.size(); i++) {
+                                        if (tag.getText().equals(tagList.get(i).getText())) {
+                                            addTag = false;
+                                        }
+                                    }
+                                    if (addTag) {
+                                        tagList.add(tag);
+                                    }
+                                })
+                        );
+                        controller.setTagList(tagList);
+
+                        // Show the dialog and wait until the user closes it
+                        addTagStage.showAndWait();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
     }
 
     /**
@@ -178,9 +199,10 @@ public class QuellenEditDialogController {
         //create needed menuitems for the contextmenu
         MenuItem newZitatItem = new MenuItem("new Zitat");
         MenuItem deleteZitatItem = new MenuItem("delete Zitat");
+        MenuItem addZitatItem = new MenuItem("add existing Zitat");
 
         //add the menuitems to the contextmenu
-        contextMenu.getItems().addAll(newZitatItem, deleteZitatItem);
+        contextMenu.getItems().addAll(newZitatItem, deleteZitatItem, addZitatItem);
 
         //add the contextmenu to the table
         this.zitatTable.setContextMenu(contextMenu);
@@ -198,6 +220,36 @@ public class QuellenEditDialogController {
             public void handle(ActionEvent event) {
                 Zitat zitat = zitatTable.getSelectionModel().getSelectedItem();
                 quelleEdited.getZitatList().remove(zitat);
+            }
+        });
+
+        addZitatItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                try {
+                    // Load the fxml file and create a new stage for the popup dialog.
+                    FXMLLoader loader = new FXMLLoader();
+                    loader.setLocation(MainApp.class.getResource("view/AddZitate.fxml"));
+                    AnchorPane page = (AnchorPane) loader.load();
+
+                    // Create the addTag Stage.
+                    Stage addTagStage = new Stage();
+                    addTagStage.setTitle("Add Zitat");
+                    addTagStage.initModality(Modality.WINDOW_MODAL);
+                    Scene scene = new Scene(page);
+                    addTagStage.setScene(scene);
+                    addTagStage.initOwner(dialogStage);
+
+                    // Set the quelle into the controller.
+                    AddZitateController controller = loader.getController();
+                    controller.setZitatList(zitatList);
+                    controller.setQuelle(quelleEdited);
+
+                    // Show the dialog and wait until the user closes it
+                    addTagStage.showAndWait();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
@@ -425,6 +477,10 @@ public class QuellenEditDialogController {
         addContentTOGridPane(rowConstraint, herausgeberLabel, this.herausgeberTextField, 3,0);
         addContentTOGridPane(rowConstraint, auflageLabel, this.auflageTextField, 4,0);
         addContentTOGridPane(rowConstraint, ausgabeLabel, this.ausgabeTextField, 5,0);
+    }
+
+    public void setZitatList(ObservableList<Zitat> zitatList) {
+        this.zitatList = zitatList;
     }
 
     /**
