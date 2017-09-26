@@ -192,6 +192,8 @@ public class Datenbank {
 
 	/**
 	 * gets called to update a quelle in the DB
+     * this method checks what instance of quelle it is and updates it.
+     * it even checks what Zitate/Tags are still in the DB but are not anymore in quelle and deletes them.
 	 * @param quelle quelle to update
 	 */
 	public void updateQuery(Quelle quelle) {
@@ -348,12 +350,14 @@ public class Datenbank {
                 try {
                     ArrayList<Integer> arrayList = new ArrayList<>();
                     ResultSet rsTagIds;
+                    //Get all tagIds that are used in this zitat
                     PreparedStatement preparedStatementGetTagIds = connection.prepareStatement(PS_GET_TAG_ID_OF_ZITAT);
                     preparedStatementGetTagIds.setInt(1, zitat.getZitatId());
                     rsTagIds = preparedStatementGetTagIds.executeQuery();
                     while(rsTagIds.next()) {
                         arrayList.add(rsTagIds.getInt("tagId"));
                     }
+                    //check if they are still in use
                     zitat.getTagList().forEach( tag -> {
                         for (int i = 0; i < arrayList.size(); i++) {
                             if (arrayList.get(i) == tag.getTagId()) {
@@ -362,6 +366,8 @@ public class Datenbank {
                             }
                         }
                     });
+                    //Arraylist contains all  tag ids that are not used anymore
+                    //Delete tag and connection to zitat from DB
                     arrayList.forEach( tagId -> {
                         try {
                             PreparedStatement preparedStatementDeleteTagZitatConnection = connection.prepareStatement(PS_DELETE_TAG_ZITAT_CONNECTION_WITH_TAG_ID);
