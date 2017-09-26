@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="anchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="186.0" prefWidth="1050.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="quellen.view.QuellenEditDialogController">
+<AnchorPane fx:id="anchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="250.0" prefWidth="1050.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="quellen.view.QuellenEditDialogController">
    <children>
       <GridPane fx:id="gridPane" layoutX="9.0" layoutY="7.0" prefHeight="129.0" prefWidth="393.0" vgap="10">
         <columnConstraints>
@@ -41,15 +41,15 @@
             <ChoiceBox fx:id="subCategory" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
          </children>
       </GridPane>
-      <Button fx:id="okButton" layoutX="287.0" layoutY="149.0" mnemonicParsing="false" onAction="#handleOk" text="OK" />
-      <Button fx:id="cancelButton" layoutX="350.0" layoutY="149.0" mnemonicParsing="false" onAction="#handleCancel" text="Cancel" />
-      <TableView fx:id="zitatTable" editable="true" layoutX="409.0" layoutY="7.0" onContextMenuRequested="#contextMenuZitatTable" prefHeight="161.0" prefWidth="426.0">
+      <Button fx:id="okButton" layoutX="409.0" layoutY="212.0" mnemonicParsing="false" onAction="#handleOk" text="OK" />
+      <Button fx:id="cancelButton" layoutX="473.0" layoutY="212.0" mnemonicParsing="false" onAction="#handleCancel" text="Cancel" />
+      <TableView fx:id="zitatTable" editable="true" layoutX="409.0" layoutY="7.0" onContextMenuRequested="#contextMenuZitatTable" prefHeight="196.0" prefWidth="426.0">
           <placeholder><Label>No Quotes found</Label></placeholder>
         <columns>
           <TableColumn fx:id="zitatColumn" prefWidth="426.0" text="Zitate" />
         </columns>
       </TableView>
-      <TableView fx:id="tagTable" editable="true" layoutX="835.0" layoutY="7.0" onContextMenuRequested="#contextMenuTagTable" prefHeight="161.0" prefWidth="208.0">
+      <TableView fx:id="tagTable" editable="true" layoutX="835.0" layoutY="7.0" onContextMenuRequested="#contextMenuTagTable" prefHeight="196.0" prefWidth="208.0">
           <placeholder><Label>No Tags Found</Label></placeholder>
         <columns>
           <TableColumn fx:id="tagColumn" prefWidth="207.0" text="Tags" />

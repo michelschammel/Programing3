@@ -1,5 +1,8 @@
 package quellen.view;
 
+import javafx.beans.Observable;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -92,12 +95,20 @@ public class QuellenEditDialogController {
         this.zitatTable.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> showZitatDeatils(newValue));
 
+        //initialize the choicebox
         subCategory.setItems((FXCollections.observableArrayList(
                 SC_NONE, SC_ARTIKEL, SC_BUECHER, SC_OQUELLEN, SC_WARBEITEN, SC_ANDERES)));
         subCategory.setValue(SC_NONE);
 
+        //set up a ChangeListener to choicebox
+        subCategory.getSelectionModel().selectedItemProperty().addListener(
+                ((observable, oldValue, newValue) -> adjustNewDialog(newValue))
+        );
+
+
 
     }
+
 
     /**
      * Fills all text fields to show details about the quelle.
@@ -437,6 +448,7 @@ public class QuellenEditDialogController {
         subCategory.setDisable(true);
     }
 
+
     /**
      * Adjusts and adds components for the editDialog
      * @param rowConstraint rowContraint for the Dialog
@@ -601,4 +613,106 @@ public class QuellenEditDialogController {
     private String getSubCategory() {
         return subCategory.getValue();
     }
+
+    private void adjustNewDialog(String category) {
+        //Create a RowContraints
+        RowConstraints rowConstraint = new RowConstraints();
+        rowConstraint.setMinHeight(30);
+        rowConstraint.setPrefHeight(30);
+        rowConstraint.setVgrow(Priority.SOMETIMES);
+
+        switch (category) {
+            case SC_ARTIKEL:
+                //Create all needed labels for Artikel
+                Label ausgabeLabel = new Label("Ausgabe");
+                Label magazinLabel = new Label("Magazin");
+
+                //Create all needed textfields for Artikel
+                this.ausgabeTextField = new TextField();
+                this.magazinTextField = new TextField();
+
+                //Add the content to the Gridpane
+                addContentTOGridPane(rowConstraint, ausgabeLabel, this.ausgabeTextField, 4, 0);
+                addContentTOGridPane(rowConstraint, magazinLabel, this.magazinTextField, 5, 0);
+                subCategory.setDisable(true);
+                break;
+
+            case SC_BUECHER:
+                //Create all needed labels for Buch
+                Label herausgeberLabel = new Label("Herausgeber");
+                Label auflageLabel = new Label("Auflage");
+                Label monatLabel = new Label("Monat");
+                Label isbnLabel = new Label("ISBN");
+
+                //create all needed textfields for Buch
+                this.herausgeberTextField = new TextField();
+                this.auflageTextField = new TextField();
+                this.monatTextField = new TextField();
+                this.isbnTextField = new TextField();
+
+                //Add the content to the Gridpane
+                addContentTOGridPane(rowConstraint, herausgeberLabel, this.herausgeberTextField, 4,0);
+                addContentTOGridPane(rowConstraint, auflageLabel, this.auflageTextField, 5,0);
+                addContentTOGridPane(rowConstraint, monatLabel, this.monatTextField, 6,0);
+                addContentTOGridPane(rowConstraint, isbnLabel, this.isbnTextField, 7,0);
+                subCategory.setDisable(true);
+                break;
+
+            case SC_OQUELLEN:
+                //Create all needed labels for Onlinequelle
+                Label aufrufDatumLabel = new Label("Aufrufdatum");
+                Label urlLabel = new Label("URL");
+
+                //Create all  needed textfields for Onlinequelle
+                this.aufrufDatumTextField = new TextField();
+                this.urlTextField = new TextField();
+
+                //Add the content to the Gridpane
+                addContentTOGridPane(rowConstraint, aufrufDatumLabel, this.aufrufDatumTextField, 4, 0);
+                addContentTOGridPane(rowConstraint, urlLabel, this.urlTextField, 5, 0);
+                subCategory.setDisable(true);
+                break;
+
+            case SC_WARBEITEN:
+                Label publisherLabel = new Label("Herausgeber");
+                Label einrichtungsLabel = new Label("Einrichtung");
+
+                //Create all  needed textfields for Onlinequelle
+                this.herausgeberTextField= new TextField();
+                this.einrichtungsTextField = new TextField();
+
+                //Add the content to the Gridpane
+                addContentTOGridPane(rowConstraint, publisherLabel, this.herausgeberTextField, 4, 0);
+                addContentTOGridPane(rowConstraint, einrichtungsLabel, this.einrichtungsTextField, 5, 0);
+                subCategory.setDisable(true);
+                break;
+
+            case SC_ANDERES:
+                //Create all needed labels for Buch
+                Label herausgeberLabel1 = new Label("Herausgeber");
+                Label auflageLabel1 = new Label("Auflage");
+                Label ausgabeLabel1 = new Label("Ausgabe");
+
+                //create all needed textfields for Buch
+                this.herausgeberTextField = new TextField();
+                this.auflageTextField = new TextField();
+                this.ausgabeTextField = new TextField();
+
+                //Add the content to the Gridpane
+                addContentTOGridPane(rowConstraint, herausgeberLabel1, this.herausgeberTextField, 4,0);
+                addContentTOGridPane(rowConstraint, auflageLabel1, this.auflageTextField, 5,0);
+                addContentTOGridPane(rowConstraint, ausgabeLabel1, this.ausgabeTextField, 6,0);
+                subCategory.setDisable(true);
+                break;
+
+
+
+
+        }
+    }
+
+
+
+
 }
+

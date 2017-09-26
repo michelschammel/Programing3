@@ -15,8 +15,7 @@ import quellen.model.Tag;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import static quellen.constants.DB_Constants.SC_ARTIKEL;
-import static quellen.constants.DB_Constants.SC_NONE;
+import static quellen.constants.DB_Constants.*;
 
 public class QuellenOverviewController {
     @FXML
@@ -152,13 +151,25 @@ public class QuellenOverviewController {
         boolean okClicked = mainApp.showQuellenEditDialog(tempQuelle);
         try {
             if (okClicked) {
-                Datenbank.updateDatabase("INSERT INTO Quellen(Autor, Titel, Jahr) VALUES ('" + tempQuelle.getAutor() + "', '" + tempQuelle.getTitel() + "', '" + tempQuelle.getJahr() + "')");
-                switch (tempQuelle.getUnterkategorie()) {
+                Datenbank.updateDatabase("INSERT INTO Quellen(Autor, Titel, Jahr) VALUES ('" + tempQuelle.getAutor() + "', '" + tempQuelle.getTitel() + "', '" + tempQuelle.getJahr() + "')"); //insert quelle in database
+                ResultSet rs = Datenbank.queryWithReturn("SELECT quellenId FROM Quellen WHERE titel = \"" + tempQuelle.getTitel() + "\"");
+                int quellenID = rs.getInt(1); //get quellenid for reference as foreign key
+                switch (tempQuelle.getUnterkategorie()) { //insert quelle in subcategory table
                     case SC_NONE: break;
                     case SC_ARTIKEL:
-                        ResultSet rs = Datenbank.queryWithReturn("Select quellenId FROM Quellen WHERE titel = \"" + tempQuelle.getTitel() + "\"");
-                        int quellenID = rs.getInt(1);
-                        Datenbank.updateDatabase("INSERT INTO ARTIKEL(quellenID) VALUES ('" + quellenID + "')");
+                        Datenbank.updateDatabase("INSERT INTO Artikel(quellenID) VALUES ('" + quellenID + "')");
+                        break;
+                    case SC_BUECHER:
+                        Datenbank.updateDatabase("INSERT INTO Bücher(quellenID) VALUES ('" + quellenID + "')");
+                        break;
+                    case SC_OQUELLEN:
+                        Datenbank.updateDatabase("INSERT INTO Onlinequellen(quellenID) VALUES ('" + quellenID + "')");
+                        break;
+                    case SC_WARBEITEN:
+                        Datenbank.updateDatabase("INSERT INTO WissenschaftlicheArbeiten(quellenID) VALUES ('" + quellenID + "')");
+                        break;
+                    case SC_ANDERES:
+                        Datenbank.updateDatabase("INSERT INTO Anderes(quellenID) VALUES ('" + quellenID + "')");
                         break;
                 }
                 mainApp.getQuellenList().add(tempQuelle);
