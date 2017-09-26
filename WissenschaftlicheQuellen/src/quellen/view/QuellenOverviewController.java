@@ -12,7 +12,11 @@ import quellen.model.Quelle;
 import quellen.model.Zitat;
 import quellen.model.Tag;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
+
+import static quellen.constants.DB_Constants.SC_ARTIKEL;
+import static quellen.constants.DB_Constants.SC_NONE;
 
 public class QuellenOverviewController {
     @FXML
@@ -149,6 +153,14 @@ public class QuellenOverviewController {
         try {
             if (okClicked) {
                 Datenbank.updateDatabase("INSERT INTO Quellen(Autor, Titel, Jahr) VALUES ('" + tempQuelle.getAutor() + "', '" + tempQuelle.getTitel() + "', '" + tempQuelle.getJahr() + "')");
+                switch (tempQuelle.getUnterkategorie()) {
+                    case SC_NONE: break;
+                    case SC_ARTIKEL:
+                        ResultSet rs = Datenbank.queryWithReturn("Select quellenId FROM Quellen WHERE titel = \"" + tempQuelle.getTitel() + "\"");
+                        int quellenID = rs.getInt(1);
+                        Datenbank.updateDatabase("INSERT INTO ARTIKEL(quellenID) VALUES ('" + quellenID + "')");
+                        break;
+                }
                 mainApp.getQuellenList().add(tempQuelle);
             }
         } catch (Exception e) {

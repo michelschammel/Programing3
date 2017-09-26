@@ -19,13 +19,13 @@ public class RootLayoutController {
         this.mainApp = mainApp;
     }
 
-    //TODO make this work
+
     @FXML
     private void handleShowBarChart() {
       mainApp.showBarChart();
     }
 
-    //TODO and this aswell
+
     @FXML
     private void handleShowPieChart() { mainApp.showPieChart(); }
 

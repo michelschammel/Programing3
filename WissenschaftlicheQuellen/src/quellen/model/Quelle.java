@@ -16,6 +16,7 @@ public class Quelle {
     private StringProperty jahr;
     private ObservableList<Zitat> zitatData;
     private int id;
+    private String unterkategorie;
 
     /**
      * The Constructor.
@@ -104,4 +105,9 @@ public class Quelle {
     public int getId() {
         return id;
     }
+
+    public String getUnterkategorie() {return unterkategorie;}
+
+    public void setUnterkategorie(String unterkategorie) {this.unterkategorie = unterkategorie; }
+
 }

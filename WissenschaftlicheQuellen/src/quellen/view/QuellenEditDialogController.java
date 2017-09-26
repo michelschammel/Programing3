@@ -19,6 +19,9 @@ import javafx.stage.Stage;
 import quellen.MainApp;
 import quellen.model.*;
 import java.io.IOException;
+import quellen.constants.*;
+
+import static quellen.constants.DB_Constants.*;
 
 /**
  * Dialog to edit details of a quelle.
@@ -48,6 +51,8 @@ public class QuellenEditDialogController {
     private TableColumn<Zitat, String> zitatColumn;
     @FXML
     private TableColumn<Tag, String> tagColumn;
+    @FXML
+    private ChoiceBox<String> subCategory;
 
     private Stage dialogStage;
     private Quelle quelle;
@@ -86,6 +91,12 @@ public class QuellenEditDialogController {
         // Listen for selection changes and show the quelle details when changed.
         this.zitatTable.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> showZitatDeatils(newValue));
+
+        subCategory.setItems((FXCollections.observableArrayList(
+                SC_NONE, SC_ARTIKEL, SC_BUECHER, SC_OQUELLEN, SC_WARBEITEN, SC_ANDERES)));
+        subCategory.setValue(SC_NONE);
+
+
     }
 
     /**
@@ -370,9 +381,9 @@ public class QuellenEditDialogController {
         Buch buch = (Buch)this.quelle;
 
         //adjust anchorPane and Buttons for Dialog
-        this.anchorPane.setPrefHeight(290);
-        this.okButton.setLayoutY(255);
-        this.cancelButton.setLayoutY(255);
+        this.anchorPane.setPrefHeight(320);
+        this.okButton.setLayoutY(285);
+        this.cancelButton.setLayoutY(285);
         this.zitatTable.setPrefHeight(273);
         this.tagTable.setPrefHeight(273);
 
@@ -389,10 +400,12 @@ public class QuellenEditDialogController {
         this.isbnTextField = new TextField(buch.getIsbn());
 
         //Add the content to the Gridpane
-        addContentTOGridPane(rowConstraint, herausgeberLabel, this.herausgeberTextField, 3,0);
-        addContentTOGridPane(rowConstraint, auflageLabel, this.auflageTextField, 4,0);
-        addContentTOGridPane(rowConstraint, monatLabel, this.monatTextField, 5,0);
-        addContentTOGridPane(rowConstraint, isbnLabel, this.isbnTextField, 6,0);
+        addContentTOGridPane(rowConstraint, herausgeberLabel, this.herausgeberTextField, 4,0);
+        addContentTOGridPane(rowConstraint, auflageLabel, this.auflageTextField, 5,0);
+        addContentTOGridPane(rowConstraint, monatLabel, this.monatTextField, 6,0);
+        addContentTOGridPane(rowConstraint, isbnLabel, this.isbnTextField, 7,0);
+        subCategory.setValue(SC_BUECHER);
+        subCategory.setDisable(true);
     }
 
     /**
@@ -403,9 +416,9 @@ public class QuellenEditDialogController {
         Artikel artikel = (Artikel)this.quelle;
 
         //adjust anchorPane and Buttons for Dialog
-        this.anchorPane.setPrefHeight(220);
-        this.okButton.setLayoutY(185);
-        this.cancelButton.setLayoutY(185);
+        this.anchorPane.setPrefHeight(250);
+        this.okButton.setLayoutY(215);
+        this.cancelButton.setLayoutY(215);
         this.zitatTable.setPrefHeight(203);
         this.tagTable.setPrefHeight(203);
 
@@ -418,8 +431,10 @@ public class QuellenEditDialogController {
         this.magazinTextField = new TextField(artikel.getMagazin());
 
         //Add the content to the Gridpane
-        addContentTOGridPane(rowConstraint, ausgabeLabel, this.ausgabeTextField, 3, 0);
-        addContentTOGridPane(rowConstraint, magazinLabel, this.magazinTextField, 4, 0);
+        addContentTOGridPane(rowConstraint, ausgabeLabel, this.ausgabeTextField, 4, 0);
+        addContentTOGridPane(rowConstraint, magazinLabel, this.magazinTextField, 5, 0);
+        subCategory.setValue(SC_ARTIKEL);
+        subCategory.setDisable(true);
     }
 
     /**
@@ -430,9 +445,9 @@ public class QuellenEditDialogController {
         Onlinequelle onlinequelle = (Onlinequelle)this.quelle;
 
         //adjust anchorPane and Buttons for Dialog
-        this.anchorPane.setPrefHeight(220);
-        this.okButton.setLayoutY(185);
-        this.cancelButton.setLayoutY(185);
+        this.anchorPane.setPrefHeight(255);
+        this.okButton.setLayoutY(220);
+        this.cancelButton.setLayoutY(220);
         this.zitatTable.setPrefHeight(203);
         this.tagTable.setPrefHeight(203);
 
@@ -445,8 +460,10 @@ public class QuellenEditDialogController {
         this.urlTextField = new TextField(onlinequelle.getUrl());
 
         //Add the content to the Gridpane
-        addContentTOGridPane(rowConstraint, aufrufDatumLabel, this.aufrufDatumTextField, 3, 0);
-        addContentTOGridPane(rowConstraint, urlLabel, this.urlTextField, 4, 0);
+        addContentTOGridPane(rowConstraint, aufrufDatumLabel, this.aufrufDatumTextField, 4, 0);
+        addContentTOGridPane(rowConstraint, urlLabel, this.urlTextField, 5, 0);
+        subCategory.setValue(SC_OQUELLEN);
+        subCategory.setDisable(true);
     }
 
     /**
@@ -457,9 +474,9 @@ public class QuellenEditDialogController {
         Anderes anderes = (Anderes)this.quelle;
 
         //adjust anchorPane and Buttons for Dialog
-        this.anchorPane.setPrefHeight(255);
-        this.okButton.setLayoutY(220);
-        this.cancelButton.setLayoutY(220);
+        this.anchorPane.setPrefHeight(295);
+        this.okButton.setLayoutY(260);
+        this.cancelButton.setLayoutY(260);
         this.zitatTable.setPrefHeight(238);
         this.tagTable.setPrefHeight(238);
 
@@ -474,9 +491,11 @@ public class QuellenEditDialogController {
         this.ausgabeTextField = new TextField(anderes.getAusgabe());
 
         //Add the content to the Gridpane
-        addContentTOGridPane(rowConstraint, herausgeberLabel, this.herausgeberTextField, 3,0);
-        addContentTOGridPane(rowConstraint, auflageLabel, this.auflageTextField, 4,0);
-        addContentTOGridPane(rowConstraint, ausgabeLabel, this.ausgabeTextField, 5,0);
+        addContentTOGridPane(rowConstraint, herausgeberLabel, this.herausgeberTextField, 4,0);
+        addContentTOGridPane(rowConstraint, auflageLabel, this.auflageTextField, 5,0);
+        addContentTOGridPane(rowConstraint, ausgabeLabel, this.ausgabeTextField, 6,0);
+        subCategory.setValue(SC_ANDERES);
+        subCategory.setDisable(true);
     }
 
     public void setZitatList(ObservableList<Zitat> zitatList) {
@@ -491,9 +510,9 @@ public class QuellenEditDialogController {
         WissenschaftlicheArbeit wissenschaftlicheArbeit = (WissenschaftlicheArbeit)this.quelle;
 
         //adjust anchorPane and Buttons for Dialog
-        this.anchorPane.setPrefHeight(220);
-        this.okButton.setLayoutY(185);
-        this.cancelButton.setLayoutY(185);
+        this.anchorPane.setPrefHeight(265);
+        this.okButton.setLayoutY(225);
+        this.cancelButton.setLayoutY(225);
         this.zitatTable.setPrefHeight(203);
         this.tagTable.setPrefHeight(203);
 
@@ -506,8 +525,10 @@ public class QuellenEditDialogController {
         this.einrichtungsTextField = new TextField(wissenschaftlicheArbeit.getEinrichtung());
 
         //Add the content to the Gridpane
-        addContentTOGridPane(rowConstraint, herausgeberLabel, this.herausgeberTextField, 3, 0);
-        addContentTOGridPane(rowConstraint, einrichtungsLabel, this.einrichtungsTextField, 4, 0);
+        addContentTOGridPane(rowConstraint, herausgeberLabel, this.herausgeberTextField, 4, 0);
+        addContentTOGridPane(rowConstraint, einrichtungsLabel, this.einrichtungsTextField, 5, 0);
+        subCategory.setValue(SC_WARBEITEN);
+        subCategory.setDisable(true);
     }
 
     /**
@@ -528,6 +549,7 @@ public class QuellenEditDialogController {
             quelle.setAutor(autorField.getText());
             quelle.setTitel(titelField.getText());
             quelle.setJahr(jahrField.getText());
+            quelle.setUnterkategorie(getSubCategory());
 
             okClicked = true;
             dialogStage.close();
@@ -574,5 +596,9 @@ public class QuellenEditDialogController {
 
             return false;
         }
+    }
+
+    private String getSubCategory() {
+        return subCategory.getValue();
     }
 }
