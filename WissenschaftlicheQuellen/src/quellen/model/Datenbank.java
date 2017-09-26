@@ -1,10 +1,12 @@
 package quellen.model;
 
+import com.sun.org.apache.regexp.internal.RE;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-import java.io.IOException;
+import javax.xml.transform.Result;
 import java.sql.*;
+import java.util.ArrayList;
 
 import static quellen.constants.DB_Constants.*;
 
@@ -190,10 +192,11 @@ public class Datenbank {
 
 	/**
 	 * gets called to update a quelle in the DB
+     * this method checks what instance of quelle it is and updates it.
+     * it even checks what Zitate/Tags are still in the DB but are not anymore in quelle and deletes them.
 	 * @param quelle quelle to update
-	 * @return boolean (worked/failed)
 	 */
-	public boolean updateQuery(Quelle quelle) {
+	public void updateQuery(Quelle quelle) {
 		try {
 			//Preparestatemt for the update
 			PreparedStatement pStatementQuelle = connection.prepareStatement(PS_UPDATA_QUELLE);
@@ -277,73 +280,172 @@ public class Datenbank {
 				pStatementWissenschaftlicheArbeit.setInt(3, wissenschaftlicheArbeit.getId());
 				pStatementWissenschaftlicheArbeit.executeUpdate();
 			}
+
 			//We just updated the Quelle without zitate/tags
             //Update zitate
             quelle.getZitatList().forEach( zitat -> {
+                ResultSet rsZitatId;
                 try {
                     if (zitat.getZitatId() != 0) {
                         //Zitat exists in the DB
-                        PreparedStatement preparedStatement = connection.prepareStatement(PS_UPDATE_ZITAT);
-                        preparedStatement.setString(1, zitat.getText());
-                        preparedStatement.setInt(2, zitat.getZitatId());
-                        preparedStatement.executeUpdate();
+                        PreparedStatement preparedStatementA = connection.prepareStatement(PS_UPDATE_ZITAT);
+                        preparedStatementA.setString(1, zitat.getText());
+                        preparedStatementA.setInt(2, zitat.getZitatId());
+                        preparedStatementA.executeUpdate();
                     } else {
                         //Insert Zitat into DB
-                        PreparedStatement preparedStatemen = connection.prepareStatement(PS_INSERT_ZITAT);
-                        preparedStatemen.setString(1, zitat.getText());
-                        preparedStatemen.setInt(2, zitat.getQuellenId());
-                        preparedStatemen.execute();
-
+                        PreparedStatement preparedStatemenB = connection.prepareStatement(PS_INSERT_ZITAT);
+                        preparedStatemenB.setString(1, zitat.getText());
+                        preparedStatemenB.setInt(2, zitat.getQuellenId());
+                        preparedStatemenB.execute();
+                        //Get ZitatId
+                        Statement statement = connection.createStatement();
+                        rsZitatId = statement.executeQuery(PS_GET_LAST_INSERTED_ZITAT_ID);
+                        rsZitatId.next();
+                        zitat.setZitatId(rsZitatId.getInt("seq"));
 
                     }
                 }catch (SQLException e) {
                     e.printStackTrace();
                 }
             });
-
 			//Update all Tags
             quelle.getZitatList().forEach( zitat -> zitat.getTagList().forEach( tag -> {
-                ResultSet rsZitatID;
+
+                ResultSet rsTagId;
                 try {
                     if (tag.getTagId() != 0) {
                         //Tag exists in the DB
+                        System.out.println("Tag vorhanden und wird geupdated");
                         PreparedStatement preparedStatement = connection.prepareStatement(PS_UPDATE_TAG);
                         preparedStatement.setString(1, tag.getText());
                         preparedStatement.setInt(2, tag.getTagId());
                         preparedStatement.executeUpdate();
                     } else {
                         //Insert Tag into DB
+                        System.out.println("Tag wird neu eingefügt");
                         PreparedStatement preparedStatement = connection.prepareStatement(PS_INSERT_TAG);
                         preparedStatement.setString(1, tag.getText());
+                        preparedStatement.execute();
 
                         //Get TagId
                         Statement statement = connection.createStatement();
-                        rsZitatID = statement.executeQuery(PS_GET_TAG_ID);
+                        rsTagId = statement.executeQuery(PS_GET_LAST_INSERTED_TAG_ID);
                         //Has only 1 value
-                        rsZitatID.next();
+                        rsTagId.next();
 
                         PreparedStatement preparedStatementTag = connection.prepareStatement(PS_INSERT_TAG_ZITAT_CONNECTION);
-                        preparedStatementTag.setInt(1, rsZitatID.getInt("seq"));
-                        preparedStatementTag.setInt(2, zitat.getZitatId());
+                        preparedStatementTag.setInt(1, zitat.getZitatId());
+                        preparedStatementTag.setInt(2, rsTagId.getInt("seq"));
                         preparedStatementTag.execute();
+                        tag.setTagId(rsTagId.getInt("seq"));
                     }
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
             }));
 
+            //Delete all tags in the db that were removed from a zitat
+            quelle.getZitatList().forEach( zitat -> {
+                try {
+                    ArrayList<Integer> arrayList = new ArrayList<>();
+                    ResultSet rsTagIds;
+                    //Get all tagIds that are used in this zitat
+                    PreparedStatement preparedStatementGetTagIds = connection.prepareStatement(PS_GET_TAG_ID_OF_ZITAT);
+                    preparedStatementGetTagIds.setInt(1, zitat.getZitatId());
+                    rsTagIds = preparedStatementGetTagIds.executeQuery();
+                    while(rsTagIds.next()) {
+                        arrayList.add(rsTagIds.getInt("tagId"));
+                    }
+                    //check if they are still in use
+                    zitat.getTagList().forEach( tag -> {
+                        for (int i = 0; i < arrayList.size(); i++) {
+                            if (arrayList.get(i) == tag.getTagId()) {
+                                //Tag is still used
+                                arrayList.remove(i);
+                            }
+                        }
+                    });
+                    //Arraylist contains all  tag ids that are not used anymore
+                    //Delete tag and connection to zitat from DB
+                    arrayList.forEach( tagId -> {
+                        try {
+                            PreparedStatement preparedStatementDeleteTagZitatConnection = connection.prepareStatement(PS_DELETE_TAG_ZITAT_CONNECTION_WITH_TAG_ID);
+                            preparedStatementDeleteTagZitatConnection.setInt(1, tagId);
+                            preparedStatementDeleteTagZitatConnection.execute();
+                            PreparedStatement preparedStatementDeleteTag = connection.prepareStatement(PS_DELETE_TAG);
+                            preparedStatementDeleteTag.setInt(1, tagId);
+                            preparedStatementDeleteTag.execute();
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+                    });
+
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            });
+
+
+
+            //Delete zitate that were removed from the quelle
+            //Get all zitate
+            ResultSet rsZitate;
+            PreparedStatement preparedStatementGetZitate = connection.prepareStatement(PS_GET_ZITATTE);
+            preparedStatementGetZitate.setInt(1, quelle.getId());
+            rsZitate = preparedStatementGetZitate.executeQuery();
+            ArrayList<Integer> arrayList = new ArrayList<>();
+            while(rsZitate.next()) {
+                arrayList.add(rsZitate.getInt("zitatId"));
+            }
+
+            quelle.getZitatList().forEach( zitat -> {
+                for (int i = 0; i < arrayList.size(); i++) {
+                    if (arrayList.get(i) == zitat.getZitatId()) {
+                        //Zitat is still available in quelle
+                        arrayList.remove(i);
+                    }
+                }
+            });
+
+            //arrayList contains all zitatIds that we need to delete
+            arrayList.forEach( zitatId -> {
+                ResultSet rsTagIdsLambda;
+                try {
+                    //First delete zitat
+                    PreparedStatement preparedStatementDeleteZitat = connection.prepareStatement(PS_DELETE_ZITAT);
+                    preparedStatementDeleteZitat.setInt(1, zitatId);
+                    preparedStatementDeleteZitat.execute();
+
+                    //get all tagIds that we need to delete
+                    PreparedStatement preparedStatementGetTagId = connection.prepareStatement(PS_GET_TAG_ID_CONNECTION);
+                    preparedStatementGetTagId.setInt(1, zitatId);
+                    rsTagIdsLambda = preparedStatementGetTagId.executeQuery();
+                    while(rsTagIdsLambda.next()) {
+                        PreparedStatement preparedStatementDeleteTags = connection.prepareStatement(PS_DELETE_TAG);
+                        preparedStatementDeleteTags.setInt(1, rsTagIdsLambda.getInt("tagId"));
+                        preparedStatementDeleteTags.execute();
+                    }
+
+                    //Delete connection between tag and zitat
+                    PreparedStatement preparedStatementDeleteConnection = connection.prepareStatement(PS_DELETE_TAG_ZITAT_CONNECTION_WITH_ZITAT_ID);
+                    preparedStatementDeleteConnection.setInt(1, zitatId);
+                    preparedStatementDeleteConnection.execute();
+                } catch (SQLException error) {
+                    error.printStackTrace();
+                }
+            });
+
 			//Commit both statements
 			connection.commit();
 			//turn autocommit on
 			connection.setAutoCommit(true);
-			return true;
 		} catch (SQLException e) {
 			try {
+			    System.out.println("rollback");
 				connection.rollback();
-				return false;
 			} catch (SQLException error) {
-				System.out.println();
-				return false;
+				error.printStackTrace();
 			}
 		}
 	}
