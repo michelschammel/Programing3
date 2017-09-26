@@ -29,4 +29,10 @@ public class RootLayoutController {
 
     @FXML
     private void handlePDFOpen () { mainApp.openPDF (); }
+
+    @FXML
+    private void handleShowTutorial ()  { mainApp.showTutorial(); }
+
+    @FXML
+    private void handleShowAbout () { mainApp.showAbout(); }
 }
