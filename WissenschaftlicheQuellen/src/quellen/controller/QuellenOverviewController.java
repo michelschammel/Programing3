@@ -84,6 +84,21 @@ public class QuellenOverviewController {
         quellenTable.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> showQuellenDetails(newValue));
 
+        //Set Rowfactory for zitatTable
+        this.zitatTable.setRowFactory(tv -> {
+            TableRow<Zitat> row = new TableRow<>();
+
+            row.hoverProperty().addListener((observable) -> {
+                final Zitat zitat = row.getItem();
+                if (row.isHover() && zitat != null) {
+                    Tooltip zitatToolTip = new Tooltip(zitat.getText());
+                    zitatToolTip.setWrapText(true);
+                    zitatToolTip.setMaxWidth(160);
+                    row.setTooltip(zitatToolTip);
+                }
+            });
+            return row;
+        });
     }
 
     /**

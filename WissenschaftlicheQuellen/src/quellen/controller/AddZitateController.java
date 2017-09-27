@@ -11,6 +11,8 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import quellen.model.*;
 
+import javax.tools.Tool;
+
 /**
  * Created by Cedric on 26.09.2017.
  * Controller for AddZitate
@@ -63,6 +65,10 @@ public class AddZitateController {
                 double y;
 
                 if (row.isHover() && zitat != null) {
+                    Tooltip zitatToolTip = new Tooltip(zitat.getText());
+                    zitatToolTip.setWrapText(true);
+                    zitatToolTip.setMaxWidth(160);
+                    row.setTooltip(zitatToolTip);
                     zitat.getTagList().forEach( tag -> {
                         MenuItem tagMenu = new MenuItem(tag.getText());
                         tagContextMenu.getItems().add(tagMenu);
@@ -99,8 +105,6 @@ public class AddZitateController {
     }
 
     private void showZitatDeails(Zitat zitat) {
-        int selection;
-        StringBuilder tagList = new StringBuilder();
         if (zitat != null) {
             zitatTable.setItems(zitatList);
         }
