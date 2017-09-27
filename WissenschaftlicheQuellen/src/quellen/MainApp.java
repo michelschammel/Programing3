@@ -247,29 +247,4 @@ public class MainApp extends Application {
             e.printStackTrace();
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-    public void openPDF() {
-        /*
-
-
-        try {
-            // Load the fxml file and create a new stage for the popup.
-            FXMLLoader loader = new FXMLLoader();
-
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
-    }
 }

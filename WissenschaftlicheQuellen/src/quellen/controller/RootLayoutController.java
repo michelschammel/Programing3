@@ -37,9 +37,5 @@ public class RootLayoutController {
         mainApp.showTutorial();
     }
 
-    @FXML
-    private void handlePDFOpen () {
-        mainApp.openPDF();
-    }
 
 }
