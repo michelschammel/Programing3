@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="283.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="quellen.controller.AddZitateController">
+    <children>
+        <TableView fx:id="zitatTable" layoutX="3.0" layoutY="45.0" prefHeight="353.0" prefWidth="278.0">
+            <columns>
+                <TableColumn fx:id="zitatColumn" prefWidth="276.0" text="Zitate" />
+            </columns>
+        </TableView>
+        <Button layoutX="217.0" layoutY="14.0" mnemonicParsing="false" text="Search" />
+        <TextField layoutX="14.0" layoutY="14.0" prefHeight="25.0" prefWidth="197.0" />
+    </children>
+</AnchorPane>

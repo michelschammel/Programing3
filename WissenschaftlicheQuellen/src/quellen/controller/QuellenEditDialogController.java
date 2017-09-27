@@ -1,5 +1,7 @@
-package quellen.view;
+package quellen.controller;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -15,10 +17,12 @@ import javafx.scene.layout.RowConstraints;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import quellen.MainApp;
+import quellen.controller.AddTagsController;
+import quellen.controller.AddZitateController;
 import quellen.model.*;
-
-import java.awt.event.MouseEvent;
 import java.io.IOException;
+
+import static quellen.constants.DB_Constants.*;
 
 /**
  * Dialog to edit details of a quelle.
@@ -48,11 +52,14 @@ public class QuellenEditDialogController {
     private TableColumn<Zitat, String> zitatColumn;
     @FXML
     private TableColumn<Tag, String> tagColumn;
+    @FXML
+    private ChoiceBox<String> subCategory;
 
     private Stage dialogStage;
     private Quelle quelle;
     private Quelle quelleEdited;
     private boolean okClicked = false;
+    private ObservableList<Zitat> zitatList;
 
     //all custom textFields
     private TextField herausgeberTextField;
@@ -64,6 +71,7 @@ public class QuellenEditDialogController {
     private TextField urlTextField;
     private TextField einrichtungsTextField;
     private TextField magazinTextField;
+    private TextField subCategoryField;
 
     /**
      * Initializes the controller class. This method is automatically called
@@ -85,7 +93,21 @@ public class QuellenEditDialogController {
         // Listen for selection changes and show the quelle details when changed.
         this.zitatTable.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> showZitatDeatils(newValue));
+
+        //initialize the choicebox
+        subCategory.setItems((FXCollections.observableArrayList(
+                SC_NONE, SC_ARTIKEL, SC_BUECHER, SC_OQUELLEN, SC_WARBEITEN, SC_ANDERES)));
+        subCategory.setValue(SC_NONE);
+
+        //set up a ChangeListener to choicebox
+        subCategory.getSelectionModel().selectedItemProperty().addListener(
+                ((observable, oldValue, newValue) -> adjustNewDialog(newValue))
+        );
+
+
+
     }
+
 
     /**
      * Fills all text fields to show details about the quelle.
@@ -103,69 +125,89 @@ public class QuellenEditDialogController {
      * gets called if the user requests a context Menu
      */
     public void contextMenuTagTable() {
-        //Create a new Contextmenu
-        ContextMenu contextMenu = new ContextMenu();
+        if (this.zitatTable.getSelectionModel().getSelectedItem() != null) {
+            //Create a new Contextmenu
+            ContextMenu contextMenu = new ContextMenu();
 
-        //create needed menuitems for the contextmenu
-        MenuItem newTagItem = new MenuItem("new Tag");
-        MenuItem deleteTagItem = new MenuItem("delete Tag");
-        MenuItem addTag = new MenuItem("add Tag");
+            //create needed menuitems for the contextmenu
+            MenuItem newTagItem = new MenuItem("new Tag");
+            MenuItem deleteTagItem = new MenuItem("delete Tag");
+            MenuItem addTag = new MenuItem("add existing Tag");
 
-        //add the menuitems to the contextmenu
-        contextMenu.getItems().addAll(newTagItem, deleteTagItem, addTag);
+            //add the menuitems to the contextmenu
+            contextMenu.getItems().addAll(newTagItem, deleteTagItem, addTag);
 
-        //add the contextmenu to the table
-        this.tagTable.setContextMenu(contextMenu);
+            //add the contextmenu to the table
+            this.tagTable.setContextMenu(contextMenu);
 
-        //add eventlistener for all menuitems
-        newTagItem.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                if (zitatTable.getSelectionModel().getSelectedItem() != null) {
-                    //1. get zitatList of quelle
-                    //2. get the selected itemindex of zitattable
-                    //3. get the taglist of the selected zitat
-                    //4. add a new tag to the zitat
-                    quelleEdited.getZitatList().get(zitatTable.getSelectionModel().getSelectedIndex()).getTagList().add(new Tag("new"));
+            //add eventlistener for all menuitems
+            newTagItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    if (zitatTable.getSelectionModel().getSelectedItem() != null) {
+                        //1. get zitatList of quelle
+                        //2. get the selected itemindex of zitattable
+                        //3. get the taglist of the selected zitat
+                        //4. add a new tag to the zitat
+                        quelleEdited.getZitatList().get(zitatTable.getSelectionModel().getSelectedIndex()).getTagList().add(new Tag("new"));
+                        zitatList = quelleEdited.getZitatList();
+                    }
                 }
-            }
-        });
+            });
 
-        deleteTagItem.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                Tag tag = tagTable.getSelectionModel().getSelectedItem();
-                quelleEdited.getZitatList().get(zitatTable.getSelectionModel().getSelectedIndex()).getTagList().remove(tag);
-            }
-        });
-
-        addTag.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                try {
-                    // Load the fxml file and create a new stage for the popup dialog.
-                    FXMLLoader loader = new FXMLLoader();
-                    loader.setLocation(MainApp.class.getResource("view/AddTags.fxml"));
-                    AnchorPane page = (AnchorPane) loader.load();
-
-                    // Create the addTag Stage.
-                    Stage addTagStage = new Stage();
-                    addTagStage.setTitle("Add Tag");
-                    addTagStage.initModality(Modality.WINDOW_MODAL);
-                    Scene scene = new Scene(page);
-                    addTagStage.setScene(scene);
-                    addTagStage.initOwner(dialogStage);
-
-                    // Set the quelle into the controller.
-                    AddTagsController controller = loader.getController();
-
-                    // Show the dialog and wait until the user closes it
-                    addTagStage.showAndWait();
-                } catch (IOException e) {
-                    e.printStackTrace();
+            deleteTagItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    Tag tag = tagTable.getSelectionModel().getSelectedItem();
+                    quelleEdited.getZitatList().get(zitatTable.getSelectionModel().getSelectedIndex()).getTagList().remove(tag);
                 }
-            }
-        });
+            });
+
+            addTag.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    try {
+                        // Load the fxml file and create a new stage for the popup dialog.
+                        FXMLLoader loader = new FXMLLoader();
+                        loader.setLocation(MainApp.class.getResource("view/AddTags.fxml"));
+                        AnchorPane page = (AnchorPane) loader.load();
+
+                        // Create the addTag Stage.
+                        Stage addTagStage = new Stage();
+                        addTagStage.setTitle("Add Tag");
+                        addTagStage.initModality(Modality.WINDOW_MODAL);
+                        Scene scene = new Scene(page);
+                        addTagStage.setScene(scene);
+                        addTagStage.initOwner(dialogStage);
+
+                        // Set the quelle into the controller.
+                        AddTagsController controller = loader.getController();
+                        ObservableList<Tag> tagList = FXCollections.observableArrayList();
+                        controller.setZitat(zitatTable.getSelectionModel().getSelectedItem());
+                        //prevent duplicates
+                        zitatList.forEach(zitat ->
+                                zitat.getTagList().forEach(tag -> {
+                                    boolean addTag = true;
+                                    for (int i = 0; i < tagList.size(); i++) {
+                                        if (tag.getText().equals(tagList.get(i).getText())) {
+                                            addTag = false;
+                                        }
+                                    }
+                                    if (addTag) {
+                                        tagList.add(tag);
+                                    }
+                                })
+                        );
+                        controller.setTagList(tagList);
+
+                        // Show the dialog and wait until the user closes it
+                        addTagStage.showAndWait();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
     }
 
     /**
@@ -178,9 +220,10 @@ public class QuellenEditDialogController {
         //create needed menuitems for the contextmenu
         MenuItem newZitatItem = new MenuItem("new Zitat");
         MenuItem deleteZitatItem = new MenuItem("delete Zitat");
+        MenuItem addZitatItem = new MenuItem("add existing Zitat");
 
         //add the menuitems to the contextmenu
-        contextMenu.getItems().addAll(newZitatItem, deleteZitatItem);
+        contextMenu.getItems().addAll(newZitatItem, deleteZitatItem, addZitatItem);
 
         //add the contextmenu to the table
         this.zitatTable.setContextMenu(contextMenu);
@@ -198,6 +241,36 @@ public class QuellenEditDialogController {
             public void handle(ActionEvent event) {
                 Zitat zitat = zitatTable.getSelectionModel().getSelectedItem();
                 quelleEdited.getZitatList().remove(zitat);
+            }
+        });
+
+        addZitatItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                try {
+                    // Load the fxml file and create a new stage for the popup dialog.
+                    FXMLLoader loader = new FXMLLoader();
+                    loader.setLocation(MainApp.class.getResource("view/AddZitate.fxml"));
+                    AnchorPane page = (AnchorPane) loader.load();
+
+                    // Create the addTag Stage.
+                    Stage addTagStage = new Stage();
+                    addTagStage.setTitle("Add Zitat");
+                    addTagStage.initModality(Modality.WINDOW_MODAL);
+                    Scene scene = new Scene(page);
+                    addTagStage.setScene(scene);
+                    addTagStage.initOwner(dialogStage);
+
+                    // Set the quelle into the controller.
+                    AddZitateController controller = loader.getController();
+                    controller.setZitatList(zitatList);
+                    controller.setQuelle(quelleEdited);
+
+                    // Show the dialog and wait until the user closes it
+                    addTagStage.showAndWait();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
@@ -318,9 +391,9 @@ public class QuellenEditDialogController {
         Buch buch = (Buch)this.quelle;
 
         //adjust anchorPane and Buttons for Dialog
-        this.anchorPane.setPrefHeight(290);
-        this.okButton.setLayoutY(255);
-        this.cancelButton.setLayoutY(255);
+        this.anchorPane.setPrefHeight(320);
+        this.okButton.setLayoutY(285);
+        this.cancelButton.setLayoutY(285);
         this.zitatTable.setPrefHeight(273);
         this.tagTable.setPrefHeight(273);
 
@@ -337,10 +410,11 @@ public class QuellenEditDialogController {
         this.isbnTextField = new TextField(buch.getIsbn());
 
         //Add the content to the Gridpane
-        addContentTOGridPane(rowConstraint, herausgeberLabel, this.herausgeberTextField, 3,0);
-        addContentTOGridPane(rowConstraint, auflageLabel, this.auflageTextField, 4,0);
-        addContentTOGridPane(rowConstraint, monatLabel, this.monatTextField, 5,0);
-        addContentTOGridPane(rowConstraint, isbnLabel, this.isbnTextField, 6,0);
+        addContentTOGridPane(rowConstraint, herausgeberLabel, this.herausgeberTextField, 4,0);
+        addContentTOGridPane(rowConstraint, auflageLabel, this.auflageTextField, 5,0);
+        addContentTOGridPane(rowConstraint, monatLabel, this.monatTextField, 6,0);
+        addContentTOGridPane(rowConstraint, isbnLabel, this.isbnTextField, 7,0);
+        subCategory.setDisable(true);
     }
 
     /**
@@ -351,9 +425,9 @@ public class QuellenEditDialogController {
         Artikel artikel = (Artikel)this.quelle;
 
         //adjust anchorPane and Buttons for Dialog
-        this.anchorPane.setPrefHeight(220);
-        this.okButton.setLayoutY(185);
-        this.cancelButton.setLayoutY(185);
+        this.anchorPane.setPrefHeight(250);
+        this.okButton.setLayoutY(215);
+        this.cancelButton.setLayoutY(215);
         this.zitatTable.setPrefHeight(203);
         this.tagTable.setPrefHeight(203);
 
@@ -366,9 +440,11 @@ public class QuellenEditDialogController {
         this.magazinTextField = new TextField(artikel.getMagazin());
 
         //Add the content to the Gridpane
-        addContentTOGridPane(rowConstraint, ausgabeLabel, this.ausgabeTextField, 3, 0);
-        addContentTOGridPane(rowConstraint, magazinLabel, this.magazinTextField, 4, 0);
+        addContentTOGridPane(rowConstraint, ausgabeLabel, this.ausgabeTextField, 4, 0);
+        addContentTOGridPane(rowConstraint, magazinLabel, this.magazinTextField, 5, 0);
+        subCategory.setDisable(true);
     }
+
 
     /**
      * Adjusts and adds components for the editDialog
@@ -378,9 +454,9 @@ public class QuellenEditDialogController {
         Onlinequelle onlinequelle = (Onlinequelle)this.quelle;
 
         //adjust anchorPane and Buttons for Dialog
-        this.anchorPane.setPrefHeight(220);
-        this.okButton.setLayoutY(185);
-        this.cancelButton.setLayoutY(185);
+        this.anchorPane.setPrefHeight(255);
+        this.okButton.setLayoutY(220);
+        this.cancelButton.setLayoutY(220);
         this.zitatTable.setPrefHeight(203);
         this.tagTable.setPrefHeight(203);
 
@@ -393,8 +469,9 @@ public class QuellenEditDialogController {
         this.urlTextField = new TextField(onlinequelle.getUrl());
 
         //Add the content to the Gridpane
-        addContentTOGridPane(rowConstraint, aufrufDatumLabel, this.aufrufDatumTextField, 3, 0);
-        addContentTOGridPane(rowConstraint, urlLabel, this.urlTextField, 4, 0);
+        addContentTOGridPane(rowConstraint, aufrufDatumLabel, this.aufrufDatumTextField, 4, 0);
+        addContentTOGridPane(rowConstraint, urlLabel, this.urlTextField, 5, 0);
+        subCategory.setDisable(true);
     }
 
     /**
@@ -405,9 +482,9 @@ public class QuellenEditDialogController {
         Anderes anderes = (Anderes)this.quelle;
 
         //adjust anchorPane and Buttons for Dialog
-        this.anchorPane.setPrefHeight(255);
-        this.okButton.setLayoutY(220);
-        this.cancelButton.setLayoutY(220);
+        this.anchorPane.setPrefHeight(295);
+        this.okButton.setLayoutY(260);
+        this.cancelButton.setLayoutY(260);
         this.zitatTable.setPrefHeight(238);
         this.tagTable.setPrefHeight(238);
 
@@ -422,9 +499,14 @@ public class QuellenEditDialogController {
         this.ausgabeTextField = new TextField(anderes.getAusgabe());
 
         //Add the content to the Gridpane
-        addContentTOGridPane(rowConstraint, herausgeberLabel, this.herausgeberTextField, 3,0);
-        addContentTOGridPane(rowConstraint, auflageLabel, this.auflageTextField, 4,0);
-        addContentTOGridPane(rowConstraint, ausgabeLabel, this.ausgabeTextField, 5,0);
+        addContentTOGridPane(rowConstraint, herausgeberLabel, this.herausgeberTextField, 4,0);
+        addContentTOGridPane(rowConstraint, auflageLabel, this.auflageTextField, 5,0);
+        addContentTOGridPane(rowConstraint, ausgabeLabel, this.ausgabeTextField, 6,0);
+        subCategory.setDisable(true);
+    }
+
+    public void setZitatList(ObservableList<Zitat> zitatList) {
+        this.zitatList = zitatList;
     }
 
     /**
@@ -435,9 +517,9 @@ public class QuellenEditDialogController {
         WissenschaftlicheArbeit wissenschaftlicheArbeit = (WissenschaftlicheArbeit)this.quelle;
 
         //adjust anchorPane and Buttons for Dialog
-        this.anchorPane.setPrefHeight(220);
-        this.okButton.setLayoutY(185);
-        this.cancelButton.setLayoutY(185);
+        this.anchorPane.setPrefHeight(265);
+        this.okButton.setLayoutY(225);
+        this.cancelButton.setLayoutY(225);
         this.zitatTable.setPrefHeight(203);
         this.tagTable.setPrefHeight(203);
 
@@ -450,8 +532,9 @@ public class QuellenEditDialogController {
         this.einrichtungsTextField = new TextField(wissenschaftlicheArbeit.getEinrichtung());
 
         //Add the content to the Gridpane
-        addContentTOGridPane(rowConstraint, herausgeberLabel, this.herausgeberTextField, 3, 0);
-        addContentTOGridPane(rowConstraint, einrichtungsLabel, this.einrichtungsTextField, 4, 0);
+        addContentTOGridPane(rowConstraint, herausgeberLabel, this.herausgeberTextField, 4, 0);
+        addContentTOGridPane(rowConstraint, einrichtungsLabel, this.einrichtungsTextField, 5, 0);
+        subCategory.setDisable(true);
     }
 
     /**
@@ -472,6 +555,7 @@ public class QuellenEditDialogController {
             quelle.setAutor(autorField.getText());
             quelle.setTitel(titelField.getText());
             quelle.setJahr(jahrField.getText());
+            quelle.setUnterkategorie(getSubCategory());
 
             okClicked = true;
             dialogStage.close();
@@ -519,4 +603,110 @@ public class QuellenEditDialogController {
             return false;
         }
     }
+
+    private String getSubCategory() {
+        return subCategory.getValue();
+    }
+
+    private void adjustNewDialog(String category) {
+        //Create a RowContraints
+        RowConstraints rowConstraint = new RowConstraints();
+        rowConstraint.setMinHeight(30);
+        rowConstraint.setPrefHeight(30);
+        rowConstraint.setVgrow(Priority.SOMETIMES);
+
+        switch (category) {
+            case SC_ARTIKEL:
+                //Create all needed labels for Artikel
+                Label ausgabeLabel = new Label("Ausgabe");
+                Label magazinLabel = new Label("Magazin");
+
+                //Create all needed textfields for Artikel
+                this.ausgabeTextField = new TextField();
+                this.magazinTextField = new TextField();
+
+                //Add the content to the Gridpane
+                addContentTOGridPane(rowConstraint, ausgabeLabel, this.ausgabeTextField, 4, 0);
+                addContentTOGridPane(rowConstraint, magazinLabel, this.magazinTextField, 5, 0);
+                subCategory.setDisable(true);
+                break;
+
+            case SC_BUECHER:
+                //Create all needed labels for Buch
+                Label herausgeberLabel = new Label("Herausgeber");
+                Label auflageLabel = new Label("Auflage");
+                Label monatLabel = new Label("Monat");
+                Label isbnLabel = new Label("ISBN");
+
+                //create all needed textfields for Buch
+                this.herausgeberTextField = new TextField();
+                this.auflageTextField = new TextField();
+                this.monatTextField = new TextField();
+                this.isbnTextField = new TextField();
+
+                //Add the content to the Gridpane
+                addContentTOGridPane(rowConstraint, herausgeberLabel, this.herausgeberTextField, 4,0);
+                addContentTOGridPane(rowConstraint, auflageLabel, this.auflageTextField, 5,0);
+                addContentTOGridPane(rowConstraint, monatLabel, this.monatTextField, 6,0);
+                addContentTOGridPane(rowConstraint, isbnLabel, this.isbnTextField, 7,0);
+                subCategory.setDisable(true);
+                break;
+
+            case SC_OQUELLEN:
+                //Create all needed labels for Onlinequelle
+                Label aufrufDatumLabel = new Label("Aufrufdatum");
+                Label urlLabel = new Label("URL");
+
+                //Create all  needed textfields for Onlinequelle
+                this.aufrufDatumTextField = new TextField();
+                this.urlTextField = new TextField();
+
+                //Add the content to the Gridpane
+                addContentTOGridPane(rowConstraint, aufrufDatumLabel, this.aufrufDatumTextField, 4, 0);
+                addContentTOGridPane(rowConstraint, urlLabel, this.urlTextField, 5, 0);
+                subCategory.setDisable(true);
+                break;
+
+            case SC_WARBEITEN:
+                Label publisherLabel = new Label("Herausgeber");
+                Label einrichtungsLabel = new Label("Einrichtung");
+
+                //Create all  needed textfields for Onlinequelle
+                this.herausgeberTextField= new TextField();
+                this.einrichtungsTextField = new TextField();
+
+                //Add the content to the Gridpane
+                addContentTOGridPane(rowConstraint, publisherLabel, this.herausgeberTextField, 4, 0);
+                addContentTOGridPane(rowConstraint, einrichtungsLabel, this.einrichtungsTextField, 5, 0);
+                subCategory.setDisable(true);
+                break;
+
+            case SC_ANDERES:
+                //Create all needed labels for Buch
+                Label herausgeberLabel1 = new Label("Herausgeber");
+                Label auflageLabel1 = new Label("Auflage");
+                Label ausgabeLabel1 = new Label("Ausgabe");
+
+                //create all needed textfields for Buch
+                this.herausgeberTextField = new TextField();
+                this.auflageTextField = new TextField();
+                this.ausgabeTextField = new TextField();
+
+                //Add the content to the Gridpane
+                addContentTOGridPane(rowConstraint, herausgeberLabel1, this.herausgeberTextField, 4,0);
+                addContentTOGridPane(rowConstraint, auflageLabel1, this.auflageTextField, 5,0);
+                addContentTOGridPane(rowConstraint, ausgabeLabel1, this.ausgabeTextField, 6,0);
+                subCategory.setDisable(true);
+                break;
+
+
+
+
+        }
+    }
+
+
+
+
 }
+

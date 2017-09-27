@@ -1,7 +1,6 @@
 package quellen;
 
 import java.io.IOException;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import javafx.application.Application;
@@ -13,10 +12,12 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import quellen.dao.SchnittstelleQuelle;
 import quellen.model.*;
-import quellen.view.QuellenEditDialogController;
-import quellen.view.QuellenOverviewController;
-import quellen.view.RootLayoutController;
+import quellen.controller.QuellenEditDialogController;
+import quellen.controller.QuellenOverviewController;
+import quellen.controller.RootLayoutController;
+import quellen.service.QuellenService;
 
 public class MainApp extends Application {
 
@@ -35,7 +36,9 @@ public class MainApp extends Application {
      * @throws SQLException
      */
     public MainApp() throws SQLException {
-        quellenData = Datenbank.getInstance().getQuellenFromDataBase();
+        //quellenData = Datenbank.getInstance().getQuellenFromDataBase();
+        QuellenService quellenService = new QuellenService();
+        quellenData = quellenService.getQuellenDataFromDB();
     }
 
     @Override
@@ -122,6 +125,14 @@ public class MainApp extends Application {
             controller.setDialogStage(dialogStage);
             controller.setQuelle(quelle);
 
+            //
+
+            ObservableList<Zitat> zitatList = FXCollections.observableArrayList();
+            quellenData.forEach( quelleList ->
+                zitatList.addAll(quelleList.getZitatList())
+            );
+            controller.setZitatList(zitatList);
+
             //set selectedQuelle for the edit dialig
             this.selectedQuelleForEdit = quelle;
 
@@ -169,29 +180,6 @@ public class MainApp extends Application {
 
     }
 
-    public void showBarChart() {
-        try {
-            // Load the fxml file and create a new stage for the popup.
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class.getResource("view/BarChart.fxml"));
-            AnchorPane page = (AnchorPane) loader.load();
-            Stage dialogStage = new Stage();
-            dialogStage.setTitle("BarChart");
-            dialogStage.initModality(Modality.WINDOW_MODAL);
-            dialogStage.initOwner(primaryStage);
-            Scene scene = new Scene(page);
-            dialogStage.setScene(scene);
-
-            // Set the persons into the controller.
-            //BarChartController controller = loader.getController();
-
-            dialogStage.show();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     public void showPieChart() {
         try {
             // Load the fxml file and create a new stage for the popup.
@@ -213,5 +201,75 @@ public class MainApp extends Application {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+
+    public void showTutorial() {
+        try {
+            // Load the fxml file and create a new stage for the popup.
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(MainApp.class.getResource("view/Tutorial.fxml"));
+            AnchorPane page = (AnchorPane) loader.load();
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("Tutorial");
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            dialogStage.initOwner(primaryStage);
+            Scene scene = new Scene(page);
+            dialogStage.setScene(scene);
+
+
+            dialogStage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+    public void showAbout() {
+        try {
+            // Load the fxml file and create a new stage for the popup.
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(MainApp.class.getResource("view/About.fxml"));
+            AnchorPane page = (AnchorPane) loader.load();
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("About");
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            dialogStage.initOwner(primaryStage);
+            Scene scene = new Scene(page);
+            dialogStage.setScene(scene);
+
+
+            dialogStage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+    public void openPDF() {
+        /*
+
+
+        try {
+            // Load the fxml file and create a new stage for the popup.
+            FXMLLoader loader = new FXMLLoader();
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }*/
     }
 }

@@ -5,7 +5,7 @@
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.layout.BorderPane?>
 
-<BorderPane prefHeight="510.0" prefWidth="1060.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="quellen.view.RootLayoutController">
+<BorderPane prefHeight="510.0" prefWidth="1060.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="quellen.controller.RootLayoutController">
    <top>
       <MenuBar BorderPane.alignment="CENTER">
         <menus>
@@ -13,18 +13,18 @@
             <items>
                   <MenuItem mnemonicParsing="false" text="Open" />
               <MenuItem mnemonicParsing="false" text="Close" />
+                  <MenuItem mnemonicParsing="false" onAction="#handlePDFOpen" text="Open PDF" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Statistics">
             <items>
-                  <MenuItem mnemonicParsing="false" onAction="#handleShowBarChart" text="BarChart" />
               <MenuItem mnemonicParsing="false" onAction="#handleShowPieChart" text="PieChart" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Help">
             <items>
-                  <MenuItem mnemonicParsing="false" text="Tutorial" />
-              <MenuItem mnemonicParsing="false" text="About" />
+                  <MenuItem mnemonicParsing="false" onAction="#handleShowTutorial" text="Tutorial" />
+              <MenuItem mnemonicParsing="false" onAction="#handleShowAbout" text="About" />
             </items>
           </Menu>
         </menus>

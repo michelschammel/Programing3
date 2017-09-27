@@ -1,4 +1,4 @@
-package quellen.view;
+package quellen.controller;
 import java.sql.ResultSet;
 
 import javafx.collections.FXCollections;
@@ -8,7 +8,7 @@ import javafx.scene.chart.*;
 import quellen.model.Datenbank;
 
 public class PieChartController {
-	String[] DatabaseTypes = {"Anderes", "Artikel", "Bücher", "Onlinequellen", "Quellen", "Tags", "TagsZitate",
+	String[] DatabaseTypes = {"Anderes", "Artikel", "BÃ¼cher", "Onlinequellen", "Quellen", "Tags", "TagsZitate",
 			"WissenschaftlicheArbeiten", "Zitate"};
 
 	@FXML
@@ -32,7 +32,7 @@ public class PieChartController {
 			pieChartData = FXCollections.observableArrayList(
 					   new PieChart.Data("Anderes", pieZahlen[0]),
 					   new PieChart.Data("Artikel", pieZahlen[1]),
-					   new PieChart.Data("Bücher", pieZahlen[2]),
+					   new PieChart.Data("BÃ¼cher", pieZahlen[2]),
 					   new PieChart.Data("Onlinequellen", pieZahlen[3]),
 					   new PieChart.Data("Quellen", pieZahlen[4]),
 					   new PieChart.Data("Tags", pieZahlen[5]),

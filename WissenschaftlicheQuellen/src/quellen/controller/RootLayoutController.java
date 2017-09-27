@@ -1,4 +1,4 @@
-package quellen.view;
+package quellen.controller;
 
 
 import javafx.fxml.FXML;
@@ -19,14 +19,27 @@ public class RootLayoutController {
         this.mainApp = mainApp;
     }
 
-    //TODO make this work
+
     @FXML
-    private void handleShowBarChart() {
-      mainApp.showBarChart();
+    private void handleShowPieChart() {
+        mainApp.showPieChart();
     }
 
-    //TODO and this aswell
+
     @FXML
-    private void handleShowPieChart() { mainApp.showPieChart(); }
+    private void handleShowAbout() {
+        mainApp.showAbout();
+    }
+
+
+    @FXML
+    private void handleShowTutorial() {
+        mainApp.showTutorial();
+    }
+
+    @FXML
+    private void handlePDFOpen () {
+        mainApp.openPDF();
+    }
 
 }
