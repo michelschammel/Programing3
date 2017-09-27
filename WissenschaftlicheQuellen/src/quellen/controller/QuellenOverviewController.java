@@ -281,7 +281,7 @@ public class QuellenOverviewController {
         //Get the text to search for
         String searchText = searchTextField.getText().toLowerCase();
         //if the text is empty throw a message
-        if(searchText.isEmpty() || !searchTag && !searchSource && !searchQuote && !searchTag) {
+        if(searchText.isEmpty() || !searchTag && !searchSource && !searchQuote && !searchAuthor) {
             nothingSelected("Error", "No search possible", "Nothing to search for");
         } else {
             if (tmpList != null) {
