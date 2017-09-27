@@ -1,4 +1,4 @@
-package quellen.view;
+package quellen.controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -20,11 +20,11 @@ public class TutorialController {
         // Handle Button event.
         Image image;
         if (nextClicks == 0) {
-            image = new Image(getClass().getResource("./pic/tut01.png").toExternalForm());
+            image = new Image(getClass().getResource("./resources/tut01.png").toExternalForm());
             myImage.setImage(image);
             this.nextClicks++;
         } //else if (nextClicks == 1) {
-            //image = new Image(getClass().getResource("./pic/.png").toExternalForm());
+            //image = new Image(getClass().getResource("./resources/.png").toExternalForm());
             //myImage.setImage(image);
             //this.nextClicks++;
        // }
