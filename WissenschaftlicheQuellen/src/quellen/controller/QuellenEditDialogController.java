@@ -370,7 +370,7 @@ public class QuellenEditDialogController {
     }
 
     /**
-     * Adds ne content to the GridPane
+     * Adds new content to the GridPane
      * @param constraints RowConstraint to add for the new Row
      * @param label Label to add
      * @param textField TextField to add
