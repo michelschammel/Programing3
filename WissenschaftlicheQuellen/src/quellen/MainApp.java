@@ -12,10 +12,12 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import quellen.dao.SchnittstelleQuelle;
 import quellen.model.*;
-import quellen.view.QuellenEditDialogController;
-import quellen.view.QuellenOverviewController;
-import quellen.view.RootLayoutController;
+import quellen.controller.QuellenEditDialogController;
+import quellen.controller.QuellenOverviewController;
+import quellen.controller.RootLayoutController;
+import quellen.service.QuellenService;
 
 public class MainApp extends Application {
 
@@ -34,7 +36,9 @@ public class MainApp extends Application {
      * @throws SQLException
      */
     public MainApp() throws SQLException {
-        quellenData = Datenbank.getInstance().getQuellenFromDataBase();
+        //quellenData = Datenbank.getInstance().getQuellenFromDataBase();
+        QuellenService quellenService = new QuellenService();
+        quellenData = quellenService.getQuellenDataFromDB();
     }
 
     @Override
@@ -174,29 +178,6 @@ public class MainApp extends Application {
      */
     public void search(String searchText, boolean searchAuthor, boolean searchTag, boolean searchSource, boolean searchQuote) {
 
-    }
-
-    public void showBarChart() {
-        try {
-            // Load the fxml file and create a new stage for the popup.
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class.getResource("view/BarChart.fxml"));
-            AnchorPane page = (AnchorPane) loader.load();
-            Stage dialogStage = new Stage();
-            dialogStage.setTitle("BarChart");
-            dialogStage.initModality(Modality.WINDOW_MODAL);
-            dialogStage.initOwner(primaryStage);
-            Scene scene = new Scene(page);
-            dialogStage.setScene(scene);
-
-            // Set the persons into the controller.
-            //BarChartController controller = loader.getController();
-
-            dialogStage.show();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     public void showPieChart() {

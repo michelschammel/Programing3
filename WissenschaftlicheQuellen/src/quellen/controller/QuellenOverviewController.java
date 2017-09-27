@@ -1,4 +1,4 @@
-package quellen.view;
+package quellen.controller;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -7,12 +7,16 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
 import quellen.MainApp;
+import quellen.dao.SchnittstelleQuelle;
 import quellen.model.Datenbank;
 import quellen.model.Quelle;
 import quellen.model.Zitat;
 import quellen.model.Tag;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
+
+import static quellen.constants.DB_Constants.*;
 
 public class QuellenOverviewController {
     @FXML
@@ -148,7 +152,27 @@ public class QuellenOverviewController {
         boolean okClicked = mainApp.showQuellenEditDialog(tempQuelle);
         try {
             if (okClicked) {
-                Datenbank.updateDatabase("INSERT INTO Quellen(Autor, Titel, Jahr) VALUES ('" + tempQuelle.getAutor() + "', '" + tempQuelle.getTitel() + "', '" + tempQuelle.getJahr() + "')");
+                Datenbank.updateDatabase("INSERT INTO Quellen(Autor, Titel, Jahr) VALUES ('" + tempQuelle.getAutor() + "', '" + tempQuelle.getTitel() + "', '" + tempQuelle.getJahr() + "')"); //insert quelle in database
+                ResultSet rs = Datenbank.queryWithReturn("SELECT quellenId FROM Quellen WHERE titel = \"" + tempQuelle.getTitel() + "\"");
+                int quellenID = rs.getInt(1); //get quellenid for reference as foreign key
+                switch (tempQuelle.getUnterkategorie()) { //insert quelle in subcategory table
+                    case SC_NONE: break;
+                    case SC_ARTIKEL:
+                        Datenbank.updateDatabase("INSERT INTO Artikel(quellenID) VALUES ('" + quellenID + "')");
+                        break;
+                    case SC_BUECHER:
+                        Datenbank.updateDatabase("INSERT INTO Bücher(quellenID) VALUES ('" + quellenID + "')");
+                        break;
+                    case SC_OQUELLEN:
+                        Datenbank.updateDatabase("INSERT INTO Onlinequellen(quellenID) VALUES ('" + quellenID + "')");
+                        break;
+                    case SC_WARBEITEN:
+                        Datenbank.updateDatabase("INSERT INTO WissenschaftlicheArbeiten(quellenID) VALUES ('" + quellenID + "')");
+                        break;
+                    case SC_ANDERES:
+                        Datenbank.updateDatabase("INSERT INTO Anderes(quellenID) VALUES ('" + quellenID + "')");
+                        break;
+                }
                 mainApp.getQuellenList().add(tempQuelle);
             }
         } catch (Exception e) {
@@ -178,8 +202,10 @@ public class QuellenOverviewController {
                 //because the selected quelle was deleted we have to set the selection on the new quelle
                 this.quellenTable.getSelectionModel().select(index);
                 try {
-                    Datenbank.getInstance().updateQuery(selectedQuelle);
-                } catch (SQLException e) {
+                    SchnittstelleQuelle schnittstelleQuelle = new SchnittstelleQuelle();
+                    schnittstelleQuelle.updateQuery(selectedQuelle);
+                    //Datenbank.getInstance().updateQuery(selectedQuelle);
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
                 showQuellenDetails(selectedQuelle);
@@ -213,10 +239,6 @@ public class QuellenOverviewController {
         quellenTable.setItems(mainApp.getQuellenList());
     }
 
-	@FXML
-	private void handleShowBarChart() {
-	      mainApp.showBarChart();
-	}
 
 	@FXML
 	private void handleShowPieChart() {

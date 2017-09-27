@@ -42,4 +42,12 @@ public class DB_Constants {
     public static final String PS_GET_TAG_ID_CONNECTION = "SELECT tagId FROM TagsZitate WHERE zitatId = ?";
     public static final String PS_DELETE_TAG = "DELETE FROM Tags WHERE tagId = ?";
     public static final String PS_GET_TAG_ID_OF_ZITAT = "SELECT tagId FROM TagsZitate NATURAL JOIN Tags WHERE zitatId = ?";
+
+    //subcategories
+    public static final String SC_ARTIKEL = "Artikel";
+    public static final String SC_BUECHER = "Buch";
+    public static final String SC_WARBEITEN = "W. Arbeit";
+    public static final String SC_OQUELLEN = "Onlinequelle";
+    public static final String SC_ANDERES = "Andere";
+    public static final String SC_NONE = "<keine>";
 }
