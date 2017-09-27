@@ -20,7 +20,7 @@ public class TutorialController {
         // Handle Button event.
         Image image;
         if (nextClicks == 0) {
-            image = new Image(getClass().getResource("./resources/tut01.png").toExternalForm());
+            image = new Image(getClass().getResource("../resources/tut01.png").toExternalForm());
             myImage.setImage(image);
             this.nextClicks++;
         } //else if (nextClicks == 1) {
