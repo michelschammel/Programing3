@@ -12,6 +12,7 @@ import quellen.model.Datenbank;
 import quellen.model.Quelle;
 import quellen.model.Zitat;
 import quellen.model.Tag;
+import quellen.service.QuellenService;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -202,8 +203,8 @@ public class QuellenOverviewController {
                 //because the selected quelle was deleted we have to set the selection on the new quelle
                 this.quellenTable.getSelectionModel().select(index);
                 try {
-                    SchnittstelleQuelle schnittstelleQuelle = new SchnittstelleQuelle();
-                    schnittstelleQuelle.updateQuery(selectedQuelle);
+                    QuellenService quellenService = new QuellenService();
+                    quellenService.updateQuelle(selectedQuelle);
                     //Datenbank.getInstance().updateQuery(selectedQuelle);
                 } catch (Exception e) {
                     e.printStackTrace();

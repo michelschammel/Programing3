@@ -23,7 +23,6 @@ public class SchnittstelleQuelle {
         try (Connection connection = this.getConnection()){
             //Create a new Observablelist
             ObservableList<Quelle> quelleList = FXCollections.observableArrayList();
-            ObservableList<Zitat> zitatList = FXCollections.observableArrayList();
 
             //Step 1: Get all different types of quellen from the DB
             //First get all "anderes"
@@ -93,6 +92,17 @@ public class SchnittstelleQuelle {
                         rsQuellen.getString("herausgeber"),
                         rsQuellen.getString("hochschule"));
                 quelleList.add(wissenschaftlicheArbeit);
+            }
+
+            //get the leftover quelle
+            rsQuellen = statement.executeQuery(S_GET_QUELLEN);
+            Quelle LeftOverquelle;
+            while (rsQuellen.next()) {
+                LeftOverquelle = new Quelle(rsQuellen.getInt("quellenId"),
+                        rsQuellen.getString("titel"),
+                        rsQuellen.getString("autor"),
+                        rsQuellen.getString("jahr"));
+                quelleList.add(LeftOverquelle);
             }
 
             //Step 2: Get all Zitate of all quellen

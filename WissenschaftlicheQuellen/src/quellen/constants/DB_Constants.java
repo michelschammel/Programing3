@@ -17,6 +17,22 @@ public class DB_Constants {
     public static final String S_GET_BUECHER = "SELECT * FROM Quellen NATURAL JOIN Bücher";
     public static final String S_GET_ONLINEQUELLEN = "SELECT * FROM Quellen NATURAL JOIN Onlinequellen";
     public static final String S_GET_WISSENSCHAFTLICHE_ARBEITEN = "SELECT * FROM Quellen NATURAL JOIN WissenschaftlicheArbeiten";
+    public static final String S_GET_QUELLEN =  "select *\n" +
+            "from Quellen \n" +
+            "WHERE quellenID IN (select quelle.quellenId\n" +
+            "from (select Quellen.quellenId \n" +
+            "from Quellen Natural join Artikel) as artikel, \n" +
+            "(select Quellen.quellenId \n" +
+            "from Quellen Natural join Onlinequellen) as onlinequellen,\n" +
+            "(select Quellen.quellenId  \n" +
+            "from Quellen Natural join Anderes) as anderes,\n" +
+            "(select Quellen.quellenId \n" +
+            "from Quellen Natural join Bücher) as buch,\n" +
+            "(select Quellen.quellenId\n" +
+            "from Quellen Natural join WissenschaftlicheArbeiten) as wissenschaftlicheArbeiten,\n" +
+            "(select Quellen.quellenId \n" +
+            "from Quellen) as quelle\n" +
+            "where quelle.quellenId NOT IN (artikel.quellenId, onlinequellen.quellenId, anderes.quellenId, buch.quellenId, wissenschaftlicheArbeiten.quellenId))";
 
     //Prepared Statements to get all zitate of a quelle
     public static final String PS_GET_ZITATTE = "SELECT * FROM Zitate WHERE quellenId = ?";
