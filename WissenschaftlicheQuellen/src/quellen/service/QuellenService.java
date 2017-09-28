@@ -18,4 +18,12 @@ public class QuellenService {
     public void updateQuelle(Quelle quelle) {
         schnittstelleQuelle.updateQuery(quelle);
     }
+
+    public int insertNewQuelle(Quelle quelle) {
+        return schnittstelleQuelle.insertNewQuelle(quelle);
+    }
+
+    public void deleteQuelle(Quelle quelle) {
+        schnittstelleQuelle.deleteQuelle(quelle);
+    }
 }

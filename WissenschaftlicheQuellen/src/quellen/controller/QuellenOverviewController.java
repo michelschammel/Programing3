@@ -3,21 +3,14 @@ package quellen.controller;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
 import quellen.MainApp;
-import quellen.dao.SchnittstelleQuelle;
-import quellen.model.Datenbank;
 import quellen.model.Quelle;
 import quellen.model.Zitat;
 import quellen.model.Tag;
 import quellen.service.QuellenService;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
-import static quellen.constants.DB_Constants.*;
+import static quellen.constants.Controller_Constants.*;
 
 public class QuellenOverviewController {
     @FXML
@@ -145,8 +138,8 @@ public class QuellenOverviewController {
             tagTable.setItems(tagList);
         } else {
             // Person is null, remove all the text.
-            titelLabel.setText("");
-            autorLabel.setText("");
+            titelLabel.setText(LEERER_STRING);
+            autorLabel.setText(LEERER_STRING);
             //jahrLabel.setText("");
         }
     }
@@ -158,9 +151,11 @@ public class QuellenOverviewController {
     private void handleDeleteQuelle() {
         int selectedIndex = quellenTable.getSelectionModel().getSelectedIndex();
         if (selectedIndex >= 0) {
+            QuellenService quellenService = new QuellenService();
+            quellenService.deleteQuelle(quellenTable.getSelectionModel().getSelectedItem());
             quellenTable.getItems().remove(selectedIndex);
         } else {
-            nothingSelected("No Selection", "No Quelle Selected", "Please select a quelle in the table.");
+            nothingSelected(NICHTS_AUSGEWAEHLT, KEINE_QUELLE_AUSGEWAEHLT, BITTE_QUELLE_AUS_TABELLE);
         }
     }
 
@@ -170,32 +165,17 @@ public class QuellenOverviewController {
      */
     @FXML
     private void handleNewQuelle() {
-        Quelle tempQuelle = new Quelle("", "", "");
-        boolean okClicked = mainApp.showQuellenEditDialog(tempQuelle);
+        Quelle tempQuelle = new Quelle(LEERER_STRING, LEERER_STRING, LEERER_STRING);
+        boolean okClicked = mainApp.showQuellenEditDialog(tempQuelle, false, "Neue Quelle");
         try {
             if (okClicked) {
-                Datenbank.updateDatabase("INSERT INTO Quellen(Autor, Titel, Jahr) VALUES ('" + tempQuelle.getAutor() + "', '" + tempQuelle.getTitel() + "', '" + tempQuelle.getJahr() + "')"); //insert quelle in database
-                ResultSet rs = Datenbank.queryWithReturn("SELECT quellenId FROM Quellen WHERE titel = \"" + tempQuelle.getTitel() + "\"");
-                int quellenID = rs.getInt(1); //get quellenid for reference as foreign key
-                switch (tempQuelle.getUnterkategorie()) { //insert quelle in subcategory table
-                    case SC_NONE: break;
-                    case SC_ARTIKEL:
-                        Datenbank.updateDatabase("INSERT INTO Artikel(quellenID) VALUES ('" + quellenID + "')");
-                        break;
-                    case SC_BUECHER:
-                        Datenbank.updateDatabase("INSERT INTO Bücher(quellenID) VALUES ('" + quellenID + "')");
-                        break;
-                    case SC_OQUELLEN:
-                        Datenbank.updateDatabase("INSERT INTO Onlinequellen(quellenID) VALUES ('" + quellenID + "')");
-                        break;
-                    case SC_WARBEITEN:
-                        Datenbank.updateDatabase("INSERT INTO WissenschaftlicheArbeiten(quellenID) VALUES ('" + quellenID + "')");
-                        break;
-                    case SC_ANDERES:
-                        Datenbank.updateDatabase("INSERT INTO Anderes(quellenID) VALUES ('" + quellenID + "')");
-                        break;
-                }
-                mainApp.getQuellenList().add(tempQuelle);
+                //Get edited quelle
+                tempQuelle = this.mainApp.getUpdatedQuelle();
+                QuellenService quellenService = new QuellenService();
+                //Insert edited quelle into DB and return the id of quelle
+                tempQuelle.setId(quellenService.insertNewQuelle(tempQuelle));
+                //insert quelle into mainApp
+                this.mainApp.getQuellenList().add(tempQuelle);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -214,7 +194,7 @@ public class QuellenOverviewController {
         index = quellenTable.getSelectionModel().getSelectedIndex();
 
         if (selectedQuelle != null) {
-            boolean okClicked = mainApp.showQuellenEditDialog(selectedQuelle);
+            boolean okClicked = mainApp.showQuellenEditDialog(selectedQuelle, true, "Bearbeite Quelle");
             if (okClicked) {
                 //remove the old quelle
                 this.mainApp.getQuellenList().remove(selectedQuelle);
@@ -235,7 +215,7 @@ public class QuellenOverviewController {
             }
 
         } else {
-            nothingSelected("No Selection", "No Quelle Selected", "Please select a quelle in the table.");
+            nothingSelected(NICHTS_AUSGEWAEHLT, KEINE_QUELLE_AUSGEWAEHLT, BITTE_QUELLE_AUS_TABELLE);
         }
     }
 
@@ -282,7 +262,7 @@ public class QuellenOverviewController {
         String searchText = searchTextField.getText().toLowerCase();
         //if the text is empty throw a message
         if(searchText.isEmpty() || !searchTag && !searchSource && !searchQuote && !searchAuthor) {
-            nothingSelected("Error", "No search possible", "Nothing to search for");
+            nothingSelected(ERROR, KEINE_SUCHE_MOEGLICH, KEINE_EINGABE_ZUM_SUCHEN_MOEGLICH);
         } else {
             if (tmpList != null) {
                 quelleList = tmpList;

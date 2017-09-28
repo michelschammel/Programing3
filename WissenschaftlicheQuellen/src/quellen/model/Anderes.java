@@ -2,6 +2,7 @@ package quellen.model;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.collections.ObservableList;
 
 public class Anderes extends Quelle{
     private StringProperty herausgeber;
@@ -20,6 +21,14 @@ public class Anderes extends Quelle{
         this.herausgeber = new SimpleStringProperty(herausgeber);
         this.auflage = new SimpleStringProperty(auflage);
         this.ausgabe = new SimpleStringProperty(ausgabe);
+    }
+
+    public Anderes (int id, String titel, String autor, String jahr, String herausgeber, String auflage, String ausgabe, ObservableList<Zitat> zitatList) {
+        super (id, titel, autor, jahr);
+        this.herausgeber = new SimpleStringProperty(herausgeber);
+        this.auflage = new SimpleStringProperty(auflage);
+        this.ausgabe = new SimpleStringProperty(ausgabe);
+        super.setZitatListe(zitatList);
     }
 
     /**

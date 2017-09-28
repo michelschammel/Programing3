@@ -12,7 +12,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import quellen.dao.SchnittstelleQuelle;
 import quellen.model.*;
 import quellen.controller.QuellenEditDialogController;
 import quellen.controller.QuellenOverviewController;
@@ -105,7 +104,7 @@ public class MainApp extends Application {
      * @param quelle the quelle object to be edited
      * @return true if the user clicked OK, false otherwise.
      */
-    public boolean showQuellenEditDialog(Quelle quelle) {
+    public boolean showQuellenEditDialog(Quelle quelle, boolean editmode, String titel) {
         try {
             // Load the fxml file and create a new stage for the popup dialog.
             FXMLLoader loader = new FXMLLoader();
@@ -114,7 +113,7 @@ public class MainApp extends Application {
 
             // Create the dialog Stage.
             Stage dialogStage = new Stage();
-            dialogStage.setTitle("Edit Zitat");
+            dialogStage.setTitle(titel);
             dialogStage.initModality(Modality.WINDOW_MODAL);
             dialogStage.initOwner(primaryStage);
             Scene scene = new Scene(page);
@@ -125,6 +124,11 @@ public class MainApp extends Application {
             controller.setDialogStage(dialogStage);
             controller.setQuelle(quelle);
 
+            if (editmode) {
+                controller.disableSubCategory(true);
+            } else {
+                controller.setEditmode(false);
+            }
             //
 
             ObservableList<Zitat> zitatList = FXCollections.observableArrayList();

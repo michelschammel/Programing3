@@ -269,6 +269,7 @@ public class SchnittstelleQuelle {
                         e.printStackTrace();
                     }
                 });
+
                 //Update all Tags
                 quelle.getZitatList().forEach(zitat -> zitat.getTagList().forEach(tag -> {
 
@@ -401,13 +402,130 @@ public class SchnittstelleQuelle {
                 connection.setAutoCommit(true);
             } catch (SQLException e) {
                 try {
-                    System.out.println("rollback");
                     connection.rollback();
                 } catch (SQLException error) {
                     error.printStackTrace();
                 }
             }
         }catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public int insertNewQuelle(Quelle quelle) {
+        try (Connection connection = this.getConnection()){
+            connection.setAutoCommit(false);
+            ResultSet rsQuellenID;
+            PreparedStatement preparedStatementInsertQuelle = connection.prepareStatement(PS_INSERT_QUELLE);
+            preparedStatementInsertQuelle.setString(1, quelle.getAutor());
+            preparedStatementInsertQuelle.setString(2, quelle.getTitel());
+            preparedStatementInsertQuelle.setString(3, quelle.getJahr());
+            preparedStatementInsertQuelle.execute();
+            Statement statementGetQuellenId = connection.createStatement();
+            rsQuellenID = statementGetQuellenId.executeQuery(PS_GET_LAST_INSERTED_QUELLEN_ID);
+            rsQuellenID.next();
+            quelle.setId(rsQuellenID.getInt("seq"));
+
+            if (quelle instanceof Anderes) {
+                PreparedStatement preparedStatementInsertAnderes = connection.prepareStatement(PS_INSERT_ANDERES);
+                Anderes anderes = (Anderes)quelle;
+                preparedStatementInsertAnderes.setInt(1, anderes.getId());
+                preparedStatementInsertAnderes.setString(2, anderes.getAuflage());
+                preparedStatementInsertAnderes.setString(3, anderes.getHerausgeber());
+                preparedStatementInsertAnderes.setString(4, anderes.getAusgabe());
+                preparedStatementInsertAnderes.execute();
+
+            } else if (quelle instanceof  Artikel) {
+                PreparedStatement preparedStatementInsertArtikel = connection.prepareStatement(PS_INSERT_ARTIKEL);
+                Artikel artikel = (Artikel)quelle;
+                preparedStatementInsertArtikel.setInt(1, artikel.getId());
+                preparedStatementInsertArtikel.setString(2, artikel.getAusgabe());
+                preparedStatementInsertArtikel.setString(3, artikel.getMagazin());
+                preparedStatementInsertArtikel.execute();
+
+            } else if (quelle instanceof Buch) {
+                PreparedStatement preparedStatementInsertBuch = connection.prepareStatement(PS_INSERT_BUCH);
+                Buch buch = (Buch)quelle;
+                preparedStatementInsertBuch.setInt(1, buch.getId());
+                preparedStatementInsertBuch.setString(2, buch.getIsbn());
+                preparedStatementInsertBuch.setString(3, buch.getHerausgeber());
+                preparedStatementInsertBuch.setString(4, buch.getAuflage());
+                preparedStatementInsertBuch.setString(5, buch.getMonat());
+                preparedStatementInsertBuch.execute();
+
+            } else if (quelle instanceof  Onlinequelle) {
+                PreparedStatement preparedStatementInsertOnlinequelle = connection.prepareStatement(PS_INSERT_ONLINEQUELLE);
+                Onlinequelle onlinequelle = (Onlinequelle)quelle;
+                preparedStatementInsertOnlinequelle.setInt(1, onlinequelle.getId());
+                preparedStatementInsertOnlinequelle.setString(2, onlinequelle.getUrl());
+                preparedStatementInsertOnlinequelle.setString(3, onlinequelle.getAufrufdatum());
+                preparedStatementInsertOnlinequelle.execute();
+
+            } else if (quelle instanceof WissenschaftlicheArbeit) {
+                PreparedStatement preparedStatementInsertWArbeit = connection.prepareStatement(PS_INSERT_WISSENSCHAFTLICHE_ARBEIT);
+                WissenschaftlicheArbeit wissenschaftlicheArbeit = (WissenschaftlicheArbeit)quelle;
+                preparedStatementInsertWArbeit.setInt(1, wissenschaftlicheArbeit.getId());
+                preparedStatementInsertWArbeit.setString(2, wissenschaftlicheArbeit.getEinrichtung());
+                preparedStatementInsertWArbeit.setString(3, wissenschaftlicheArbeit.getHerausgeber());
+                preparedStatementInsertWArbeit.execute();
+            }
+            connection.commit();
+            connection.setAutoCommit(true);
+
+            quelle.getZitatList().forEach( zitat -> {
+                zitat.setQuellenId(quelle.getId());
+            });
+            //Update function inserts all zitate and tags
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        this.updateQuery(quelle);
+        return quelle.getId();
+    }
+
+    public void deleteQuelle(Quelle quelle) {
+        try (Connection connection = this.getConnection()) {
+            //delete zitatlist from quelle;
+            quelle.getZitatList().clear();
+            this.updateQuery(quelle);
+
+            //Delete quelle without zitat
+            connection.setAutoCommit(false);
+            PreparedStatement preparedStatementDeleteQuelle = connection.prepareStatement(PS_DELETE_QUELLE);
+            preparedStatementDeleteQuelle.setInt(1, quelle.getId());
+            preparedStatementDeleteQuelle.execute();
+
+            if (quelle instanceof Anderes) {
+                PreparedStatement preparedStatementDeleteAnderes = connection.prepareStatement(PS_DELETE_ANDERES);
+                preparedStatementDeleteAnderes.setInt(1, quelle.getId());
+                preparedStatementDeleteAnderes.execute();
+
+            } else if (quelle instanceof Artikel) {
+                PreparedStatement preparedStatementDeleteArtikel = connection.prepareStatement(PS_DELETE_ARTIKEL);
+                preparedStatementDeleteArtikel.setInt(1, quelle.getId());
+                preparedStatementDeleteArtikel.execute();
+
+            } else if (quelle instanceof Buch) {
+                PreparedStatement preparedStatementDeleteBuch = connection.prepareStatement(PS_DELETE_BUCH);
+                preparedStatementDeleteBuch.setInt(1, quelle.getId());
+                preparedStatementDeleteBuch.execute();
+
+            } else if (quelle instanceof Onlinequelle) {
+                PreparedStatement preparedStatementDeleteOnlineQuelle = connection.prepareStatement(PS_DELETE_ONLINEQUELLE);
+                preparedStatementDeleteOnlineQuelle.setInt(1, quelle.getId());
+                preparedStatementDeleteOnlineQuelle.execute();
+
+            } else if (quelle instanceof WissenschaftlicheArbeit) {
+                PreparedStatement preparedStatementWissenschaftlichArbeit = connection.prepareStatement(PS_DELETE_WARBEIT);
+                preparedStatementWissenschaftlichArbeit.setInt(1, quelle.getId());
+                preparedStatementWissenschaftlichArbeit.execute();
+
+            }
+            connection.commit();
+            connection.setAutoCommit(true);
+
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }

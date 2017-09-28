@@ -11,7 +11,6 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import quellen.model.*;
 
-import javax.tools.Tool;
 
 /**
  * Created by Cedric on 26.09.2017.

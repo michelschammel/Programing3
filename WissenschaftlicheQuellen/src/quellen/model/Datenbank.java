@@ -1,11 +1,6 @@
 package quellen.model;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import java.sql.*;
-import java.util.ArrayList;
-
-import static quellen.constants.DB_Constants.*;
 
 public class Datenbank {
 	

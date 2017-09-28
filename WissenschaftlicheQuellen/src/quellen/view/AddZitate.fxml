@@ -13,7 +13,7 @@
                 <TableColumn fx:id="zitatColumn" prefWidth="276.0" text="Zitate" />
             </columns>
         </TableView>
-        <Button layoutX="171.0" layoutY="14.0" mnemonicParsing="false" onAction="#search" prefHeight="25.0" prefWidth="52.0" text="Search" />
+        <Button layoutX="171.0" layoutY="14.0" mnemonicParsing="false" onAction="#search" prefHeight="25.0" prefWidth="52.0" text="Suche" />
         <TextField fx:id="searchField" layoutX="3.0" layoutY="14.0" prefHeight="25.0" prefWidth="165.0" />
         <Button layoutX="229.0" layoutY="14.0" mnemonicParsing="false" onAction="#reset" prefHeight="25.0" prefWidth="52.0" text="Reset" />
     </children>
