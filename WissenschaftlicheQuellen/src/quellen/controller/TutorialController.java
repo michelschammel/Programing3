@@ -7,7 +7,7 @@ import static quellen.constants.Controller_Constants.*;
 
 /**
  *
- * @Author Björn Schmidt
+ * @author Björn Schmidt
  */
 public class TutorialController {
 

@@ -22,9 +22,9 @@ import static quellen.constants.Controller_Constants.*;
 
 
 /**
- * @Author Björn Schmidt
- * @Author Michel Schammel
- * @Author Roman Berezin
+ * @author Björn Schmidt
+ * @author Michel Schammel
+ * @author Roman Berezin
  */
 public class MainApp extends Application {
 
