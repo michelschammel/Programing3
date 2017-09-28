@@ -21,6 +21,10 @@ public class TutorialController {
     private void handleButtonNextAction () {
         // Handle Button event.
         Image image;
+
+        if (buttonTest == false && nextClicks < 4) {
+            this.nextClicks++;
+        }
         this.buttonTest = true;
 
         switch (nextClicks) {
@@ -54,9 +58,11 @@ public class TutorialController {
             this.nextClicks--;
             this.buttonTest = false;
         }
+
         if (nextClicks > 1) {
             this.nextClicks--;
         }
+
 
         switch (nextClicks) {
             case TUT_01:
