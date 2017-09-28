@@ -4,7 +4,10 @@ package quellen.controller;
 import javafx.fxml.FXML;
 import quellen.MainApp;
 
-
+/**
+ * @author Bjloern Schmidt
+ * @author Roman Berezin
+ */
 public class RootLayoutController {
 
     // Reference to the main application
