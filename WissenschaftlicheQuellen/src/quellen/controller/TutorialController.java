@@ -75,19 +75,19 @@ public class TutorialController {
                 myImage.setImage(image);
                 this.nextClicks++;
                 break;
- /*           case TUT_08:
+            case TUT_08:
                 image = new Image(getClass().getResource("../resources/tut08.png").toExternalForm());
                 myImage.setImage(image);
                 this.nextClicks++;
                 break;
-            case TUT_09:
+ /*           case TUT_09:
                 image = new Image(getClass().getResource("../resources/tut09.png").toExternalForm());
                 myImage.setImage(image);
                 this.nextClicks++;
                 break;
    */         default:
                 this.buttonTest = false;
-                image = new Image(getClass().getResource("../resources/ende.png").toExternalForm());
+                image = new Image(getClass().getResource("../resources/tut.png").toExternalForm());
                 myImage.setImage(image);
         }
     }
@@ -136,16 +136,16 @@ public class TutorialController {
                 image = new Image(getClass().getResource("../resources/tut07.png").toExternalForm());
                 myImage.setImage(image);
                 break;
-   /*         case TUT_08:
+            case TUT_08:
                 image = new Image(getClass().getResource("../resources/tut08.png").toExternalForm());
                 myImage.setImage(image);
                 break;
-            case TUT_09:
+   /*         case TUT_09:
                 image = new Image(getClass().getResource("../resources/tut09.png").toExternalForm());
                 myImage.setImage(image);
                 break;
      */       default:
-                image = new Image(getClass().getResource("../resources/ende.png").toExternalForm());
+                image = new Image(getClass().getResource("../resources/tut.png").toExternalForm());
                 myImage.setImage(image);
         }
     }
