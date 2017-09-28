@@ -2,7 +2,7 @@ package quellen.constants;
 
 /**
  * Constants Class for all Selections/Updates/Deletes on the DB
- * @author Cedric Schreiner
+ * @author Cedric Schreiner, Roman Berezin
  */
 public class DB_Constants {
     //Prepared Statements to update a quelle
@@ -78,6 +78,10 @@ public class DB_Constants {
     public static final String SC_OQUELLEN = "Onlinequelle";
     public static final String SC_ANDERES = "Andere";
     public static final String SC_NONE = "<keine>";
+    public static final String SC_TAGS = "Tags";
+    public static final String SC_TAGSZITATE = "TagsZitate";
+    public static final String SC_ZITATE = "Zitate";
+    public static final String SC_QUELLEN = "Quellen";
 
     //Delete Quelle
     public static final String PS_DELETE_QUELLE = "DELETE FROM Quellen WHERE quellenId = ?";
