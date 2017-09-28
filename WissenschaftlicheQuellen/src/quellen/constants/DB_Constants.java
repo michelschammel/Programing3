@@ -72,4 +72,12 @@ public class DB_Constants {
     public static final String SC_OQUELLEN = "Onlinequelle";
     public static final String SC_ANDERES = "Andere";
     public static final String SC_NONE = "<keine>";
+
+    //Delete Quelle
+    public static final String PS_DELETE_QUELLE = "DELETE FROM Quellen WHERE quellenId = ?";
+    public static final String PS_DELETE_ANDERES = "DELETE FROM Anderes WHERE quellenId = ?";
+    public static final String PS_DELETE_ARTIKEL = "DELETE FROM Artikel WHERE quellenId = ?";
+    public static final String PS_DELETE_BUCH = "DELETE FROM Bücher WHERE quellenId = ?";
+    public static final String PS_DELETE_ONLINEQUELLE = "DELETE FROM Onlinequellen WHERE quellenId = ?";
+    public static final String PS_DELETE_WARBEIT = "DELETE FROM WissenschaftlicheArbeiten WHERE quellenId = ?";
 }

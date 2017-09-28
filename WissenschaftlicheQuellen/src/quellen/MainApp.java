@@ -12,7 +12,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import quellen.dao.SchnittstelleQuelle;
 import quellen.model.*;
 import quellen.controller.QuellenEditDialogController;
 import quellen.controller.QuellenOverviewController;
