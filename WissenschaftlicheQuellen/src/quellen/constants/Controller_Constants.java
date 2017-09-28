@@ -135,9 +135,12 @@ public class Controller_Constants {
     public static final int TUT_07 = 7;
     public static final int TUT_08 = 8;
     public static final int TUT_09 = 9;
+    public static final int TUT_10 = 10;
+    public static final int TUT_11 = 11;
+    public static final int TUT_12 = 12;
 
 
-    public static final int TUT_ANZAHL_PLUS_EINS = 10;
+    public static final int TUT_ANZAHL_PLUS_EINS = 13;
 
 
     public static final String PIC_TUT_01 = "../resources/tut01.png";
@@ -150,5 +153,7 @@ public class Controller_Constants {
     public static final String PIC_TUT_08 = "../resources/tut08.png";
     public static final String PIC_TUT_09 = "../resources/tut09.png";
     public static final String PIC_TUT_10 = "../resources/tut10.png";
+    public static final String PIC_TUT_11 = "../resources/tut11.png";
+    public static final String PIC_TUT_12 = "../resources/tut12.png";
     public static final String PIC_TUT = "../resources/tut.png";
 }

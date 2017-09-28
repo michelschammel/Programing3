@@ -73,12 +73,27 @@ public class TutorialController {
                 myImage.setImage(image);
                 this.nextClicks++;
                 break;
- /*           case TUT_09:
+            case TUT_09:
                 image = new Image(getClass().getResource(PIC_TUT_09).toExternalForm());
                 myImage.setImage(image);
                 this.nextClicks++;
                 break;
-   */         default:
+            case TUT_10:
+                image = new Image(getClass().getResource(PIC_TUT_10).toExternalForm());
+                myImage.setImage(image);
+                this.nextClicks++;
+                break;
+            case TUT_11:
+                image = new Image(getClass().getResource(PIC_TUT_11).toExternalForm());
+                myImage.setImage(image);
+                this.nextClicks++;
+                break;
+            case TUT_12:
+                image = new Image(getClass().getResource(PIC_TUT_12).toExternalForm());
+                myImage.setImage(image);
+                this.nextClicks++;
+                break;
+            default:
                 this.buttonTest = false;
                 image = new Image(getClass().getResource(PIC_TUT).toExternalForm());
                 myImage.setImage(image);
@@ -95,8 +110,6 @@ public class TutorialController {
         if (nextClicks > 1 && buttonTest == true) {
             this.nextClicks--;
             this.buttonTest = false;
-        } else if (nextClicks == TUT_ANZAHL_PLUS_EINS && buttonTest == false){
-            this.nextClicks--;
         }
 
         if (nextClicks > 1) {
@@ -137,11 +150,23 @@ public class TutorialController {
                 image = new Image(getClass().getResource(PIC_TUT_08).toExternalForm());
                 myImage.setImage(image);
                 break;
-   /*         case TUT_09:
+            case TUT_09:
                 image = new Image(getClass().getResource(PIC_TUT_09).toExternalForm());
                 myImage.setImage(image);
                 break;
-     */       default:
+            case TUT_10:
+                image = new Image(getClass().getResource(PIC_TUT_10).toExternalForm());
+                myImage.setImage(image);
+                break;
+            case TUT_11:
+                image = new Image(getClass().getResource(PIC_TUT_11).toExternalForm());
+                myImage.setImage(image);
+                break;
+            case TUT_12:
+                image = new Image(getClass().getResource(PIC_TUT_12).toExternalForm());
+                myImage.setImage(image);
+                break;
+            default:
                 image = new Image(getClass().getResource(PIC_TUT).toExternalForm());
                 myImage.setImage(image);
         }
