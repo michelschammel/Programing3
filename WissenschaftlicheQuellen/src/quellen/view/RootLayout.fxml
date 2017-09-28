@@ -11,7 +11,7 @@
         <menus>
           <Menu mnemonicParsing="false" text="Statistiken">
             <items>
-              <MenuItem mnemonicParsing="false" onAction="#handleShowPieChart" text="Kuchen Diagramm" />
+              <MenuItem mnemonicParsing="false" onAction="#handleShowPieChart" text="Kuchendiagramm" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Hilfe">

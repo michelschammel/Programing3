@@ -114,5 +114,46 @@ public class PieChartController {
 		pieChart.setData(pieChartData);
 	}
 
+	@FXML
+	private void setStats4() throws SQLException{
+	    //initialize connection to database
+	    db = Datenbank.getInstance();
+	    ResultSet result = db.queryWithReturn(PIECHART_STAT_5);
+	    int[] werkeInZeiten = {0,0,0,0,0};
+
+	    //query data
+	    while (result.next()) {
+	        String tempObject = result.getString(1);
+	        try {
+                int date = Integer.parseInt(tempObject);
+                if (date < 1900) {
+                    werkeInZeiten[0]++;
+                } else if (date >= 1900 && date < 2000) {
+                    werkeInZeiten[1]++;
+                } else if (date >= 2000 && date < 2100) {
+                    werkeInZeiten[2]++;
+                } else if (date >= 2100) {
+                    werkeInZeiten[3]++;
+                }
+            }catch (Exception e) {
+                werkeInZeiten[4]++;
+            }
+
+        }
+        result.close();
+
+	    //write data to piechart
+        pieChartData = FXCollections.observableArrayList(
+                new PieChart.Data("vor 1900", werkeInZeiten[0]),
+                new PieChart.Data("20. Jh", werkeInZeiten[1]),
+                new PieChart.Data("21. Jh", werkeInZeiten[2]),
+                new PieChart.Data("aus der Zukunft", werkeInZeiten[3]),
+                new PieChart.Data("nicht bekannt", werkeInZeiten[4])
+        );
+        pieChart.setData(pieChartData);
+
+
+    }
+
 
 }
