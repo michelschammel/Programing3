@@ -172,12 +172,9 @@ public class MainApp extends Application {
     public ObservableList<Quelle> getQuellenList() {
         return this.quellenData;
     }
-    /**
-     * Search for Tag/Author/Source/Quote
-     *
-     */
-    public void search(String searchText, boolean searchAuthor, boolean searchTag, boolean searchSource, boolean searchQuote) {
 
+    public void setQuellenList(ObservableList<Quelle> quellenData) {
+        this.quellenData = quellenData;
     }
 
     public void showPieChart() {

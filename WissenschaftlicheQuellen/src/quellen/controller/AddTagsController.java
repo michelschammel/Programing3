@@ -1,11 +1,13 @@
 package quellen.controller;
 
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import quellen.model.*;
 
@@ -14,9 +16,13 @@ public class AddTagsController {
     private TableView<Tag> tagTable;
     @FXML
     private TableColumn<Tag, String> tagColumn;
+    @FXML
+    private TextField searchField;
 
     private ObservableList<Tag> tagList;
     private Zitat zitat;
+    private ObservableList<Tag> searchTagList;
+    private ObservableList<Tag> tmpList;
 
     @FXML
     private void initialize() {
@@ -60,6 +66,27 @@ public class AddTagsController {
         if (tag != null) {
             tagTable.setItems(tagList);
         }
+    }
+
+    public void search() {
+        if (tmpList != null) {
+            tagList = tmpList;
+        }
+        this.searchTagList = FXCollections.observableArrayList();
+        String searchText = this.searchField.getText().toLowerCase();
+        this.tagList.forEach(tag -> {
+            if (tag.getText().toLowerCase().contains(searchText)) {
+                this.searchTagList.add(tag);
+            }
+        });
+        tmpList = tagList;
+        tagList = searchTagList;
+        this.tagTable.setItems(this.tagList);
+    }
+
+    public void reset() {
+        this.tagList = tmpList;
+        this.tagTable.setItems(this.tagList);
     }
 
     public void addTag() {

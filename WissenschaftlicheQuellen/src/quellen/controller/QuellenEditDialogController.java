@@ -102,8 +102,21 @@ public class QuellenEditDialogController {
                 ((observable, oldValue, newValue) -> adjustNewDialog(newValue))
         );
 
+        //Set Rowfactory for zitatTable
+        this.zitatTable.setRowFactory(tv -> {
+            TableRow<Zitat> row = new TableRow<>();
 
-
+            row.hoverProperty().addListener((observable) -> {
+                final Zitat zitat = row.getItem();
+                if (row.isHover() && zitat != null) {
+                    Tooltip zitatToolTip = new Tooltip(zitat.getText());
+                    zitatToolTip.setWrapText(true);
+                    zitatToolTip.setMaxWidth(160);
+                    row.setTooltip(zitatToolTip);
+                }
+            });
+            return row;
+        });
     }
 
 
@@ -137,6 +150,7 @@ public class QuellenEditDialogController {
 
             //add the contextmenu to the table
             this.tagTable.setContextMenu(contextMenu);
+
 
             //add eventlistener for all menuitems
             newTagItem.setOnAction(new EventHandler<ActionEvent>() {

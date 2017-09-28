@@ -55,6 +55,9 @@ public class QuellenOverviewController {
 
     // Reference to the main application.
     private MainApp mainApp;
+    private ObservableList<Quelle> tmpList;
+    private ObservableList<Quelle> searchQuelleList;
+    private ObservableList<Quelle> quelleList;
 
     /**
      * The constructor.
@@ -84,6 +87,24 @@ public class QuellenOverviewController {
         quellenTable.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> showQuellenDetails(newValue));
 
+        //Set Rowfactory for zitatTable
+        this.zitatTable.setRowFactory(tv -> {
+            TableRow<Zitat> row = new TableRow<>();
+
+            row.hoverProperty().addListener((observable) -> {
+                final Zitat zitat = row.getItem();
+                if (row.isHover() && zitat != null) {
+                    Tooltip zitatToolTip = new Tooltip(zitat.getText());
+                    zitatToolTip.setWrapText(true);
+                    zitatToolTip.setMaxWidth(160);
+                    row.setTooltip(zitatToolTip);
+                }
+            });
+            return row;
+        });
+
+        //initialize lists
+        searchQuelleList = FXCollections.observableArrayList();
     }
 
     /**
@@ -200,6 +221,7 @@ public class QuellenOverviewController {
                 selectedQuelle =  mainApp.getUpdatedQuelle();
                 //add the edited version into table
                 this.mainApp.getQuellenList().add(index, selectedQuelle);
+                this.quellenTable.setItems(this.mainApp.getQuellenList());
                 //because the selected quelle was deleted we have to set the selection on the new quelle
                 this.quellenTable.getSelectionModel().select(index);
                 try {
@@ -235,7 +257,7 @@ public class QuellenOverviewController {
      */
     public void setMainApp(MainApp mainApp) {
         this.mainApp = mainApp;
-
+        quelleList = mainApp.getQuellenList();
         // Add observable list data to the quellen table.
         quellenTable.setItems(mainApp.getQuellenList());
     }
@@ -257,15 +279,70 @@ public class QuellenOverviewController {
         boolean searchQuote = checkBoxQuote.isSelected();
         boolean searchTag = checkBoxTag.isSelected();
         //Get the text to search for
-        String searchText = searchTextField.getCharacters().toString();
+        String searchText = searchTextField.getText().toLowerCase();
         //if the text is empty throw a message
-        if(searchText.isEmpty()) {
-            nothingSelected("No Search Text", "No search possible", "Please enter a text to search for");
+        if(searchText.isEmpty() || !searchTag && !searchSource && !searchQuote && !searchAuthor) {
+            nothingSelected("Error", "No search possible", "Nothing to search for");
         } else {
-            this.mainApp.search(searchText, searchAuthor, searchTag, searchSource, searchQuote);
+            if (tmpList != null) {
+                quelleList = tmpList;
+            }
+            this.searchQuelleList = FXCollections.observableArrayList();
+            mainApp.getQuellenList().forEach( quelle -> {
+                Boolean addQuelle = false;
+                if (searchAuthor) {
+                    if (quelle.getAutor().toLowerCase().contains(searchText)) {
+                        //Add to list
+                        addQuelle = true;
+                    }
+                }
+
+                if (searchSource && !addQuelle) {
+                    if (quelle.getTitel().toLowerCase().contains(searchText)) {
+                        addQuelle = true;
+                    }
+                }
+
+                if (searchQuote && !addQuelle) {
+                    for (int i = 0; i < quelle.getZitatList().size(); i++) {
+                        if (quelle.getZitatList().get(i).getText().toLowerCase().contains(searchText)) {
+                            addQuelle = true;
+                            //quelle contains a zitat that fits the search criteria so we dont need
+                            //to search any further
+                            break;
+                        }
+                    }
+                }
+
+                if (searchTag && !addQuelle) {
+                    for (int i = 0; i < quelle.getZitatList().size(); i++) {
+                        for (int j = 0; j < quelle.getZitatList().get(i).getTagList().size(); j++) {
+                            if (quelle.getZitatList().get(i).getTagList().get(j).getText().toLowerCase().contains(searchText)) {
+                                addQuelle = true;
+                                break;
+                            }
+                        }
+                        if (addQuelle) {
+                            break;
+                        }
+                    }
+                }
+
+                if(addQuelle) {
+                    searchQuelleList.add(quelle);
+                }
+            });
+            tmpList = quelleList;
+            quelleList = searchQuelleList;
+            this.quellenTable.setItems(quelleList);
+            this.quellenTable.getSelectionModel().select(0);
         }
     }
 
+    public void reset() {
+        this.quelleList = tmpList;
+        this.quellenTable.setItems(this.quelleList);
+    }
 
 }
 
