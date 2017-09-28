@@ -28,7 +28,7 @@ public class TutorialController {
         // Handle Button event.
         Image image;
 
-        if (buttonTest == false && nextClicks < TUT_ANZAHL_PLUS_EINS) {
+        if (!buttonTest && nextClicks < TUT_ANZAHL_PLUS_EINS) {
             this.nextClicks++;
         }
         this.buttonTest = true;
@@ -107,7 +107,7 @@ public class TutorialController {
     private void handleButtonBackAction () {
         Image image;
 
-        if (nextClicks > 1 && buttonTest == true) {
+        if (nextClicks > 1 && buttonTest) {
             this.nextClicks--;
             this.buttonTest = false;
         }

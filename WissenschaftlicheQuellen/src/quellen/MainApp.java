@@ -18,6 +18,9 @@ import quellen.controller.QuellenOverviewController;
 import quellen.controller.RootLayoutController;
 import quellen.service.QuellenService;
 
+/**
+ * @author Cedric Schreiner
+ */
 public class MainApp extends Application {
 
     private Stage primaryStage;

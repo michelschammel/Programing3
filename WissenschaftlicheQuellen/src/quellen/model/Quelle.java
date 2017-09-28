@@ -7,7 +7,7 @@ import javafx.collections.ObservableList;
 
 /**
  * Model class for a Zitat.
- *
+ * @author Cedric Schreiner
  */
 public class Quelle {
 

@@ -3,7 +3,7 @@ package quellen.constants;
 
 /**
  * Enthaelt Kontanten, die in den Controllern vorkommen
- * @Author Bjoern Schmidt
+ * @author Bjoern Schmidt, Cedric Schreiner
  */
 public class Controller_Constants {
 

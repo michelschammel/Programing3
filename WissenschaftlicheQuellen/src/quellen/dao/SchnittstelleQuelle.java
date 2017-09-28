@@ -9,14 +9,24 @@ import java.util.ArrayList;
 
 import static quellen.constants.DB_Constants.*;
 
+/**
+ * @author Cedric Schreiner
+ */
 public class SchnittstelleQuelle {
-
+    /**
+     * get a connection to the DB
+     * @return connection
+     */
     private Connection getConnection() {
         ConnectionKlasse con = new ConnectionKlasse();
 
         return con.getConnection();
     }
 
+    /**
+     * get All Quellen from the DB
+     * @return all quellen as ObservableList
+     */
     public ObservableList<Quelle> getQuellenFromDataBase() {
         ResultSet rsQuellen;
 
@@ -412,10 +422,16 @@ public class SchnittstelleQuelle {
         }
     }
 
+    /**
+     * Insert a new Quelle
+     * @param quelle
+     * @return
+     */
     public int insertNewQuelle(Quelle quelle) {
         try (Connection connection = this.getConnection()){
             connection.setAutoCommit(false);
             ResultSet rsQuellenID;
+            //Insert the standard attributes of Quelle (Author, Titel, Year)
             PreparedStatement preparedStatementInsertQuelle = connection.prepareStatement(PS_INSERT_QUELLE);
             preparedStatementInsertQuelle.setString(1, quelle.getAutor());
             preparedStatementInsertQuelle.setString(2, quelle.getTitel());
@@ -426,6 +442,7 @@ public class SchnittstelleQuelle {
             rsQuellenID.next();
             quelle.setId(rsQuellenID.getInt("seq"));
 
+            //Check what instance quelle is an insert the leftover attributes
             if (quelle instanceof Anderes) {
                 PreparedStatement preparedStatementInsertAnderes = connection.prepareStatement(PS_INSERT_ANDERES);
                 Anderes anderes = (Anderes)quelle;
@@ -480,10 +497,16 @@ public class SchnittstelleQuelle {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        //Just send the quelle to the update function
+        //this Method then inserts Zitate and Tags
         this.updateQuery(quelle);
         return quelle.getId();
     }
 
+    /**
+     * Delete quelle from DB
+     * @param quelle quelle to delete
+     */
     public void deleteQuelle(Quelle quelle) {
         try (Connection connection = this.getConnection()) {
             //delete zitatlist from quelle;
