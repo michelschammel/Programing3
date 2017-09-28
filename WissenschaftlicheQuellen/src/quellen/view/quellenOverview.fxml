@@ -30,7 +30,7 @@
                   <CheckBox fx:id="checkBoxAuthor" layoutX="75.0" layoutY="42.0" mnemonicParsing="false" text="Autor" />
                   <CheckBox fx:id="checkBoxSource" layoutX="144.0" layoutY="42.0" mnemonicParsing="false" text="Quelle" />
                   <CheckBox fx:id="checkBoxQuote" layoutX="224.0" layoutY="42.0" mnemonicParsing="false" text="Zitat" />
-                  <Button layoutX="188.0" layoutY="9.0" mnemonicParsing="false" onAction="#handleSearch" text="Search" />
+                  <Button layoutX="188.0" layoutY="9.0" mnemonicParsing="false" onAction="#handleSearch" text="Suche" />
                   <Button layoutX="250.0" layoutY="9.0" mnemonicParsing="false" onAction="#reset" text="Reset" />
                </children>
             </AnchorPane>
@@ -39,16 +39,16 @@
                   <Label layoutX="14.0" layoutY="14.0" text="Zitate aus" />
                   <ButtonBar layoutX="253.0" layoutY="424.0" prefHeight="40.0" prefWidth="200.0">
                     <buttons>
-                        <Button mnemonicParsing="false" onAction="#handleNewQuelle" text="New..." />
-                        <Button mnemonicParsing="false" onAction="#handleEditQuelle" text="Edit..." />
-                      <Button mnemonicParsing="false" onAction="#handleDeleteQuelle" text="Delete" />
+                        <Button mnemonicParsing="false" onAction="#handleNewQuelle" text="Neu..." />
+                        <Button mnemonicParsing="false" onAction="#handleEditQuelle" text="Bearbeiten..." />
+                      <Button mnemonicParsing="false" onAction="#handleDeleteQuelle" text="Löschen" />
                     </buttons>
                   </ButtonBar>
                   <Label fx:id="titelLabel" layoutX="85.0" layoutY="14.0" text="Quelle" />
                   <Label fx:id="autorLabel" layoutX="84.0" layoutY="36.0" text="Autor" />
                   <Label layoutX="51.0" layoutY="36.0" text="von" />
                   <TableView fx:id="zitatTable" layoutX="23.0" layoutY="69.0" prefHeight="348.0" prefWidth="494.0">
-                      <placeholder><Label>No Source selected</Label></placeholder>
+                      <placeholder><Label>Keine Quelle ausgewählt</Label></placeholder>
                     <columns>
                       <TableColumn fx:id="zitatColumn" minWidth="-1.0" prefWidth="492.0" resizable="false" />
                     </columns>
@@ -58,7 +58,7 @@
             <AnchorPane maxWidth="527.0" minWidth="210.0" prefHeight="478.0" prefWidth="250.0" SplitPane.resizableWithParent="false">
                <children>
                   <TableView fx:id="tagTable" prefHeight="478.0" prefWidth="210.0">
-                      <placeholder><Label>No Tags found</Label></placeholder>
+                      <placeholder><Label>Keine Tags gefunden</Label></placeholder>
                     <columns>
                       <TableColumn fx:id="tagColumn" minWidth="30.0" prefWidth="209.0" text="Tags" />
                     </columns>
