@@ -93,6 +93,21 @@ public class TutorialController {
                 myImage.setImage(image);
                 this.nextClicks++;
                 break;
+            case TUT_13:
+                image = new Image(getClass().getResource(PIC_TUT_13).toExternalForm());
+                myImage.setImage(image);
+                this.nextClicks++;
+                break;
+            case TUT_14:
+                image = new Image(getClass().getResource(PIC_TUT_14).toExternalForm());
+                myImage.setImage(image);
+                this.nextClicks++;
+                break;
+            case TUT_15:
+                image = new Image(getClass().getResource(PIC_TUT_15).toExternalForm());
+                myImage.setImage(image);
+                this.nextClicks++;
+                break;
             default:
                 this.buttonTest = false;
                 image = new Image(getClass().getResource(PIC_TUT).toExternalForm());
@@ -164,6 +179,18 @@ public class TutorialController {
                 break;
             case TUT_12:
                 image = new Image(getClass().getResource(PIC_TUT_12).toExternalForm());
+                myImage.setImage(image);
+                break;
+            case TUT_13:
+                image = new Image(getClass().getResource(PIC_TUT_13).toExternalForm());
+                myImage.setImage(image);
+                break;
+            case TUT_14:
+                image = new Image(getClass().getResource(PIC_TUT_14).toExternalForm());
+                myImage.setImage(image);
+                break;
+            case TUT_15:
+                image = new Image(getClass().getResource(PIC_TUT_15).toExternalForm());
                 myImage.setImage(image);
                 break;
             default:
