@@ -1,3 +1,4 @@
 *.project
 WissenschaftlicheQuellen/.classpath
 .classpath
+WissenschaftlicheQuellen/bin/DBconfig.properties
