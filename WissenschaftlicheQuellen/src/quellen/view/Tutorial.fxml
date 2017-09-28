@@ -21,8 +21,8 @@
                <image>
                   <Image url="@../resources/tut01.png" />
                </image></ImageView>
-            <Button layoutX="664.0" layoutY="457.0" mnemonicParsing="false" onAction="#handleButtonNextAction" text="Next" textAlignment="CENTER" />
-            <Button layoutX="616.0" layoutY="457.0" mnemonicParsing="false" onAction="#handleButtonBackAction" text="Back" />
+            <Button layoutX="663.0" layoutY="457.0" mnemonicParsing="false" onAction="#handleButtonNextAction" text="Weiter" textAlignment="CENTER" />
+            <Button layoutX="603.0" layoutY="457.0" mnemonicParsing="false" onAction="#handleButtonBackAction" text="Zurück" />
          </children>
       </Pane>
    </children>
