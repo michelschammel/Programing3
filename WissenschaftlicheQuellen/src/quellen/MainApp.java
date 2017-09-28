@@ -172,12 +172,9 @@ public class MainApp extends Application {
     public ObservableList<Quelle> getQuellenList() {
         return this.quellenData;
     }
-    /**
-     * Search for Tag/Author/Source/Quote
-     *
-     */
-    public void search(String searchText, boolean searchAuthor, boolean searchTag, boolean searchSource, boolean searchQuote) {
 
+    public void setQuellenList(ObservableList<Quelle> quellenData) {
+        this.quellenData = quellenData;
     }
 
     public void showPieChart() {
@@ -246,30 +243,5 @@ public class MainApp extends Application {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-    public void openPDF() {
-        /*
-
-
-        try {
-            // Load the fxml file and create a new stage for the popup.
-            FXMLLoader loader = new FXMLLoader();
-
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
     }
 }

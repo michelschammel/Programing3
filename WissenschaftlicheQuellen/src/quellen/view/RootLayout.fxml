@@ -9,22 +9,15 @@
    <top>
       <MenuBar BorderPane.alignment="CENTER">
         <menus>
-          <Menu mnemonicParsing="false" text="File">
+          <Menu mnemonicParsing="false" text="Statistiken">
             <items>
-                  <MenuItem mnemonicParsing="false" text="Open" />
-              <MenuItem mnemonicParsing="false" text="Close" />
-                  <MenuItem mnemonicParsing="false" onAction="#handlePDFOpen" text="Open PDF" />
+              <MenuItem mnemonicParsing="false" onAction="#handleShowPieChart" text="Kuchen Diagramm" />
             </items>
           </Menu>
-          <Menu mnemonicParsing="false" text="Statistics">
-            <items>
-              <MenuItem mnemonicParsing="false" onAction="#handleShowPieChart" text="PieChart" />
-            </items>
-          </Menu>
-          <Menu mnemonicParsing="false" text="Help">
+          <Menu mnemonicParsing="false" text="Hilfe">
             <items>
                   <MenuItem mnemonicParsing="false" onAction="#handleShowTutorial" text="Tutorial" />
-              <MenuItem mnemonicParsing="false" onAction="#handleShowAbout" text="About" />
+              <MenuItem mnemonicParsing="false" onAction="#handleShowAbout" text="Über..." />
             </items>
           </Menu>
         </menus>

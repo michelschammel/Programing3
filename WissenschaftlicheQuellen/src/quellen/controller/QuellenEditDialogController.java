@@ -17,8 +17,6 @@ import javafx.scene.layout.RowConstraints;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import quellen.MainApp;
-import quellen.controller.AddTagsController;
-import quellen.controller.AddZitateController;
 import quellen.model.*;
 import java.io.IOException;
 
@@ -104,8 +102,21 @@ public class QuellenEditDialogController {
                 ((observable, oldValue, newValue) -> adjustNewDialog(newValue))
         );
 
+        //Set Rowfactory for zitatTable
+        this.zitatTable.setRowFactory(tv -> {
+            TableRow<Zitat> row = new TableRow<>();
 
-
+            row.hoverProperty().addListener((observable) -> {
+                final Zitat zitat = row.getItem();
+                if (row.isHover() && zitat != null) {
+                    Tooltip zitatToolTip = new Tooltip(zitat.getText());
+                    zitatToolTip.setWrapText(true);
+                    zitatToolTip.setMaxWidth(160);
+                    row.setTooltip(zitatToolTip);
+                }
+            });
+            return row;
+        });
     }
 
 
@@ -140,6 +151,7 @@ public class QuellenEditDialogController {
             //add the contextmenu to the table
             this.tagTable.setContextMenu(contextMenu);
 
+
             //add eventlistener for all menuitems
             newTagItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -149,8 +161,10 @@ public class QuellenEditDialogController {
                         //2. get the selected itemindex of zitattable
                         //3. get the taglist of the selected zitat
                         //4. add a new tag to the zitat
-                        quelleEdited.getZitatList().get(zitatTable.getSelectionModel().getSelectedIndex()).getTagList().add(new Tag("new"));
-                        zitatList = quelleEdited.getZitatList();
+                        Tag tag = new Tag("neu");
+                        quelleEdited.getZitatList().get(zitatTable.getSelectionModel().getSelectedIndex()).getTagList().add(tag);
+                        //zitatList = quelleEdited.getZitatList();
+                        //zitatList.get(zitatTable.getSelectionModel().getSelectedIndex()).getTagList().add(tag);
                     }
                 }
             });
@@ -254,20 +268,22 @@ public class QuellenEditDialogController {
                     AnchorPane page = (AnchorPane) loader.load();
 
                     // Create the addTag Stage.
-                    Stage addTagStage = new Stage();
-                    addTagStage.setTitle("Add Zitat");
-                    addTagStage.initModality(Modality.WINDOW_MODAL);
+                    Stage addZitatStage = new Stage();
+                    addZitatStage.setTitle("Add Zitat");
+                    addZitatStage.initModality(Modality.WINDOW_MODAL);
                     Scene scene = new Scene(page);
-                    addTagStage.setScene(scene);
-                    addTagStage.initOwner(dialogStage);
+                    addZitatStage.setScene(scene);
+                    addZitatStage.initOwner(dialogStage);
+                    addZitatStage.setResizable(false);
 
                     // Set the quelle into the controller.
                     AddZitateController controller = loader.getController();
                     controller.setZitatList(zitatList);
                     controller.setQuelle(quelleEdited);
+                    controller.setStage(addZitatStage);
 
                     // Show the dialog and wait until the user closes it
-                    addTagStage.showAndWait();
+                    addZitatStage.showAndWait();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -370,7 +386,7 @@ public class QuellenEditDialogController {
     }
 
     /**
-     * Adds ne content to the GridPane
+     * Adds new content to the GridPane
      * @param constraints RowConstraint to add for the new Row
      * @param label Label to add
      * @param textField TextField to add

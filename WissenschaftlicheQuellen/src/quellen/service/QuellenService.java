@@ -14,4 +14,8 @@ public class QuellenService {
     public ObservableList<Quelle> getQuellenDataFromDB() {
         return schnittstelleQuelle.getQuellenFromDataBase();
     }
+
+    public void updateQuelle(Quelle quelle) {
+        schnittstelleQuelle.updateQuery(quelle);
+    }
 }
