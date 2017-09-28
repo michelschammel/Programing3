@@ -3,6 +3,8 @@ package quellen.controller;
 import javafx.fxml.FXML;
 import javafx.scene.image.*;
 
+import static quellen.constants.Controller_Constants.*;
+
 /**
  *
  * @Author Björn Schmidt
@@ -14,22 +16,13 @@ public class TutorialController {
 
     private int nextClicks = 1;
     private boolean buttonTest = true;
-    private static final int TUT_01 = 1;
-    private static final int TUT_02 = 2;
-    private static final int TUT_03 = 3;
-    private static final int TUT_04 = 4;
-    private static final int TUT_05 = 5;
-    private static final int TUT_06 = 6;
-    private static final int TUT_07 = 7;
-    private static final int TUT_08 = 8;
-    private static final int TUT_09 = 9;
-
-
-    private static final int TUT_ANZAHL_PLUS_EINS = 10;
 
 
 
 
+    /**
+     * Verwaltet die Tutorialbilder, damit sie beim "weiter" klicken in der richtigen Reihenfolge auftauchen.
+     */
     @FXML
     private void handleButtonNextAction () {
         // Handle Button event.
@@ -42,57 +35,59 @@ public class TutorialController {
 
         switch (nextClicks) {
             case TUT_01:
-                image = new Image(getClass().getResource("../resources/tut01.png").toExternalForm());
+                image = new Image(getClass().getResource(PIC_TUT_01).toExternalForm());
                 myImage.setImage(image);
                 this.nextClicks++;
             case TUT_02:
-                image = new Image(getClass().getResource("../resources/tut02.png").toExternalForm());
+                image = new Image(getClass().getResource(PIC_TUT_02).toExternalForm());
                 myImage.setImage(image);
                 this.nextClicks++;
                 break;
             case TUT_03:
-                image = new Image(getClass().getResource("../resources/tut03.png").toExternalForm());
+                image = new Image(getClass().getResource(PIC_TUT_03).toExternalForm());
                 myImage.setImage(image);
                 this.nextClicks++;
                 break;
             case TUT_04:
-                image = new Image(getClass().getResource("../resources/tut04.png").toExternalForm());
+                image = new Image(getClass().getResource(PIC_TUT_04).toExternalForm());
                 myImage.setImage(image);
                 this.nextClicks++;
                 break;
             case TUT_05:
-                image = new Image(getClass().getResource("../resources/tut05.png").toExternalForm());
+                image = new Image(getClass().getResource(PIC_TUT_05).toExternalForm());
                 myImage.setImage(image);
                 this.nextClicks++;
                 break;
             case TUT_06:
-                image = new Image(getClass().getResource("../resources/tut06.png").toExternalForm());
+                image = new Image(getClass().getResource(PIC_TUT_06).toExternalForm());
                 myImage.setImage(image);
                 this.nextClicks++;
                 break;
             case TUT_07:
-                image = new Image(getClass().getResource("../resources/tut07.png").toExternalForm());
+                image = new Image(getClass().getResource(PIC_TUT_07).toExternalForm());
                 myImage.setImage(image);
                 this.nextClicks++;
                 break;
- /*           case TUT_08:
-                image = new Image(getClass().getResource("../resources/tut08.png").toExternalForm());
+            case TUT_08:
+                image = new Image(getClass().getResource(PIC_TUT_08).toExternalForm());
                 myImage.setImage(image);
                 this.nextClicks++;
                 break;
-            case TUT_09:
-                image = new Image(getClass().getResource("../resources/tut09.png").toExternalForm());
+ /*           case TUT_09:
+                image = new Image(getClass().getResource(PIC_TUT_09).toExternalForm());
                 myImage.setImage(image);
                 this.nextClicks++;
                 break;
    */         default:
                 this.buttonTest = false;
-                image = new Image(getClass().getResource("../resources/ende.png").toExternalForm());
+                image = new Image(getClass().getResource(PIC_TUT).toExternalForm());
                 myImage.setImage(image);
         }
     }
 
-
+    /**
+     * Verwaltet die Tutorialbilder, damit sie beim "zurueck" klicken in der richtigen Reihenfolge auftauchen.
+     */
     @FXML
     private void handleButtonBackAction () {
         Image image;
@@ -100,6 +95,8 @@ public class TutorialController {
         if (nextClicks > 1 && buttonTest == true) {
             this.nextClicks--;
             this.buttonTest = false;
+        } else if (nextClicks == TUT_ANZAHL_PLUS_EINS && buttonTest == false){
+            this.nextClicks--;
         }
 
         if (nextClicks > 1) {
@@ -109,43 +106,43 @@ public class TutorialController {
 
         switch (nextClicks) {
             case TUT_01:
-                image = new Image(getClass().getResource("../resources/tut01.png").toExternalForm());
+                image = new Image(getClass().getResource(PIC_TUT_01).toExternalForm());
                 myImage.setImage(image);
                 break;
             case TUT_02:
-                image = new Image(getClass().getResource("../resources/tut02.png").toExternalForm());
+                image = new Image(getClass().getResource(PIC_TUT_02).toExternalForm());
                 myImage.setImage(image);
                 break;
             case TUT_03:
-                image = new Image(getClass().getResource("../resources/tut03.png").toExternalForm());
+                image = new Image(getClass().getResource(PIC_TUT_03).toExternalForm());
                 myImage.setImage(image);
                 break;
             case TUT_04:
-                image = new Image(getClass().getResource("../resources/tut04.png").toExternalForm());
+                image = new Image(getClass().getResource(PIC_TUT_04).toExternalForm());
                 myImage.setImage(image);
                 break;
             case TUT_05:
-                image = new Image(getClass().getResource("../resources/tut05.png").toExternalForm());
+                image = new Image(getClass().getResource(PIC_TUT_05).toExternalForm());
                 myImage.setImage(image);
                 break;
             case TUT_06:
-                image = new Image(getClass().getResource("../resources/tut06.png").toExternalForm());
+                image = new Image(getClass().getResource(PIC_TUT_06).toExternalForm());
                 myImage.setImage(image);
                 break;
             case TUT_07:
-                image = new Image(getClass().getResource("../resources/tut07.png").toExternalForm());
+                image = new Image(getClass().getResource(PIC_TUT_07).toExternalForm());
                 myImage.setImage(image);
                 break;
-   /*         case TUT_08:
-                image = new Image(getClass().getResource("../resources/tut08.png").toExternalForm());
+            case TUT_08:
+                image = new Image(getClass().getResource(PIC_TUT_08).toExternalForm());
                 myImage.setImage(image);
                 break;
-            case TUT_09:
-                image = new Image(getClass().getResource("../resources/tut09.png").toExternalForm());
+   /*         case TUT_09:
+                image = new Image(getClass().getResource(PIC_TUT_09).toExternalForm());
                 myImage.setImage(image);
                 break;
      */       default:
-                image = new Image(getClass().getResource("../resources/ende.png").toExternalForm());
+                image = new Image(getClass().getResource(PIC_TUT).toExternalForm());
                 myImage.setImage(image);
         }
     }

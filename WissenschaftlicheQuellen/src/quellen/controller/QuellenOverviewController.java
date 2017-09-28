@@ -18,6 +18,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import static quellen.constants.DB_Constants.*;
+import static quellen.constants.Controller_Constants.*;
 
 public class QuellenOverviewController {
     @FXML
@@ -145,8 +146,8 @@ public class QuellenOverviewController {
             tagTable.setItems(tagList);
         } else {
             // Person is null, remove all the text.
-            titelLabel.setText("");
-            autorLabel.setText("");
+            titelLabel.setText(LEERER_STRING);
+            autorLabel.setText(LEERER_STRING);
             //jahrLabel.setText("");
         }
     }
@@ -162,7 +163,7 @@ public class QuellenOverviewController {
             quellenService.deleteQuelle(quellenTable.getSelectionModel().getSelectedItem());
             quellenTable.getItems().remove(selectedIndex);
         } else {
-            nothingSelected("Nichts ausgeählt", "Keine Quelle ausgewählt", "Bitte wählen Sie eine Quelle aus der Tabelle!");
+            nothingSelected(NICHTS_AUSGEWAEHLT, KEINE_QUELLE_AUSGEWAEHLT, BITTE_QUELLE_AUS_TABELLE);
         }
     }
 
@@ -172,7 +173,7 @@ public class QuellenOverviewController {
      */
     @FXML
     private void handleNewQuelle() {
-        Quelle tempQuelle = new Quelle("", "", "");
+        Quelle tempQuelle = new Quelle(LEERER_STRING, LEERER_STRING, LEERER_STRING);
         boolean okClicked = mainApp.showQuellenEditDialog(tempQuelle, false);
         try {
             if (okClicked) {
@@ -201,7 +202,7 @@ public class QuellenOverviewController {
         index = quellenTable.getSelectionModel().getSelectedIndex();
 
         if (selectedQuelle != null) {
-            boolean okClicked = mainApp.showQuellenEditDialog(selectedQuelle, true);
+            boolean okClicked = mainApp.showQuellenEditDialog(selectedQuelle);
             if (okClicked) {
                 //remove the old quelle
                 this.mainApp.getQuellenList().remove(selectedQuelle);
@@ -222,7 +223,7 @@ public class QuellenOverviewController {
             }
 
         } else {
-            nothingSelected("Nichts ausgeählt", "Keine Quelle ausgewählt", "Bitte wählen Sie eine Quelle aus der Tabelle!");
+            nothingSelected(NICHTS_AUSGEWAEHLT, KEINE_QUELLE_AUSGEWAEHLT, BITTE_QUELLE_AUS_TABELLE);
         }
     }
 
@@ -269,7 +270,7 @@ public class QuellenOverviewController {
         String searchText = searchTextField.getText().toLowerCase();
         //if the text is empty throw a message
         if(searchText.isEmpty() || !searchTag && !searchSource && !searchQuote && !searchAuthor) {
-            nothingSelected("Error", "KeineNo search possible", "Nothing to search for");
+            nothingSelected(ERROR, KEINE_SUCHE_MOEGLICH, KEINE_EINGABE_ZUM_SUCHEN_MOEGLICH);
         } else {
             if (tmpList != null) {
                 quelleList = tmpList;
