@@ -136,6 +136,7 @@ public class AddZitateController {
 
     public void setZitatList(ObservableList<Zitat> zitatList) {
         this.zitatList = zitatList;
+        this.tmpList = zitatList;
         this.zitatTable.setItems(this.zitatList);
     }
 
