@@ -38,6 +38,7 @@ public class Controller_Constants {
     public final static int ANCHOR_PANE_SET_PREF_HEIGHT_FOR_BUCH = 320;
     public final static int OK_AND_CANCEL_BUTTON_SET_LAYOUT_Y_FPR_BUCH = 285;
     public final static int ZITAT_AND_TAG_TABLE_SET_PREF_HEIGHT_FOR_BUCH = 273;
+    public final static int SET_WINDOW_HEIGHT_FOR_BUCH = 355;
 
     public final static String HERAUSGEBER = "Herausgeber";
     public final static String AUFLAGE = "Auflage";
@@ -56,6 +57,7 @@ public class Controller_Constants {
     public final static int ANCHOR_PANE_SET_PREF_HEIGHT_FOR_ARTIKEL = 250;
     public final static int OK_AND_CANCEL_BUTTON_SET_LAYOUT_Y_FOR_ARTIKEL = 215;
     public final static int ZITAT_AND_TAG_TABLE_SET_PREF_HEIGHT_FOR_ARTIKEL = 203;
+    public final static int SET_WINDOW_HEIGHT_FOR_ARTIKEL = 285;
 
     public final static String AUSGABE = "Ausgabe";
     public final static String MAGAZIN = "Magazin";
@@ -66,8 +68,14 @@ public class Controller_Constants {
     public final static int MAGAZIN_TEXT_FIELD_COL = 0;
 
     public final static int ANCHOR_PANE_SET_PREF_HEIGHT_FOR_ONLINEQUELLE = 255;
-    public final static int OK_AND_CANCEL_BUTTON_SET_LAYOUT_Y_FOR_ONLINEQUELLE = 220;
+    public final static int OK_AND_CANCEL_BUTTON_SET_LAYOUT_Y_FOR_ONLINEQUELLE = 215;
     public final static int ZITAT_AND_TAG_TABLE_SET_PREF_HEIGHT_FOR_ONLINEQUELLE = 203;
+    public final static int SET_WINDOW_HEIGHT_FOR_ONLINEQUELLE = 285;
+
+    public final static int ANCHOR_PANE_SET_PREF_HEIGHT_FOR_QUELLE = 255;
+    public final static int OK_AND_CANCEL_BUTTON_SET_LAYOUT_Y_FOR_QUELLE = 215;
+    public final static int ZITAT_AND_TAG_TABLE_SET_PREF_HEIGHT_FOR_QUELLE = 203;
+    public final static int SET_WINDOW_HEIGHT_FOR_QUELLE = 285;
 
     public final static String AUFRUFDATUM = "Aufrufdatum";
     public final static String URL = "URL";
@@ -78,14 +86,16 @@ public class Controller_Constants {
     public final static int URL_TEXT_FIELD_COL = 0;
 
     public final static int ANCHOR_PANE_SET_PREF_HEIGHT_FOR_ANDERES = 295;
-    public final static int OK_AND_CANCEL_BUTTON_SET_LAYOUT_Y_FOR_ANDERES = 260;
+    public final static int OK_AND_CANCEL_BUTTON_SET_LAYOUT_Y_FOR_ANDERES = 250;
     public final static int ZITAT_AND_TAG_TABLE_SET_PREF_HEIGHT_FOR_ANDERES = 238;
+    public final static int SET_WINDOW_HEIGHT_FOR_ANDERES = 320;
 
     public final static int AUSGABE_TEXT_FIELD_ROW_FOR_ANDERES = 6;
 
     public final static int ANCHOR_PANE_SET_PREF_HEIGHT_FOR_WISSENSCHAFTLICHE_ARBEIT = 265;
-    public final static int OK_AND_CANCEL_BUTTON_SET_LAYOUT_Y_FOR_WISSENSCHAFTLICHE_ARBEIT = 225;
+    public final static int OK_AND_CANCEL_BUTTON_SET_LAYOUT_Y_FOR_WISSENSCHAFTLICHE_ARBEIT = 215;
     public final static int ZITAT_AND_TAG_TABLE_SET_PREF_HEIGHT_FOR_WISSENSCHAFTLICHE_ARBEIT = 203;
+    public final static int SET_WINDOW_HEIGHT_FOR_WISSENSCHAFTLICHE_ARBEIT = 285;
 
     public final static String EINRICHTUNG = "Einrichtung";
 

@@ -1,5 +1,6 @@
 package quellen.controller;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -15,17 +16,20 @@ public class PieChartController {
 	ObservableList<PieChart.Data> pieChartData;
 	@FXML
 	PieChart pieChart;
+	Datenbank db;
+
 
 	private void initialize() {
 
 	}
 
 	@FXML
-	private void setStats1() {
+	private void setStats1() throws SQLException {
+		db = Datenbank.getInstance();
 		int[] pieZahlen = new int[9];
 		try {
 			for (int i = 0; i < DatabaseTypes.length; i++) {
-				ResultSet result = Datenbank.queryWithReturn("select count (*) from " + DatabaseTypes[i]);
+				ResultSet result = db.queryWithReturn("select count (*) from " + DatabaseTypes[i]);
 				pieZahlen[i] = result.getInt(1);
 				result.close();
 			}
@@ -60,5 +64,37 @@ public class PieChartController {
 		pieChart.setData(pieChartData);
 
 	}
+
+
+	@FXML
+	private void setStats3() throws SQLException {
+		db = Datenbank.getInstance();
+		ResultSet result = db.queryWithReturn("select count(distinct autor) from Quellen");
+		//result.next();
+		int anzahlAutoren = result.getInt(1);
+		result.close();
+		ResultSet result2 = db.queryWithReturn("select distinct autor from Quellen");
+		result2.next();
+		int[] anzahlWerke = new int[anzahlAutoren];
+		String[] autoren = new String[anzahlAutoren];
+
+		for (int i = 0; i < anzahlAutoren; i++) {
+			String autor = result2.getString(1);
+			ResultSet tempResult = Datenbank.queryWithReturn("select count(*) from Quellen where autor = \"" + autor + "\"");
+			tempResult.next();
+			autoren[i] = autor;
+			anzahlWerke[i] = tempResult.getInt(1);
+			tempResult.next();
+			result2.next();
+			tempResult.close();
+		}
+		result2.close();
+		pieChartData = FXCollections.observableArrayList();
+		for (int j = 0; j < anzahlAutoren; j++) {
+			pieChartData.add(new PieChart.Data(autoren[j], anzahlWerke[j]));
+		}
+		pieChart.setData(pieChartData);
+	}
+
 
 }
