@@ -160,7 +160,7 @@ public class QuellenOverviewController {
         if (selectedIndex >= 0) {
             quellenTable.getItems().remove(selectedIndex);
         } else {
-            nothingSelected("No Selection", "No Quelle Selected", "Please select a quelle in the table.");
+            nothingSelected("Nichts ausgeählt", "Keine Quelle ausgewählt", "Bitte wählen Sie eine Quelle aus der Tabelle!");
         }
     }
 
@@ -235,7 +235,7 @@ public class QuellenOverviewController {
             }
 
         } else {
-            nothingSelected("No Selection", "No Quelle Selected", "Please select a quelle in the table.");
+            nothingSelected("Nichts ausgeählt", "Keine Quelle ausgewählt", "Bitte wählen Sie eine Quelle aus der Tabelle!");
         }
     }
 
@@ -282,7 +282,7 @@ public class QuellenOverviewController {
         String searchText = searchTextField.getText().toLowerCase();
         //if the text is empty throw a message
         if(searchText.isEmpty() || !searchTag && !searchSource && !searchQuote && !searchAuthor) {
-            nothingSelected("Error", "No search possible", "Nothing to search for");
+            nothingSelected("Error", "KeineNo search possible", "Nothing to search for");
         } else {
             if (tmpList != null) {
                 quelleList = tmpList;
