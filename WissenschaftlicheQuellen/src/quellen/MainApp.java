@@ -104,7 +104,7 @@ public class MainApp extends Application {
      * @param quelle the quelle object to be edited
      * @return true if the user clicked OK, false otherwise.
      */
-    public boolean showQuellenEditDialog(Quelle quelle, boolean editmode) {
+    public boolean showQuellenEditDialog(Quelle quelle, boolean editmode, String titel) {
         try {
             // Load the fxml file and create a new stage for the popup dialog.
             FXMLLoader loader = new FXMLLoader();
@@ -113,7 +113,7 @@ public class MainApp extends Application {
 
             // Create the dialog Stage.
             Stage dialogStage = new Stage();
-            dialogStage.setTitle("Edit Zitat");
+            dialogStage.setTitle(titel);
             dialogStage.initModality(Modality.WINDOW_MODAL);
             dialogStage.initOwner(primaryStage);
             Scene scene = new Scene(page);

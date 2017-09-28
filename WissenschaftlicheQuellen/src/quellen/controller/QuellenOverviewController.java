@@ -166,7 +166,7 @@ public class QuellenOverviewController {
     @FXML
     private void handleNewQuelle() {
         Quelle tempQuelle = new Quelle(LEERER_STRING, LEERER_STRING, LEERER_STRING);
-        boolean okClicked = mainApp.showQuellenEditDialog(tempQuelle, false);
+        boolean okClicked = mainApp.showQuellenEditDialog(tempQuelle, false, "Neue Quelle");
         try {
             if (okClicked) {
                 //Get edited quelle
@@ -194,7 +194,7 @@ public class QuellenOverviewController {
         index = quellenTable.getSelectionModel().getSelectedIndex();
 
         if (selectedQuelle != null) {
-            boolean okClicked = mainApp.showQuellenEditDialog(selectedQuelle, true);
+            boolean okClicked = mainApp.showQuellenEditDialog(selectedQuelle, true, "Bearbeite Quelle");
             if (okClicked) {
                 //remove the old quelle
                 this.mainApp.getQuellenList().remove(selectedQuelle);

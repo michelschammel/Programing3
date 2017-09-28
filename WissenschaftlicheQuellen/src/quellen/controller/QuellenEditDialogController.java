@@ -27,7 +27,7 @@ import static quellen.constants.Controller_Constants.*;
 
 /**
  * Dialog to edit details of a quelle.
- * 
+ * @author Cedric Schreiner,
  */
 public class QuellenEditDialogController {
 
@@ -396,9 +396,12 @@ public class QuellenEditDialogController {
             adjustDialogForWissenschaftlicheArbeit(rowConstraint);
         } else {
             //normal quelle
-            //set zitat and tag Table position new
-            zitatTable.setLayoutY(ZITAT_AND_TAG_TABLE_POSITION_Y);
-            tagTable.setLayoutY(ZITAT_AND_TAG_TABLE_POSITION_Y);
+            this.anchorPane.setPrefHeight(ANCHOR_PANE_SET_PREF_HEIGHT_FOR_QUELLE);
+            this.okButton.setLayoutY(OK_AND_CANCEL_BUTTON_SET_LAYOUT_Y_FOR_QUELLE);
+            this.cancelButton.setLayoutY(OK_AND_CANCEL_BUTTON_SET_LAYOUT_Y_FOR_QUELLE);
+            this.zitatTable.setPrefHeight(ZITAT_AND_TAG_TABLE_SET_PREF_HEIGHT_FOR_QUELLE);
+            this.tagTable.setPrefHeight(ZITAT_AND_TAG_TABLE_SET_PREF_HEIGHT_FOR_QUELLE);
+            this.zitatTable.getScene().getWindow().setHeight(SET_WINDOW_HEIGHT_FOR_QUELLE);
         }
     }
 
@@ -430,6 +433,7 @@ public class QuellenEditDialogController {
         this.cancelButton.setLayoutY(OK_AND_CANCEL_BUTTON_SET_LAYOUT_Y_FPR_BUCH);
         this.zitatTable.setPrefHeight(ZITAT_AND_TAG_TABLE_SET_PREF_HEIGHT_FOR_BUCH);
         this.tagTable.setPrefHeight(ZITAT_AND_TAG_TABLE_SET_PREF_HEIGHT_FOR_BUCH);
+        this.zitatTable.getScene().getWindow().setHeight(SET_WINDOW_HEIGHT_FOR_BUCH);
 
         //Create all needed labels for Buch
         Label herausgeberLabel = new Label(HERAUSGEBER);
@@ -464,6 +468,7 @@ public class QuellenEditDialogController {
         this.cancelButton.setLayoutY(OK_AND_CANCEL_BUTTON_SET_LAYOUT_Y_FOR_ARTIKEL);
         this.zitatTable.setPrefHeight(ZITAT_AND_TAG_TABLE_SET_PREF_HEIGHT_FOR_ARTIKEL);
         this.tagTable.setPrefHeight(ZITAT_AND_TAG_TABLE_SET_PREF_HEIGHT_FOR_ARTIKEL);
+        this.zitatTable.getScene().getWindow().setHeight(SET_WINDOW_HEIGHT_FOR_ARTIKEL);
 
         //Create all needed labels for Artikel
         Label ausgabeLabel = new Label(AUSGABE);
@@ -494,6 +499,7 @@ public class QuellenEditDialogController {
         this.cancelButton.setLayoutY(OK_AND_CANCEL_BUTTON_SET_LAYOUT_Y_FOR_ONLINEQUELLE);
         this.zitatTable.setPrefHeight(ZITAT_AND_TAG_TABLE_SET_PREF_HEIGHT_FOR_ONLINEQUELLE);
         this.tagTable.setPrefHeight(ZITAT_AND_TAG_TABLE_SET_PREF_HEIGHT_FOR_ONLINEQUELLE);
+        this.zitatTable.getScene().getWindow().setHeight(SET_WINDOW_HEIGHT_FOR_ONLINEQUELLE);
 
         //Create all needed labels for Onlinequelle
         Label aufrufDatumLabel = new Label(AUFRUFDATUM);
@@ -523,6 +529,7 @@ public class QuellenEditDialogController {
         this.cancelButton.setLayoutY(OK_AND_CANCEL_BUTTON_SET_LAYOUT_Y_FOR_ANDERES);
         this.zitatTable.setPrefHeight(ZITAT_AND_TAG_TABLE_SET_PREF_HEIGHT_FOR_ANDERES);
         this.tagTable.setPrefHeight(ZITAT_AND_TAG_TABLE_SET_PREF_HEIGHT_FOR_ANDERES);
+        this.zitatTable.getScene().getWindow().setHeight(SET_WINDOW_HEIGHT_FOR_ANDERES);
 
         //Create all needed labels for Buch
         Label herausgeberLabel = new Label(HERAUSGEBER);
@@ -559,6 +566,7 @@ public class QuellenEditDialogController {
         this.cancelButton.setLayoutY(OK_AND_CANCEL_BUTTON_SET_LAYOUT_Y_FOR_WISSENSCHAFTLICHE_ARBEIT);
         this.zitatTable.setPrefHeight(ZITAT_AND_TAG_TABLE_SET_PREF_HEIGHT_FOR_WISSENSCHAFTLICHE_ARBEIT);
         this.tagTable.setPrefHeight(ZITAT_AND_TAG_TABLE_SET_PREF_HEIGHT_FOR_WISSENSCHAFTLICHE_ARBEIT);
+        this.zitatTable.getScene().getWindow().setHeight(SET_WINDOW_HEIGHT_FOR_WISSENSCHAFTLICHE_ARBEIT);
 
         //Create all needed labels for Onlinequelle
         Label herausgeberLabel = new Label(HERAUSGEBER);
@@ -689,6 +697,12 @@ public class QuellenEditDialogController {
                     this.quelleEdited = new Anderes((Anderes)this.quelle);
                     this.adjustGridPane();
                     break;
+
+                case SC_NONE:
+                    this.quelle = new Quelle("", "", "");
+                    this.quelle.setZitatListe(this.quelleEdited.getZitatList());
+                    this.quelleEdited = new Quelle(this.quelle);
+                    this.adjustGridPane();
             }
         }
     }
