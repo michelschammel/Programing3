@@ -90,4 +90,10 @@ public class DB_Constants {
     public static final String PS_DELETE_BUCH = "DELETE FROM Bücher WHERE quellenId = ?";
     public static final String PS_DELETE_ONLINEQUELLE = "DELETE FROM Onlinequellen WHERE quellenId = ?";
     public static final String PS_DELETE_WARBEIT = "DELETE FROM WissenschaftlicheArbeiten WHERE quellenId = ?";
+
+    //Konstanten für die Statistiken
+    public static final String PIECHART_STAT_1 = "select count (*) from ";
+    public static final String PIECHART_STAT_2 = "select count(distinct autor) from Quellen";
+    public static final String PIECHART_STAT_3 = "select distinct autor from Quellen";
+    public static final String PIECHART_STAT_4 = "select count(*) from Quellen where autor = \"";
 }

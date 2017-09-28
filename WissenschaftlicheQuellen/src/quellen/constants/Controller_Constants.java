@@ -3,7 +3,7 @@ package quellen.constants;
 
 /**
  * Enthaelt Kontanten, die in den Controllern vorkommen
- * @author Bjoern Schmidt, Cedric Schreiner, Roman Berezin
+ * @author Bjoern Schmidt, Cedric Schreiner
  */
 public class Controller_Constants {
 
@@ -174,11 +174,7 @@ public class Controller_Constants {
     public static final String TUTORIAL = "Tutorial";
     public static final String ABOUT = "Über";
 
-    //Konstanten für die Statistiken
-    public static final String PIECHART_STAT_1 = "select count (*) from ";
-    public static final String PIECHART_STAT_2 = "select count(distinct autor) from Quellen";
-    public static final String PIECHART_STAT_3 = "select distinct autor from Quellen";
-    public static final String PIECHART_STAT_4 = "select count(*) from Quellen where autor = \"";
+
 
 
 
