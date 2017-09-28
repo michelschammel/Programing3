@@ -3,21 +3,13 @@ package quellen.controller;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
 import quellen.MainApp;
-import quellen.dao.SchnittstelleQuelle;
-import quellen.model.Datenbank;
 import quellen.model.Quelle;
 import quellen.model.Zitat;
 import quellen.model.Tag;
 import quellen.service.QuellenService;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
-import static quellen.constants.DB_Constants.*;
 import static quellen.constants.Controller_Constants.*;
 
 public class QuellenOverviewController {
@@ -202,7 +194,7 @@ public class QuellenOverviewController {
         index = quellenTable.getSelectionModel().getSelectedIndex();
 
         if (selectedQuelle != null) {
-            boolean okClicked = mainApp.showQuellenEditDialog(selectedQuelle);
+            boolean okClicked = mainApp.showQuellenEditDialog(selectedQuelle, true);
             if (okClicked) {
                 //remove the old quelle
                 this.mainApp.getQuellenList().remove(selectedQuelle);
