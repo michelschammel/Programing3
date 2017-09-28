@@ -40,10 +40,16 @@ public class DB_Constants {
     //Prepared Statements to get all tags of a zitat
     public static final String PS_GET_TAGS = "SELECT * FROM Zitate NATURAL JOIN TagsZitate NATURAL JOIN Tags WHERE zitatId = ?";
 
-    //Prepared Statement to insert new zitat
+    //Prepared Statement to insert
     public static final String PS_INSERT_ZITAT = "INSERT INTO Zitate (text, quellenId) VALUES (?, ?)";
     public static final String PS_INSERT_TAG = "INSERT INTO Tags (name) VALUES (?)";
     public static final String PS_INSERT_TAG_ZITAT_CONNECTION = "INSERT INTO TagsZitate VALUES (?, ?)";
+    public static final String PS_INSERT_QUELLE = "INSERT INTO Quellen (?, ?, ?, ?)";
+    public static final String PS_INSERT_ANDERES = "INSERT INTO Anderes VALUES (?, ?, ?, ?)";
+    public static final String PS_INSERT_ARTIKEL = "INSERT INTO Artikel VALUES (?, ?, ?)";
+    public static final String PS_INSERT_BUCH = "INSERT INTO Bücher VALUES (?, ?, ?, ?, ?)";
+    public static final String PS_INSERT_ONLINEQUELLE = "INSERT INTO Onlinequellen VALUES (?, ?, ?)";
+    public static final String PS_INSERT_WISSENSCHAFTLICHE_ARBEIT = "INSERT INTO WissenschaftlicheArbeiten VALUES (?, ?, ?)";
 
     //Statement to get the tagId
     public static final String PS_GET_LAST_INSERTED_TAG_ID = "SELECT seq FROM sqlite_sequence WHERE name = 'Tags'";
