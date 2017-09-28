@@ -44,7 +44,7 @@ public class DB_Constants {
     public static final String PS_INSERT_ZITAT = "INSERT INTO Zitate (text, quellenId) VALUES (?, ?)";
     public static final String PS_INSERT_TAG = "INSERT INTO Tags (name) VALUES (?)";
     public static final String PS_INSERT_TAG_ZITAT_CONNECTION = "INSERT INTO TagsZitate VALUES (?, ?)";
-    public static final String PS_INSERT_QUELLE = "INSERT INTO Quellen (?, ?, ?, ?)";
+    public static final String PS_INSERT_QUELLE = "INSERT INTO Quellen(autor, titel, jahr) VALUES (?, ?, ?)";
     public static final String PS_INSERT_ANDERES = "INSERT INTO Anderes VALUES (?, ?, ?, ?)";
     public static final String PS_INSERT_ARTIKEL = "INSERT INTO Artikel VALUES (?, ?, ?)";
     public static final String PS_INSERT_BUCH = "INSERT INTO Bücher VALUES (?, ?, ?, ?, ?)";

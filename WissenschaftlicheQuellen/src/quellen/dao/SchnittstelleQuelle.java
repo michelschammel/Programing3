@@ -417,10 +417,9 @@ public class SchnittstelleQuelle {
             connection.setAutoCommit(false);
             ResultSet rsQuellenID;
             PreparedStatement preparedStatementInsertQuelle = connection.prepareStatement(PS_INSERT_QUELLE);
-            preparedStatementInsertQuelle.setInt(1, quelle.getId());
-            preparedStatementInsertQuelle.setString(2, quelle.getAutor());
-            preparedStatementInsertQuelle.setString(3, quelle.getTitel());
-            preparedStatementInsertQuelle.setString(4, quelle.getJahr());
+            preparedStatementInsertQuelle.setString(1, quelle.getAutor());
+            preparedStatementInsertQuelle.setString(2, quelle.getTitel());
+            preparedStatementInsertQuelle.setString(3, quelle.getJahr());
             preparedStatementInsertQuelle.execute();
             Statement statementGetQuellenId = connection.createStatement();
             rsQuellenID = statementGetQuellenId.executeQuery(PS_GET_LAST_INSERTED_QUELLEN_ID);
@@ -472,12 +471,16 @@ public class SchnittstelleQuelle {
             }
             connection.commit();
             connection.setAutoCommit(true);
+
+            quelle.getZitatList().forEach( zitat -> {
+                zitat.setQuellenId(quelle.getId());
+            });
             //Update function inserts all zitate and tags
-            this.updateQuery(quelle);
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        this.updateQuery(quelle);
         return quelle.getId();
     }
 

@@ -104,7 +104,7 @@ public class MainApp extends Application {
      * @param quelle the quelle object to be edited
      * @return true if the user clicked OK, false otherwise.
      */
-    public boolean showQuellenEditDialog(Quelle quelle) {
+    public boolean showQuellenEditDialog(Quelle quelle, boolean editmode) {
         try {
             // Load the fxml file and create a new stage for the popup dialog.
             FXMLLoader loader = new FXMLLoader();
@@ -124,6 +124,11 @@ public class MainApp extends Application {
             controller.setDialogStage(dialogStage);
             controller.setQuelle(quelle);
 
+            if (editmode) {
+                controller.disableSubCategory(true);
+            } else {
+                controller.setEditmode(false);
+            }
             //
 
             ObservableList<Zitat> zitatList = FXCollections.observableArrayList();

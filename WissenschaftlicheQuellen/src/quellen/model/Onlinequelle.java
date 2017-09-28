@@ -2,6 +2,7 @@ package quellen.model;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.collections.ObservableList;
 
 public class Onlinequelle extends Quelle{
     private StringProperty aufrufdatum;
@@ -17,6 +18,13 @@ public class Onlinequelle extends Quelle{
         super(id, titel, autor, jahr);
         this.aufrufdatum = new SimpleStringProperty(aufrufdatum);
         this.url = new SimpleStringProperty(url);
+    }
+
+    public Onlinequelle (int id, String titel, String autor, String jahr, String aufrufdatum, String url, ObservableList<Zitat> zitatList) {
+        super(id, titel, autor, jahr);
+        this.aufrufdatum = new SimpleStringProperty(aufrufdatum);
+        this.url = new SimpleStringProperty(url);
+        super.setZitatListe(zitatList);
     }
 
     /**

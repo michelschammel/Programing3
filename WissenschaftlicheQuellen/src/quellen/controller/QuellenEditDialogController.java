@@ -61,6 +61,8 @@ public class QuellenEditDialogController {
     private Quelle quelleEdited;
     private boolean okClicked = false;
     private ObservableList<Zitat> zitatList;
+    private boolean editmode = true;
+    private String newQuelleType = "";
 
     //all custom textFields
     private TextField herausgeberTextField;
@@ -122,6 +124,9 @@ public class QuellenEditDialogController {
         });
     }
 
+    public void disableSubCategory(boolean disable) {
+        this.subCategory.setDisable(disable);
+    }
 
     /**
      * Fills all text fields to show details about the quelle.
@@ -133,6 +138,10 @@ public class QuellenEditDialogController {
         if (zitat != null) {
             tagTable.setItems(zitat.getTagList());
         }
+    }
+
+    public void setEditmode(boolean enable) {
+        this.editmode = enable;
     }
 
     /**
@@ -250,6 +259,7 @@ public class QuellenEditDialogController {
             @Override
             public void handle(ActionEvent event) {
                 quelleEdited.getZitatList().add(new Zitat(BEARBEITE_MICH, quelleEdited.getId()));
+                zitatTable.setItems(quelleEdited.getZitatList());
             }
         });
 
@@ -362,6 +372,10 @@ public class QuellenEditDialogController {
         titelField.setText(quelle.getTitel());
         jahrField.setText(quelle.getJahr());
 
+        adjustGridPane();
+    }
+
+    private void adjustGridPane() {
         //Create a RowContraints
         RowConstraints rowConstraint = new RowConstraints();
         rowConstraint.setMinHeight(ROW_CONTRAINTS_HEIGHT);
@@ -372,7 +386,7 @@ public class QuellenEditDialogController {
         //the editdialog gets adjusted for every sort of Source
         if (quelle instanceof Buch) {
             adjustDialogForBuch(rowConstraint);
-        } else if (quelle instanceof Artikel){
+        } else if (quelle instanceof Artikel || newQuelleType.equals(SC_ARTIKEL)){
             adjustDialogForArtikel(rowConstraint);
         } else if (quelle instanceof Onlinequelle){
             adjustDialogForOnlinequelle(rowConstraint);
@@ -408,6 +422,7 @@ public class QuellenEditDialogController {
      */
     private void adjustDialogForBuch(RowConstraints rowConstraint) {
         Buch buch = (Buch)this.quelle;
+        subCategory.setValue(SC_BUECHER);
 
         //adjust anchorPane and Buttons for Dialog
         this.anchorPane.setPrefHeight(ANCHOR_PANE_SET_PREF_HEIGHT_FOR_BUCH);
@@ -433,7 +448,7 @@ public class QuellenEditDialogController {
         addContentTOGridPane(rowConstraint, auflageLabel, this.auflageTextField, AUFLAGE_TEXT_FIELD_ROW,AUFLAGE_TEXT_FIELD_COL);
         addContentTOGridPane(rowConstraint, monatLabel, this.monatTextField, MONAT_TEXT_FIELD_ROW,MONAT_TEXT_FIELD_COL);
         addContentTOGridPane(rowConstraint, isbnLabel, this.isbnTextField, ISBN_TEXT_FIELD_ROW,ISBN_TEXT_FIELD_COL);
-        subCategory.setDisable(true);
+        //subCategory.setDisable(true);
     }
 
     /**
@@ -461,7 +476,8 @@ public class QuellenEditDialogController {
         //Add the content to the Gridpane
         addContentTOGridPane(rowConstraint, ausgabeLabel, this.ausgabeTextField, AUSGABE_TEXT_FIELD_ROW, AUSGABE_DATUM_TEXT_FIELD_COL);
         addContentTOGridPane(rowConstraint, magazinLabel, this.magazinTextField, MAGAZIN_TEXT_FIELD_ROW, MAGAZIN_TEXT_FIELD_COL);
-        subCategory.setDisable(true);
+        //subCategory.setDisable(true);
+        subCategory.setValue(SC_ARTIKEL);
     }
 
 
@@ -490,7 +506,8 @@ public class QuellenEditDialogController {
         //Add the content to the Gridpane
         addContentTOGridPane(rowConstraint, aufrufDatumLabel, this.aufrufDatumTextField, AUFRUF_DATUM_TEXT_FIELD_ROW, AUFRUF_DATUM_TEXT_FIELD_COL);
         addContentTOGridPane(rowConstraint, urlLabel, this.urlTextField, URL_TEXT_FIELD_ROW, URL_TEXT_FIELD_COL);
-        subCategory.setDisable(true);
+        //subCategory.setDisable(true);
+        subCategory.setValue(SC_OQUELLEN);
     }
 
     /**
@@ -521,7 +538,8 @@ public class QuellenEditDialogController {
         addContentTOGridPane(rowConstraint, herausgeberLabel, this.herausgeberTextField, HERAUSGEBER_TEXT_FIELD_ROW,HERAUSGEBER_TEXT_FIELD_COL);
         addContentTOGridPane(rowConstraint, auflageLabel, this.auflageTextField, AUFLAGE_TEXT_FIELD_ROW,AUFLAGE_TEXT_FIELD_COL);
         addContentTOGridPane(rowConstraint, ausgabeLabel, this.ausgabeTextField, AUSGABE_TEXT_FIELD_ROW_FOR_ANDERES,AUSGABE_DATUM_TEXT_FIELD_COL);
-        subCategory.setDisable(true);
+        //subCategory.setDisable(true);
+        subCategory.setValue(SC_ANDERES);
     }
 
     public void setZitatList(ObservableList<Zitat> zitatList) {
@@ -553,7 +571,8 @@ public class QuellenEditDialogController {
         //Add the content to the Gridpane
         addContentTOGridPane(rowConstraint, herausgeberLabel, this.herausgeberTextField, HERAUSGEBER_TEXT_FIELD_ROW, HERAUSGEBER_TEXT_FIELD_COL);
         addContentTOGridPane(rowConstraint, einrichtungsLabel, this.einrichtungsTextField, EINRICHTUNGS_TEXT_FIELD_ROW, EINRICHTUNGS_TEXT_FIELD_COL);
-        subCategory.setDisable(true);
+        //subCategory.setDisable(true);
+        subCategory.setValue(SC_WARBEITEN);
     }
 
     /**
@@ -628,95 +647,49 @@ public class QuellenEditDialogController {
     }
 
     private void adjustNewDialog(String category) {
+        //child node count
+        int count = this.gridPane.getChildren().size();
         //Create a RowContraints
         RowConstraints rowConstraint = new RowConstraints();
         rowConstraint.setMinHeight(ROW_CONTRAINTS_HEIGHT);
         rowConstraint.setPrefHeight(ROW_CONTRAINTS_HEIGHT);
         rowConstraint.setVgrow(Priority.SOMETIMES);
+        //Remove all items from another quelle
+        if (!editmode) {
+            if (count >= 8) {
+                this.gridPane.getChildren().remove(8, count);
+            }
+            switch (category) {
+                case SC_ARTIKEL:
+                    this.quelle = new Artikel(0, "", "", "", "", "", this.quelleEdited.getZitatList());
+                    this.quelleEdited = new Artikel((Artikel)this.quelle);
+                    this.adjustGridPane();
+                    break;
 
-        switch (category) {
-            case SC_ARTIKEL:
-                //Create all needed labels for Artikel
-                Label ausgabeLabel = new Label(AUSGABE);
-                Label magazinLabel = new Label(MAGAZIN);
+                case SC_BUECHER:
+                    this.quelle = new Buch(0, "",  "", "", "", "", "", "", this.quelleEdited.getZitatList());
+                    this.quelleEdited = new Buch((Buch)this.quelle);
+                    this.adjustGridPane();
+                    break;
 
-                //Create all needed textfields for Artikel
-                this.ausgabeTextField = new TextField();
-                this.magazinTextField = new TextField();
+                case SC_OQUELLEN:
+                    this.quelle = new Onlinequelle(0, "", "", "", "", "", this.quelleEdited.getZitatList());
+                    this.quelleEdited = new Onlinequelle((Onlinequelle)this.quelle);
+                    this.adjustGridPane();
+                    break;
 
-                //Add the content to the Gridpane
-                addContentTOGridPane(rowConstraint, ausgabeLabel, this.ausgabeTextField, AUSGABE_TEXT_FIELD_ROW, AUSGABE_DATUM_TEXT_FIELD_COL);
-                addContentTOGridPane(rowConstraint, magazinLabel, this.magazinTextField, MAGAZIN_TEXT_FIELD_ROW, MAGAZIN_TEXT_FIELD_COL);
-                subCategory.setDisable(true);
-                break;
+                case SC_WARBEITEN:
+                    this.quelle = new WissenschaftlicheArbeit(0, "", "", "", "", "", this.quelleEdited.getZitatList());
+                    this.quelleEdited = new WissenschaftlicheArbeit((WissenschaftlicheArbeit)this.quelle);
+                    this.adjustGridPane();
+                    break;
 
-            case SC_BUECHER:
-                //Create all needed labels for Buch
-                Label herausgeberLabel = new Label(HERAUSGEBER);
-                Label auflageLabel = new Label(AUFLAGE);
-                Label monatLabel = new Label(MONAT);
-                Label isbnLabel = new Label(ISBN);
-
-                //create all needed textfields for Buch
-                this.herausgeberTextField = new TextField();
-                this.auflageTextField = new TextField();
-                this.monatTextField = new TextField();
-                this.isbnTextField = new TextField();
-
-                //Add the content to the Gridpane
-                addContentTOGridPane(rowConstraint, herausgeberLabel, this.herausgeberTextField, HERAUSGEBER_TEXT_FIELD_ROW,HERAUSGEBER_TEXT_FIELD_COL);
-                addContentTOGridPane(rowConstraint, auflageLabel, this.auflageTextField, AUFLAGE_TEXT_FIELD_ROW,AUFLAGE_TEXT_FIELD_COL);
-                addContentTOGridPane(rowConstraint, monatLabel, this.monatTextField, MONAT_TEXT_FIELD_ROW,MONAT_TEXT_FIELD_COL);
-                addContentTOGridPane(rowConstraint, isbnLabel, this.isbnTextField, ISBN_TEXT_FIELD_ROW,ISBN_TEXT_FIELD_COL);
-                subCategory.setDisable(true);
-                break;
-
-            case SC_OQUELLEN:
-                //Create all needed labels for Onlinequelle
-                Label aufrufDatumLabel = new Label(AUFRUFDATUM);
-                Label urlLabel = new Label(URL);
-
-                //Create all  needed textfields for Onlinequelle
-                this.aufrufDatumTextField = new TextField();
-                this.urlTextField = new TextField();
-
-                //Add the content to the Gridpane
-                addContentTOGridPane(rowConstraint, aufrufDatumLabel, this.aufrufDatumTextField, AUFRUF_DATUM_TEXT_FIELD_ROW, AUFRUF_DATUM_TEXT_FIELD_COL);
-                addContentTOGridPane(rowConstraint, urlLabel, this.urlTextField, URL_TEXT_FIELD_ROW, URL_TEXT_FIELD_COL);
-                subCategory.setDisable(true);
-                break;
-
-            case SC_WARBEITEN:
-                Label publisherLabel = new Label(HERAUSGEBER);
-                Label einrichtungsLabel = new Label(EINRICHTUNG);
-
-                //Create all  needed textfields for Onlinequelle
-                this.herausgeberTextField= new TextField();
-                this.einrichtungsTextField = new TextField();
-
-                //Add the content to the Gridpane
-                addContentTOGridPane(rowConstraint, publisherLabel, this.herausgeberTextField, HERAUSGEBER_TEXT_FIELD_ROW, HERAUSGEBER_TEXT_FIELD_COL);
-                addContentTOGridPane(rowConstraint, einrichtungsLabel, this.einrichtungsTextField, EINRICHTUNGS_TEXT_FIELD_ROW, EINRICHTUNGS_TEXT_FIELD_COL);
-                subCategory.setDisable(true);
-                break;
-
-            case SC_ANDERES:
-                //Create all needed labels for Buch
-                Label herausgeberLabel1 = new Label(HERAUSGEBER);
-                Label auflageLabel1 = new Label(AUFLAGE);
-                Label ausgabeLabel1 = new Label(AUSGABE);
-
-                //create all needed textfields for Buch
-                this.herausgeberTextField = new TextField();
-                this.auflageTextField = new TextField();
-                this.ausgabeTextField = new TextField();
-
-                //Add the content to the Gridpane
-                addContentTOGridPane(rowConstraint, herausgeberLabel1, this.herausgeberTextField, HERAUSGEBER_TEXT_FIELD_ROW,HERAUSGEBER_TEXT_FIELD_COL);
-                addContentTOGridPane(rowConstraint, auflageLabel1, this.auflageTextField, AUFLAGE_TEXT_FIELD_ROW,AUFLAGE_TEXT_FIELD_COL);
-                addContentTOGridPane(rowConstraint, ausgabeLabel1, this.ausgabeTextField, AUSGABE_TEXT_FIELD_ROW_FOR_ANDERES,AUSGABE_DATUM_TEXT_FIELD_COL);
-                subCategory.setDisable(true);
-                break;
+                case SC_ANDERES:
+                    this.quelle = new Anderes("", "", "", "", "", "");
+                    this.quelleEdited = new Anderes((Anderes)this.quelle);
+                    this.adjustGridPane();
+                    break;
+            }
         }
     }
 }
