@@ -194,7 +194,7 @@ public class QuellenEditDialogController {
                     try {
                         // Load the fxml file and create a new stage for the popup dialog.
                         FXMLLoader loader = new FXMLLoader();
-                        loader.setLocation(MainApp.class.getResource(ADDTAGSFXML));
+                        loader.setLocation(MainApp.class.getResource(ADD_TAGS_FXML));
                         AnchorPane page = (AnchorPane) loader.load();
 
                         // Create the addTag Stage.
@@ -276,7 +276,7 @@ public class QuellenEditDialogController {
                 try {
                     // Load the fxml file and create a new stage for the popup dialog.
                     FXMLLoader loader = new FXMLLoader();
-                    loader.setLocation(MainApp.class.getResource(ADDZITATEFXML));
+                    loader.setLocation(MainApp.class.getResource(ADD_ZITATE_FXML));
                     AnchorPane page = (AnchorPane) loader.load();
 
                     // Create the addTag Stage.
