@@ -57,6 +57,9 @@ public class DB_Constants {
     //Statement to get the zitatId
     public static final String PS_GET_LAST_INSERTED_ZITAT_ID = "SELECT seq FROM sqlite_sequence WHERE name = 'Zitate'";
 
+    //Statement to get the quellenId
+    public static final String PS_GET_LAST_INSERTED_QUELLEN_ID = "SELECT seq FROM sqlite_sequence WHERE name = 'Quellen'";
+
     //Delete Zitate
     public static final String PS_DELETE_ZITAT = "DELETE FROM Zitate WHERE zitatId = ?";
     public static final String PS_DELETE_TAG_ZITAT_CONNECTION_WITH_ZITAT_ID = "DELETE FROM TagsZitate WHERE zitatId = ?";
