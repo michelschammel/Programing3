@@ -33,14 +33,19 @@ public class PieChartController {
 
 	@FXML
 	private void setStats1() throws SQLException {
+		//initialize array and database connection
 		db = Datenbank.getInstance();
 		int[] pieZahlen = new int[9];
+
+		//query database
 		try {
 			for (int i = 0; i < DatabaseTypes.length; i++) {
 				ResultSet result = db.queryWithReturn(PIECHART_STAT_1 + DatabaseTypes[i]);
 				pieZahlen[i] = result.getInt(1);
 				result.close();
 			}
+
+			//write data in piechart
 			pieChartData = FXCollections.observableArrayList(
 					   new PieChart.Data(SC_ANDERES, pieZahlen[0]),
 					   new PieChart.Data(SC_ARTIKEL, pieZahlen[1]),
@@ -76,6 +81,8 @@ public class PieChartController {
 
 	@FXML
 	private void setStats3() throws SQLException {
+
+		//initialize connection to database
 		db = Datenbank.getInstance();
 		ResultSet result = db.queryWithReturn(PIECHART_STAT_2);
 		//result.next();
@@ -86,6 +93,7 @@ public class PieChartController {
 		int[] anzahlWerke = new int[anzahlAutoren];
 		String[] autoren = new String[anzahlAutoren];
 
+		//query data
 		for (int i = 0; i < anzahlAutoren; i++) {
 			String autor = result2.getString(1);
 			ResultSet tempResult = Datenbank.queryWithReturn(PIECHART_STAT_4 + autor + "\"");
@@ -97,6 +105,8 @@ public class PieChartController {
 			tempResult.close();
 		}
 		result2.close();
+
+		//write data to piechart
 		pieChartData = FXCollections.observableArrayList();
 		for (int j = 0; j < anzahlAutoren; j++) {
 			pieChartData.add(new PieChart.Data(autoren[j], anzahlWerke[j]));
