@@ -108,6 +108,10 @@ public class Quelle {
 
     public String getUnterkategorie() {return unterkategorie;}
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public void setUnterkategorie(String unterkategorie) {this.unterkategorie = unterkategorie; }
 
 }

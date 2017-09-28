@@ -412,15 +412,20 @@ public class SchnittstelleQuelle {
         }
     }
 
-    public void insertNewQuelle(Quelle quelle) {
+    public int insertNewQuelle(Quelle quelle) {
         try (Connection connection = this.getConnection()){
             connection.setAutoCommit(false);
+            ResultSet rsQuellenID;
             PreparedStatement preparedStatementInsertQuelle = connection.prepareStatement(PS_INSERT_QUELLE);
             preparedStatementInsertQuelle.setInt(1, quelle.getId());
             preparedStatementInsertQuelle.setString(2, quelle.getAutor());
             preparedStatementInsertQuelle.setString(3, quelle.getTitel());
             preparedStatementInsertQuelle.setString(4, quelle.getJahr());
             preparedStatementInsertQuelle.execute();
+            Statement statementGetQuellenId = connection.createStatement();
+            rsQuellenID = statementGetQuellenId.executeQuery(PS_GET_LAST_INSERTED_QUELLEN_ID);
+            rsQuellenID.next();
+            quelle.setId(rsQuellenID.getInt("seq"));
 
             if (quelle instanceof Anderes) {
                 PreparedStatement preparedStatementInsertAnderes = connection.prepareStatement(PS_INSERT_ANDERES);
@@ -473,6 +478,7 @@ public class SchnittstelleQuelle {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return quelle.getId();
     }
 
     public void deleteQuelle(Quelle quelle) {

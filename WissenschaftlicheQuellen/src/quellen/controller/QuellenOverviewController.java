@@ -176,28 +176,13 @@ public class QuellenOverviewController {
         boolean okClicked = mainApp.showQuellenEditDialog(tempQuelle);
         try {
             if (okClicked) {
-                Datenbank.updateDatabase("INSERT INTO Quellen(Autor, Titel, Jahr) VALUES ('" + tempQuelle.getAutor() + "', '" + tempQuelle.getTitel() + "', '" + tempQuelle.getJahr() + "')"); //insert quelle in database
-                ResultSet rs = Datenbank.queryWithReturn("SELECT quellenId FROM Quellen WHERE titel = \"" + tempQuelle.getTitel() + "\"");
-                int quellenID = rs.getInt(1); //get quellenid for reference as foreign key
-                switch (tempQuelle.getUnterkategorie()) { //insert quelle in subcategory table
-                    case SC_NONE: break;
-                    case SC_ARTIKEL:
-                        Datenbank.updateDatabase("INSERT INTO Artikel(quellenID) VALUES ('" + quellenID + "')");
-                        break;
-                    case SC_BUECHER:
-                        Datenbank.updateDatabase("INSERT INTO Bücher(quellenID) VALUES ('" + quellenID + "')");
-                        break;
-                    case SC_OQUELLEN:
-                        Datenbank.updateDatabase("INSERT INTO Onlinequellen(quellenID) VALUES ('" + quellenID + "')");
-                        break;
-                    case SC_WARBEITEN:
-                        Datenbank.updateDatabase("INSERT INTO WissenschaftlicheArbeiten(quellenID) VALUES ('" + quellenID + "')");
-                        break;
-                    case SC_ANDERES:
-                        Datenbank.updateDatabase("INSERT INTO Anderes(quellenID) VALUES ('" + quellenID + "')");
-                        break;
-                }
-                mainApp.getQuellenList().add(tempQuelle);
+                //Get edited quelle
+                tempQuelle = this.mainApp.getUpdatedQuelle();
+                QuellenService quellenService = new QuellenService();
+                //Insert edited quelle into DB and return the id of quelle
+                tempQuelle.setId(quellenService.insertNewQuelle(tempQuelle));
+                //insert quelle into mainApp
+                this.mainApp.getQuellenList().add(tempQuelle);
             }
         } catch (Exception e) {
             e.printStackTrace();
