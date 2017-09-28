@@ -401,13 +401,75 @@ public class SchnittstelleQuelle {
                 connection.setAutoCommit(true);
             } catch (SQLException e) {
                 try {
-                    System.out.println("rollback");
                     connection.rollback();
                 } catch (SQLException error) {
                     error.printStackTrace();
                 }
             }
         }catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void insertNewQuelle(Quelle quelle) {
+        try (Connection connection = this.getConnection()){
+            connection.setAutoCommit(false);
+            PreparedStatement preparedStatementInsertQuelle = connection.prepareStatement(PS_INSERT_QUELLE);
+            preparedStatementInsertQuelle.setInt(1, quelle.getId());
+            preparedStatementInsertQuelle.setString(2, quelle.getAutor());
+            preparedStatementInsertQuelle.setString(3, quelle.getTitel());
+            preparedStatementInsertQuelle.setString(4, quelle.getJahr());
+            preparedStatementInsertQuelle.execute();
+
+            if (quelle instanceof Anderes) {
+                PreparedStatement preparedStatementInsertAnderes = connection.prepareStatement(PS_INSERT_ANDERES);
+                Anderes anderes = (Anderes)quelle;
+                preparedStatementInsertAnderes.setInt(1, anderes.getId());
+                preparedStatementInsertAnderes.setString(2, anderes.getAuflage());
+                preparedStatementInsertAnderes.setString(3, anderes.getHerausgeber());
+                preparedStatementInsertAnderes.setString(4, anderes.getAusgabe());
+                preparedStatementInsertAnderes.execute();
+
+            } else if (quelle instanceof  Artikel) {
+                PreparedStatement preparedStatementInsertArtikel = connection.prepareStatement(PS_INSERT_ARTIKEL);
+                Artikel artikel = (Artikel)quelle;
+                preparedStatementInsertArtikel.setInt(1, artikel.getId());
+                preparedStatementInsertArtikel.setString(2, artikel.getAusgabe());
+                preparedStatementInsertArtikel.setString(3, artikel.getMagazin());
+                preparedStatementInsertArtikel.execute();
+
+            } else if (quelle instanceof Buch) {
+                PreparedStatement preparedStatementInsertBuch = connection.prepareStatement(PS_INSERT_BUCH);
+                Buch buch = (Buch)quelle;
+                preparedStatementInsertBuch.setInt(1, buch.getId());
+                preparedStatementInsertBuch.setString(2, buch.getIsbn());
+                preparedStatementInsertBuch.setString(3, buch.getHerausgeber());
+                preparedStatementInsertBuch.setString(4, buch.getAuflage());
+                preparedStatementInsertBuch.setString(5, buch.getMonat());
+                preparedStatementInsertBuch.execute();
+
+            } else if (quelle instanceof  Onlinequelle) {
+                PreparedStatement preparedStatementInsertOnlinequelle = connection.prepareStatement(PS_INSERT_ONLINEQUELLE);
+                Onlinequelle onlinequelle = (Onlinequelle)quelle;
+                preparedStatementInsertOnlinequelle.setInt(1, onlinequelle.getId());
+                preparedStatementInsertOnlinequelle.setString(2, onlinequelle.getUrl());
+                preparedStatementInsertOnlinequelle.setString(3, onlinequelle.getAufrufdatum());
+                preparedStatementInsertOnlinequelle.execute();
+
+            } else if (quelle instanceof WissenschaftlicheArbeit) {
+                PreparedStatement preparedStatementInsertWArbeit = connection.prepareStatement(PS_INSERT_WISSENSCHAFTLICHE_ARBEIT);
+                WissenschaftlicheArbeit wissenschaftlicheArbeit = (WissenschaftlicheArbeit)quelle;
+                preparedStatementInsertWArbeit.setInt(1, wissenschaftlicheArbeit.getId());
+                preparedStatementInsertWArbeit.setString(2, wissenschaftlicheArbeit.getEinrichtung());
+                preparedStatementInsertWArbeit.setString(3, wissenschaftlicheArbeit.getHerausgeber());
+                preparedStatementInsertWArbeit.execute();
+            }
+            connection.commit();
+            connection.setAutoCommit(true);
+            //Update function inserts all zitate and tags
+            this.updateQuery(quelle);
+
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
