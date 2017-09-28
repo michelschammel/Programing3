@@ -20,6 +20,6 @@ public class QuellenService {
     }
 
     public void insertNewQuelle(Quelle quelle) {
-
+        schnittstelleQuelle.insertNewQuelle(quelle);
     }
 }
