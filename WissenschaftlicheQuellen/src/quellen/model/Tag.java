@@ -3,6 +3,9 @@ package quellen.model;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
+/**
+ * @author Cedric Schreiner
+ */
 public class Tag {
     private StringProperty text;
     private int tagId;

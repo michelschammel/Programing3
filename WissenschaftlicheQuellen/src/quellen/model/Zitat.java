@@ -5,6 +5,9 @@ import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+/**
+ * @author Cedric Schreiner
+ */
 public class Zitat {
     
     private final StringProperty text;

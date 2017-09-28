@@ -15,6 +15,7 @@ import quellen.model.*;
 /**
  * Created by Cedric on 26.09.2017.
  * Controller for AddZitate
+ * @author Cedric Schreiner
  */
 public class AddZitateController {
     @FXML
@@ -33,6 +34,10 @@ public class AddZitateController {
     private double yMouseCoordinate;
     private boolean goUp;
 
+    /**
+     * Initializes the controller class. This method is automatically called
+     * after the fxml file has been loaded.
+     */
     @FXML
     private void initialize() {
         // Initialize the zitat table with the two columns.
@@ -103,12 +108,19 @@ public class AddZitateController {
         });
     }
 
+    /**
+     * Show all zitate
+     * @param zitat
+     */
     private void showZitatDeails(Zitat zitat) {
         if (zitat != null) {
             zitatTable.setItems(zitatList);
         }
     }
 
+    /**
+     * search for a specific zitat
+     */
     public void search() {
         if (tmpList != null) {
             zitatList = tmpList;
@@ -125,21 +137,35 @@ public class AddZitateController {
         this.zitatTable.setItems(this.zitatList);
     }
 
+    /**
+     * reset the search and show all tags
+     */
     public void reset() {
         this.zitatList = tmpList;
         this.zitatTable.setItems(this.zitatList);
     }
 
+    /**
+     * Set the Stage
+     * @param stage
+     */
     public void setStage(Stage stage) {
         this.addZitatStage = stage;
     }
 
+    /**
+     * set the zitatlist that is later displayed
+     * @param zitatList contains all zitate with tags
+     */
     public void setZitatList(ObservableList<Zitat> zitatList) {
         this.zitatList = zitatList;
         this.tmpList = zitatList;
         this.zitatTable.setItems(this.zitatList);
     }
 
+    /**
+     * @param quelle add zitate to this quelle
+     */
     public void setQuelle(Quelle quelle) {
         this.quelle = quelle;
     }

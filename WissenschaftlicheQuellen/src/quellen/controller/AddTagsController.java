@@ -11,6 +11,10 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import quellen.model.*;
 
+/**
+ * Controller for AddTags.xml
+ * @author Cedric Schreiner
+ */
 public class AddTagsController {
     @FXML
     private TableView<Tag> tagTable;
@@ -24,6 +28,10 @@ public class AddTagsController {
     private ObservableList<Tag> searchTagList;
     private ObservableList<Tag> tmpList;
 
+    /**
+     * Initializes the controller class. This method is automatically called
+     * after the fxml file has been loaded.
+     */
     @FXML
     private void initialize() {
         // Initialize the zitat table with the two columns.
@@ -57,18 +65,29 @@ public class AddTagsController {
         });
     }
 
+    /**
+     * set the tagList that is later used for AddTags
+     * @param tagList tagList used for AddTag
+     */
     public void setTagList(ObservableList<Tag> tagList) {
         this.tagList = tagList;
         this.tmpList = tagList;
         this.tagTable.setItems(this.tagList);
     }
 
+    /**
+     * Show All Tags
+     * @param tag selected tag
+     */
     private void showTagDeails(Tag tag) {
         if (tag != null) {
             tagTable.setItems(tagList);
         }
     }
 
+    /**
+     * Search for a specific tag
+     */
     public void search() {
         if (tmpList != null) {
             tagList = tmpList;
@@ -85,15 +104,18 @@ public class AddTagsController {
         this.tagTable.setItems(this.tagList);
     }
 
+    /**
+     * reset the search and show all tags
+     */
     public void reset() {
         this.tagList = tmpList;
         this.tagTable.setItems(this.tagList);
     }
 
-    public void addTag() {
-        System.out.println("Add");
-    }
-
+    /**
+     * Zitat where the selected tags are added
+     * @param zitat
+     */
     public void setZitat(Zitat zitat) {
         this.zitat = zitat;
     }

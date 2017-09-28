@@ -55,6 +55,7 @@ public class QuellenOverviewController {
     /**
      * The constructor.
      * The constructor is called before the initialize() method.
+     * @author Cedric Schreiner
      */
     public QuellenOverviewController() {
     }

@@ -7,7 +7,13 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
+/**
+ * @author Cedric Schreienr
+ */
 public class ConnectionKlasse {
+    /**
+     * Creates a connection to the DB
+     */
     private Properties properties;
 
     public ConnectionKlasse() {
@@ -23,9 +29,8 @@ public class ConnectionKlasse {
     }
 
     /**
-     * Methode um eine Verbindung aufzubauen
-     *
-     * @return Connection
+     * Method to create a connection
+     * @return Connection to the DB
      */
     public Connection getConnection() {
         Connection con = null;

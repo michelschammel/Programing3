@@ -18,6 +18,15 @@ import quellen.controller.QuellenOverviewController;
 import quellen.controller.RootLayoutController;
 import quellen.service.QuellenService;
 
+import static quellen.constants.Controller_Constants.*;
+
+
+/**
+ * @author Björn Schmidt
+ * @author Michel Schammel
+ * @author Roman Berezin
+ * @author Cedric Schreiner
+ */
 public class MainApp extends Application {
 
     private Stage primaryStage;
@@ -43,7 +52,7 @@ public class MainApp extends Application {
     @Override
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
-        this.primaryStage.setTitle("Wissenschaftliche Quellen");
+        this.primaryStage.setTitle(WISSENSCHAFTLICHE_QUELLEN);
 
         initRootLayout();
 
@@ -60,7 +69,7 @@ public class MainApp extends Application {
         try {
             // Load root layout from fxml file.
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class.getResource("view/RootLayout.fxml"));
+            loader.setLocation(MainApp.class.getResource(ROOT_LAYOUT_FXML));
             rootLayout = (BorderPane) loader.load();
             RootLayoutController rootLayoutController = loader.getController();
             rootLayoutController.setMainApp(this);
@@ -81,7 +90,7 @@ public class MainApp extends Application {
         try {
             // Load quellen overview.
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class.getResource("view/quellenOverview.fxml"));
+            loader.setLocation(MainApp.class.getResource(QUELLEN_OVERVIEW_FXML));
             AnchorPane quellenOverview = (AnchorPane) loader.load();
 
             // Set quellen overview into the center of root layout.
@@ -108,7 +117,7 @@ public class MainApp extends Application {
         try {
             // Load the fxml file and create a new stage for the popup dialog.
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class.getResource("view/QuellenEditDialog.fxml"));
+            loader.setLocation(MainApp.class.getResource(QUELLEN_EDIT_DIALOG_FXML));
             AnchorPane page = (AnchorPane) loader.load();
 
             // Create the dialog Stage.
@@ -185,10 +194,10 @@ public class MainApp extends Application {
         try {
             // Load the fxml file and create a new stage for the popup.
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class.getResource("view/PieChart.fxml"));
+            loader.setLocation(MainApp.class.getResource(PIE_CHART_FXML));
             AnchorPane page = (AnchorPane) loader.load();
             Stage dialogStage = new Stage();
-            dialogStage.setTitle("PieChart");
+            dialogStage.setTitle(KUCHEN_DIAGRAMM);
             dialogStage.initModality(Modality.WINDOW_MODAL);
             dialogStage.initOwner(primaryStage);
             Scene scene = new Scene(page);
@@ -209,10 +218,10 @@ public class MainApp extends Application {
         try {
             // Load the fxml file and create a new stage for the popup.
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class.getResource("view/Tutorial.fxml"));
+            loader.setLocation(MainApp.class.getResource(TUTORIAL_FXML));
             AnchorPane page = (AnchorPane) loader.load();
             Stage dialogStage = new Stage();
-            dialogStage.setTitle("Tutorial");
+            dialogStage.setTitle(TUTORIAL);
             dialogStage.initModality(Modality.WINDOW_MODAL);
             dialogStage.initOwner(primaryStage);
             Scene scene = new Scene(page);
@@ -232,10 +241,10 @@ public class MainApp extends Application {
         try {
             // Load the fxml file and create a new stage for the popup.
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class.getResource("view/About.fxml"));
+            loader.setLocation(MainApp.class.getResource(ABOUT_FXML));
             AnchorPane page = (AnchorPane) loader.load();
             Stage dialogStage = new Stage();
-            dialogStage.setTitle("About");
+            dialogStage.setTitle(ABOUT);
             dialogStage.initModality(Modality.WINDOW_MODAL);
             dialogStage.initOwner(primaryStage);
             Scene scene = new Scene(page);

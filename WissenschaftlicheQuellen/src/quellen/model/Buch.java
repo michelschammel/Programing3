@@ -4,6 +4,9 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.ObservableList;
 
+/**
+ * @author Cedric Schreiner
+ */
 public class Buch extends Quelle{
 
     private StringProperty herausgeber;

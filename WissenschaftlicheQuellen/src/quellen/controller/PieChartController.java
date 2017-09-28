@@ -8,6 +8,10 @@ import javafx.fxml.FXML;
 import javafx.scene.chart.*;
 import quellen.model.Datenbank;
 
+
+/**
+ * @author Roman Berezin
+ */
 public class PieChartController {
 	String[] DatabaseTypes = {"Anderes", "Artikel", "Bücher", "Onlinequellen", "Quellen", "Tags", "TagsZitate",
 			"WissenschaftlicheArbeiten", "Zitate"};

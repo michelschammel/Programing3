@@ -1,5 +1,9 @@
 package quellen.constants;
 
+/**
+ * Constants Class for all Selections/Updates/Deletes on the DB
+ * @author Cedric Schreiner
+ */
 public class DB_Constants {
     //Prepared Statements to update a quelle
     public static final String PS_UPDATA_QUELLE = "UPDATE Quellen SET autor = ?, titel = ?, jahr = ? WHERE quellenId = ?";

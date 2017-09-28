@@ -4,6 +4,9 @@ import javafx.collections.ObservableList;
 import quellen.dao.SchnittstelleQuelle;
 import quellen.model.Quelle;
 
+/**
+ * @author Cedric Schreiner
+ */
 public class QuellenService {
     private SchnittstelleQuelle schnittstelleQuelle;
 

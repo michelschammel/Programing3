@@ -7,7 +7,7 @@ import static quellen.constants.Controller_Constants.*;
 
 /**
  *
- * @Author Björn Schmidt
+ * @author Björn Schmidt
  */
 public class TutorialController {
 
@@ -28,7 +28,7 @@ public class TutorialController {
         // Handle Button event.
         Image image;
 
-        if (buttonTest == false && nextClicks < TUT_ANZAHL_PLUS_EINS) {
+        if (!buttonTest && nextClicks < TUT_ANZAHL_PLUS_EINS) {
             this.nextClicks++;
         }
         this.buttonTest = true;
@@ -93,6 +93,21 @@ public class TutorialController {
                 myImage.setImage(image);
                 this.nextClicks++;
                 break;
+            case TUT_13:
+                image = new Image(getClass().getResource(PIC_TUT_13).toExternalForm());
+                myImage.setImage(image);
+                this.nextClicks++;
+                break;
+            case TUT_14:
+                image = new Image(getClass().getResource(PIC_TUT_14).toExternalForm());
+                myImage.setImage(image);
+                this.nextClicks++;
+                break;
+            case TUT_15:
+                image = new Image(getClass().getResource(PIC_TUT_15).toExternalForm());
+                myImage.setImage(image);
+                this.nextClicks++;
+                break;
             default:
                 this.buttonTest = false;
                 image = new Image(getClass().getResource(PIC_TUT).toExternalForm());
@@ -107,7 +122,7 @@ public class TutorialController {
     private void handleButtonBackAction () {
         Image image;
 
-        if (nextClicks > 1 && buttonTest == true) {
+        if (nextClicks > 1 && buttonTest) {
             this.nextClicks--;
             this.buttonTest = false;
         }
@@ -164,6 +179,18 @@ public class TutorialController {
                 break;
             case TUT_12:
                 image = new Image(getClass().getResource(PIC_TUT_12).toExternalForm());
+                myImage.setImage(image);
+                break;
+            case TUT_13:
+                image = new Image(getClass().getResource(PIC_TUT_13).toExternalForm());
+                myImage.setImage(image);
+                break;
+            case TUT_14:
+                image = new Image(getClass().getResource(PIC_TUT_14).toExternalForm());
+                myImage.setImage(image);
+                break;
+            case TUT_15:
+                image = new Image(getClass().getResource(PIC_TUT_15).toExternalForm());
                 myImage.setImage(image);
                 break;
             default:
