@@ -269,6 +269,7 @@ public class SchnittstelleQuelle {
                         e.printStackTrace();
                     }
                 });
+
                 //Update all Tags
                 quelle.getZitatList().forEach(zitat -> zitat.getTagList().forEach(tag -> {
 
@@ -468,6 +469,52 @@ public class SchnittstelleQuelle {
             connection.setAutoCommit(true);
             //Update function inserts all zitate and tags
             this.updateQuery(quelle);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void deleteQuelle(Quelle quelle) {
+        try (Connection connection = this.getConnection()) {
+            //delete zitatlist from quelle;
+            quelle.getZitatList().clear();
+            this.updateQuery(quelle);
+
+            //Delete quelle without zitat
+            connection.setAutoCommit(false);
+            PreparedStatement preparedStatementDeleteQuelle = connection.prepareStatement(PS_DELETE_QUELLE);
+            preparedStatementDeleteQuelle.setInt(1, quelle.getId());
+            preparedStatementDeleteQuelle.execute();
+
+            if (quelle instanceof Anderes) {
+                PreparedStatement preparedStatementDeleteAnderes = connection.prepareStatement(PS_DELETE_ANDERES);
+                preparedStatementDeleteAnderes.setInt(1, quelle.getId());
+                preparedStatementDeleteAnderes.execute();
+
+            } else if (quelle instanceof Artikel) {
+                PreparedStatement preparedStatementDeleteArtikel = connection.prepareStatement(PS_DELETE_ARTIKEL);
+                preparedStatementDeleteArtikel.setInt(1, quelle.getId());
+                preparedStatementDeleteArtikel.execute();
+
+            } else if (quelle instanceof Buch) {
+                PreparedStatement preparedStatementDeleteBuch = connection.prepareStatement(PS_DELETE_BUCH);
+                preparedStatementDeleteBuch.setInt(1, quelle.getId());
+                preparedStatementDeleteBuch.execute();
+
+            } else if (quelle instanceof Onlinequelle) {
+                PreparedStatement preparedStatementDeleteOnlineQuelle = connection.prepareStatement(PS_DELETE_ONLINEQUELLE);
+                preparedStatementDeleteOnlineQuelle.setInt(1, quelle.getId());
+                preparedStatementDeleteOnlineQuelle.execute();
+
+            } else if (quelle instanceof WissenschaftlicheArbeit) {
+                PreparedStatement preparedStatementWissenschaftlichArbeit = connection.prepareStatement(PS_DELETE_WARBEIT);
+                preparedStatementWissenschaftlichArbeit.setInt(1, quelle.getId());
+                preparedStatementWissenschaftlichArbeit.execute();
+
+            }
+            connection.commit();
+            connection.setAutoCommit(true);
 
         } catch (SQLException e) {
             e.printStackTrace();

@@ -22,4 +22,8 @@ public class QuellenService {
     public void insertNewQuelle(Quelle quelle) {
         schnittstelleQuelle.insertNewQuelle(quelle);
     }
+
+    public void deleteQuelle(Quelle quelle) {
+        schnittstelleQuelle.deleteQuelle(quelle);
+    }
 }

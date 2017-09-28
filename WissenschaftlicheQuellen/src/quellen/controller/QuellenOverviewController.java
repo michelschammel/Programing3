@@ -158,6 +158,8 @@ public class QuellenOverviewController {
     private void handleDeleteQuelle() {
         int selectedIndex = quellenTable.getSelectionModel().getSelectedIndex();
         if (selectedIndex >= 0) {
+            QuellenService quellenService = new QuellenService();
+            quellenService.deleteQuelle(quellenTable.getSelectionModel().getSelectedItem());
             quellenTable.getItems().remove(selectedIndex);
         } else {
             nothingSelected("No Selection", "No Quelle Selected", "Please select a quelle in the table.");
