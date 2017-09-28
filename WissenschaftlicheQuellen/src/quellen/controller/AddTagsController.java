@@ -59,6 +59,7 @@ public class AddTagsController {
 
     public void setTagList(ObservableList<Tag> tagList) {
         this.tagList = tagList;
+        this.tmpList = tagList;
         this.tagTable.setItems(this.tagList);
     }
 

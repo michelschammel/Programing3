@@ -237,6 +237,7 @@ public class QuellenOverviewController {
      */
     public void setMainApp(MainApp mainApp) {
         this.mainApp = mainApp;
+        tmpList = mainApp.getQuellenList();
         quelleList = mainApp.getQuellenList();
         // Add observable list data to the quellen table.
         quellenTable.setItems(mainApp.getQuellenList());

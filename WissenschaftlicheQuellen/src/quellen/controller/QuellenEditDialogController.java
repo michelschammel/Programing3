@@ -27,7 +27,7 @@ import static quellen.constants.Controller_Constants.*;
 
 /**
  * Dialog to edit details of a quelle.
- * @author Cedric Schreiner,
+ * @author Cedric Schreiner
  */
 public class QuellenEditDialogController {
 
@@ -62,7 +62,6 @@ public class QuellenEditDialogController {
     private boolean okClicked = false;
     private ObservableList<Zitat> zitatList;
     private boolean editmode = true;
-    private String newQuelleType = "";
 
     //all custom textFields
     private TextField herausgeberTextField;
@@ -293,6 +292,7 @@ public class QuellenEditDialogController {
                     AddZitateController controller = loader.getController();
                     controller.setZitatList(zitatList);
                     controller.setQuelle(quelleEdited);
+                    zitatTable.setItems(quelleEdited.getZitatList());
                     controller.setStage(addZitatStage);
 
                     // Show the dialog and wait until the user closes it
@@ -386,7 +386,7 @@ public class QuellenEditDialogController {
         //the editdialog gets adjusted for every sort of Source
         if (quelle instanceof Buch) {
             adjustDialogForBuch(rowConstraint);
-        } else if (quelle instanceof Artikel || newQuelleType.equals(SC_ARTIKEL)){
+        } else if (quelle instanceof Artikel){
             adjustDialogForArtikel(rowConstraint);
         } else if (quelle instanceof Onlinequelle){
             adjustDialogForOnlinequelle(rowConstraint);
