@@ -1,5 +1,8 @@
 package quellen.controller;
-
+/*
+Ursprünglich geplant, allerdings verworfen da zu viele Schwierigkeiten.
+@author Roman Berezin
+ */
 
 import java.sql.ResultSet;
 import java.util.Arrays;

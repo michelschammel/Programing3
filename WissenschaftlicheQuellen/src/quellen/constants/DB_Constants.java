@@ -2,7 +2,7 @@ package quellen.constants;
 
 /**
  * Constants Class for all Selections/Updates/Deletes on the DB
- * @author Cedric Schreiner
+ * @author Cedric Schreiner, Roman Berezin
  */
 public class DB_Constants {
     //Prepared Statements to update a quelle
@@ -78,6 +78,10 @@ public class DB_Constants {
     public static final String SC_OQUELLEN = "Onlinequelle";
     public static final String SC_ANDERES = "Andere";
     public static final String SC_NONE = "<keine>";
+    public static final String SC_TAGS = "Tags";
+    public static final String SC_TAGSZITATE = "TagsZitate";
+    public static final String SC_ZITATE = "Zitate";
+    public static final String SC_QUELLEN = "Quellen";
 
     //Delete Quelle
     public static final String PS_DELETE_QUELLE = "DELETE FROM Quellen WHERE quellenId = ?";
@@ -86,4 +90,11 @@ public class DB_Constants {
     public static final String PS_DELETE_BUCH = "DELETE FROM Bücher WHERE quellenId = ?";
     public static final String PS_DELETE_ONLINEQUELLE = "DELETE FROM Onlinequellen WHERE quellenId = ?";
     public static final String PS_DELETE_WARBEIT = "DELETE FROM WissenschaftlicheArbeiten WHERE quellenId = ?";
+
+    //Konstanten für die Statistiken
+    public static final String PIECHART_STAT_1 = "select count (*) from ";
+    public static final String PIECHART_STAT_2 = "select count(distinct autor) from Quellen";
+    public static final String PIECHART_STAT_3 = "select distinct autor from Quellen";
+    public static final String PIECHART_STAT_4 = "select count(*) from Quellen where autor = \"";
+    public static final String PIECHART_STAT_5 = "select jahr from Quellen";
 }

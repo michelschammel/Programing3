@@ -27,7 +27,7 @@ import static quellen.constants.Controller_Constants.*;
 
 /**
  * Dialog to edit details of a quelle.
- * @author Cedric Schreiner
+ * @author Cedric Schreiner, Roman Berezin
  */
 public class QuellenEditDialogController {
 
