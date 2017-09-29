@@ -95,7 +95,7 @@ public class AddZitateController {
                 public void handle(MouseEvent event) {
                     if (event.getClickCount() == 2 && (!row.isEmpty())) {
                         boolean newZitat = true;
-                        boolean newTag = false;
+                        boolean newTag;
                         //text of the selected zitat
                         String zitatText = zitatTable.getSelectionModel().getSelectedItem().getText();
 
@@ -124,9 +124,9 @@ public class AddZitateController {
                             //create new zitat
                             Zitat zitat = new Zitat(zitatTable.getSelectionModel().getSelectedItem().getText(), quelle.getId());
                             //set every tagId to 0
-                            zitatTable.getSelectionModel().getSelectedItem().getTagList().forEach(tag -> {
-                                zitat.getTagList().add(new Tag(tag.getText()));
-                            });
+                            zitatTable.getSelectionModel().getSelectedItem().getTagList().forEach(tag ->
+                                zitat.getTagList().add(new Tag(tag.getText()))
+                            );
                             quelle.getZitatList().add(zitat);
                         }
                     }
@@ -138,7 +138,7 @@ public class AddZitateController {
 
     /**
      * Show all zitate
-     * @param zitat
+     * @param zitat selected zitat
      */
     private void showZitatDeails(Zitat zitat) {
         if (zitat != null) {
@@ -175,7 +175,7 @@ public class AddZitateController {
 
     /**
      * Set the Stage
-     * @param stage
+     * @param stage stage
      */
     public void setStage(Stage stage) {
         this.addZitatStage = stage;
