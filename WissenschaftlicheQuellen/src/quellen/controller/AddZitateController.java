@@ -13,7 +13,6 @@ import quellen.model.*;
 
 
 /**
- * Created by Cedric on 26.09.2017.
  * Controller for AddZitate
  * @author Cedric Schreiner
  */
