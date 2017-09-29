@@ -94,13 +94,41 @@ public class AddZitateController {
                 @Override
                 public void handle(MouseEvent event) {
                     if (event.getClickCount() == 2 && (!row.isEmpty())) {
-                        //create new zitat
-                        Zitat zitat = new Zitat(zitatTable.getSelectionModel().getSelectedItem().getText(), quelle.getId());
-                        //set every tagId to 0
-                        zitatTable.getSelectionModel().getSelectedItem().getTagList().forEach( tag -> {
-                            zitat.getTagList().add(new Tag(tag.getText()));
-                        });
-                        quelle.getZitatList().add(zitat);
+                        boolean newZitat = true;
+                        boolean newTag = false;
+                        //text of the selected zitat
+                        String zitatText = zitatTable.getSelectionModel().getSelectedItem().getText();
+
+                        //check if a zitat like this already exists in quelle
+                        for (Zitat zitat: quelle.getZitatList()) {
+                            if (zitat.getText().toLowerCase().equals(zitatText.toLowerCase())) {
+                                newZitat = false;
+                                //the zitat exists already in quelle
+                                //check if the zitat has new tags that the zitat of quelle doesnt have
+                                for(Tag newZitatTag: zitatTable.getSelectionModel().getSelectedItem().getTagList()) {
+                                    newTag = true;
+                                    for (Tag quelleTag: zitat.getTagList()) {
+                                        if (newZitatTag.getText().toLowerCase().equals(quelleTag.getText().toLowerCase())) {
+                                            newTag = false;
+                                        }
+                                    }
+                                    if (newTag) {
+                                        zitat.addTag(new Tag(newZitatTag.getText()));
+                                    }
+                                }
+                            }
+                        }
+
+                        System.out.println("Neues Zitat: " + newZitat);
+                        if (newZitat) {
+                            //create new zitat
+                            Zitat zitat = new Zitat(zitatTable.getSelectionModel().getSelectedItem().getText(), quelle.getId());
+                            //set every tagId to 0
+                            zitatTable.getSelectionModel().getSelectedItem().getTagList().forEach(tag -> {
+                                zitat.getTagList().add(new Tag(tag.getText()));
+                            });
+                            quelle.getZitatList().add(zitat);
+                        }
                     }
                 }
             });
