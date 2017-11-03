@@ -5,7 +5,7 @@ import javafx.fxml.FXML;
 import quellen.MainApp;
 
 /**
- * @author Bjloern Schmidt
+ * @author Bjoern Schmidt
  * @author Roman Berezin
  */
 public class RootLayoutController {

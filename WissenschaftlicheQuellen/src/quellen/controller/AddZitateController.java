@@ -17,7 +17,6 @@ import java.awt.geom.Point2D;
 
 
 /**
- * Created by Cedric on 26.09.2017.
  * Controller for AddZitate
  * @author Cedric Schreiner
  */
