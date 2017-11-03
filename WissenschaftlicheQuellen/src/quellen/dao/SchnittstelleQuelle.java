@@ -552,4 +552,14 @@ public class SchnittstelleQuelle {
             e.printStackTrace();
         }
     }
+
+    public ResultSet queryWithReturn(String sql) throws SQLException {
+        //needed type but not working with sqlite
+        //Statement stmt = c.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+        //Return the Resultset
+        try (Connection connection = this.getConnection()){
+            Statement stmt  = connection.createStatement();
+            return stmt.executeQuery(sql);
+        }
+    }
 }

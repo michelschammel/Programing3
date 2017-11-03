@@ -47,22 +47,30 @@ public class AddTagsController {
             row.setOnMouseClicked(new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent event) {
-                    if (event.getClickCount() == 2 && (!row.isEmpty())) {
-                        ObservableList<Tag> tagList = zitat.getTagList();
-                        boolean addTag = true;
-                        for (int i = 0; i < tagList.size(); i++) {
-                            if (tagList.get(i).getText().equals(tagTable.getSelectionModel().getSelectedItem().getText())) {
-                                addTag = false;
-                            }
-                        }
-                        if (addTag) {
-                            zitat.addTag(new Tag(tagTable.getSelectionModel().getSelectedItem()));
-                        }
-                    }
+                    handleRowMouseClick(event, row);
                 }
             });
             return row;
         });
+    }
+
+    /**
+     *
+     */
+    private void handleRowMouseClick(MouseEvent event, TableRow<Tag> row) {
+        if (event.getClickCount() == 2 && (!row.isEmpty())) {
+            ObservableList<Tag> tagList = zitat.getTagList();
+            boolean addTag = true;
+
+            for (Tag tag : tagList) {
+                if (tag.getText().equals(tagTable.getSelectionModel().getSelectedItem().getText())) {
+                    addTag = false;
+                }
+            }
+            if (addTag) {
+                zitat.addTag(new Tag(tagTable.getSelectionModel().getSelectedItem()));
+            }
+        }
     }
 
     /**

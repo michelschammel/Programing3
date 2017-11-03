@@ -297,9 +297,9 @@ public class QuellenOverviewController {
                 }
 
                 if (searchTag && !addQuelle) {
-                    for (int i = 0; i < quelle.getZitatList().size(); i++) {
-                        for (int j = 0; j < quelle.getZitatList().get(i).getTagList().size(); j++) {
-                            if (quelle.getZitatList().get(i).getTagList().get(j).getText().toLowerCase().contains(searchText)) {
+                    for (Zitat zitat : quelle.getZitatList()) {
+                        for (Tag tag : zitat.getTagList()) {
+                            if (tag.getText().toLowerCase().contains(searchText)) {
                                 addQuelle = true;
                                 break;
                             }

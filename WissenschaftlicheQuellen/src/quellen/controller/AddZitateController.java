@@ -6,10 +6,14 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import quellen.model.*;
+
+import java.awt.*;
+import java.awt.geom.Point2D;
 
 
 /**
@@ -63,73 +67,13 @@ public class AddZitateController {
             TableRow<Zitat> row = new TableRow<>();
 
             row.hoverProperty().addListener((observable) -> {
-                final Zitat zitat = row.getItem();
-                tagContextMenu.getItems().clear();
-                double x;
-                double y;
-
-                if (row.isHover() && zitat != null) {
-                    Tooltip zitatToolTip = new Tooltip(zitat.getText());
-                    zitatToolTip.setWrapText(true);
-                    zitatToolTip.setMaxWidth(160);
-                    row.setTooltip(zitatToolTip);
-                    zitat.getTagList().forEach( tag -> {
-                        MenuItem tagMenu = new MenuItem(tag.getText());
-                        tagContextMenu.getItems().add(tagMenu);
-                    });
-                    Window window = zitatTable.getScene().getWindow();
-                    x = window.getX() + window.getWidth() - 3;
-                    y = window.getY() + 95;
-                    if (goUp) {
-                        y += 24 * (Math.round((this.yMouseCoordinate - 69) / 24) + 1);
-                    } else {
-                        y += 24 * (Math.round((this.yMouseCoordinate - 69) / 24) + 2);
-                    }
-                    tagContextMenu.hide();
-                    tagContextMenu.show(addZitatStage, x, y);
-                }
+                rowHover(row);
             });
 
             row.setOnMouseClicked(new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent event) {
-                    if (event.getClickCount() == 2 && (!row.isEmpty())) {
-                        boolean newZitat = true;
-                        boolean newTag;
-                        //text of the selected zitat
-                        String zitatText = zitatTable.getSelectionModel().getSelectedItem().getText();
-
-                        //check if a zitat like this already exists in quelle
-                        for (Zitat zitat: quelle.getZitatList()) {
-                            if (zitat.getText().toLowerCase().equals(zitatText.toLowerCase())) {
-                                newZitat = false;
-                                //the zitat exists already in quelle
-                                //check if the zitat has new tags that the zitat of quelle doesnt have
-                                for(Tag newZitatTag: zitatTable.getSelectionModel().getSelectedItem().getTagList()) {
-                                    newTag = true;
-                                    for (Tag quelleTag: zitat.getTagList()) {
-                                        if (newZitatTag.getText().toLowerCase().equals(quelleTag.getText().toLowerCase())) {
-                                            newTag = false;
-                                        }
-                                    }
-                                    if (newTag) {
-                                        zitat.addTag(new Tag(newZitatTag.getText()));
-                                    }
-                                }
-                            }
-                        }
-
-                        System.out.println("Neues Zitat: " + newZitat);
-                        if (newZitat) {
-                            //create new zitat
-                            Zitat zitat = new Zitat(zitatTable.getSelectionModel().getSelectedItem().getText(), quelle.getId());
-                            //set every tagId to 0
-                            zitatTable.getSelectionModel().getSelectedItem().getTagList().forEach(tag ->
-                                zitat.getTagList().add(new Tag(tag.getText()))
-                            );
-                            quelle.getZitatList().add(zitat);
-                        }
-                    }
+                    handleRowDoubleClick(event, row);
                 }
             });
             return row;
@@ -144,6 +88,84 @@ public class AddZitateController {
         if (zitat != null) {
             zitatTable.setItems(zitatList);
         }
+    }
+
+    private void handleRowDoubleClick(MouseEvent event, TableRow<Zitat> row) {
+        if (event.getClickCount() == 2 && (!row.isEmpty())) {
+            boolean isNewZitat = true;
+            boolean isNewTag;
+            //text of the selected zitat
+            String zitatText = zitatTable.getSelectionModel().getSelectedItem().getText();
+
+            //check if a zitat like this already exists in quelle
+            for (Zitat zitat: quelle.getZitatList()) {
+                if (zitat.getText().toLowerCase().equals(zitatText.toLowerCase())) {
+                    isNewZitat = false;
+                    //the zitat exists already in quelle
+                    //check if the zitat has new tags that the zitat of quelle doesnt have
+                    for(Tag newZitatTag: zitatTable.getSelectionModel().getSelectedItem().getTagList()) {
+                        isNewTag = true;
+                        for (Tag quelleTag: zitat.getTagList()) {
+                            if (newZitatTag.getText().toLowerCase().equals(quelleTag.getText().toLowerCase())) {
+                                isNewTag = false;
+                            }
+                        }
+                        if (isNewTag) {
+                            zitat.addTag(new Tag(newZitatTag.getText()));
+                        }
+                    }
+                }
+            }
+
+            if (isNewZitat) {
+                //create new zitat
+                Zitat zitat = new Zitat(zitatTable.getSelectionModel().getSelectedItem().getText(), quelle.getId());
+                //set every tagId to 0
+                zitatTable.getSelectionModel().getSelectedItem().getTagList().forEach(tag ->
+                        zitat.getTagList().add(new Tag(tag.getText()))
+                );
+                quelle.getZitatList().add(zitat);
+            }
+        }
+    }
+
+    private void rowHover(TableRow<Zitat> row) {
+        final Zitat zitat = row.getItem();
+        tagContextMenu.getItems().clear();
+
+        if (row.isHover() && zitat != null) {
+            Tooltip zitatToolTip = new Tooltip(zitat.getText());
+            zitatToolTip.setWrapText(true);
+            zitatToolTip.setMaxWidth(160);
+            row.setTooltip(zitatToolTip);
+            zitat.getTagList().forEach( tag -> {
+                MenuItem tagMenu = new MenuItem(tag.getText());
+                tagContextMenu.getItems().add(tagMenu);
+            });
+
+            Point2D contextPosition = calculateContextMenuPosition();
+            tagContextMenu.hide();
+            tagContextMenu.show(addZitatStage, contextPosition.getX(), contextPosition.getY());
+        }
+    }
+
+    private Point2D calculateContextMenuPosition() {
+        Point2D contextPosition = new Point2D.Double();
+        double x;
+        double y;
+
+        Window window = zitatTable.getScene().getWindow();
+        x = window.getX() + window.getWidth() - 3;
+        y = window.getY() + 95;
+
+        if (goUp) {
+            y += 24 * (Math.round((this.yMouseCoordinate - 69) / 24) + 1);
+        } else {
+            y += 24 * (Math.round((this.yMouseCoordinate - 69) / 24) + 2);
+        }
+
+        contextPosition.setLocation(x, y);
+        return contextPosition;
     }
 
     /**

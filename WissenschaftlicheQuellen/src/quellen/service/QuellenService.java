@@ -4,6 +4,9 @@ import javafx.collections.ObservableList;
 import quellen.dao.SchnittstelleQuelle;
 import quellen.model.Quelle;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 /**
  * @author Cedric Schreiner
  */
@@ -28,5 +31,10 @@ public class QuellenService {
 
     public void deleteQuelle(Quelle quelle) {
         schnittstelleQuelle.deleteQuelle(quelle);
+    }
+
+    public ResultSet queryWithReturn(String sql) throws SQLException{
+        System.out.println("Geht noch 1");
+        return schnittstelleQuelle.queryWithReturn(sql);
     }
 }
