@@ -2,6 +2,7 @@ package quellen.controller;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
@@ -44,11 +45,8 @@ public class AddTagsController {
 
         this.tagTable.setRowFactory(tv -> {
             TableRow<Tag> row = new TableRow<>();
-            row.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) {
+            row.setOnMouseClicked((MouseEvent event) -> {
                     handleRowMouseClick(event, row);
-                }
             });
             return row;
         });

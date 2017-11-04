@@ -2,17 +2,20 @@ package quellen.dao;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import quellen.Interfaces.SourceDatabaseInterface;
 import quellen.model.*;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.List;
 
+import static quellen.constants.Controller_Constants.*;
 import static quellen.constants.DB_Constants.*;
 
 /**
  * @author Cedric Schreiner
  */
-public class SchnittstelleQuelle {
+public class SourceDatabaseControl implements SourceDatabaseInterface {
     /**
      * get a connection to the DB
      * @return connection
@@ -136,7 +139,7 @@ public class SchnittstelleQuelle {
 
             //Step 3: Get all Tags for a Zitat
             quelleList.forEach( quelle -> quelle.getZitatList().forEach( zitat -> {
-                final  ResultSet rsTags;
+                final ResultSet rsTags;
                 Tag tag;
                 try {
                     PreparedStatement preparedStatement = connection.prepareStatement(PS_GET_TAGS);
@@ -553,13 +556,52 @@ public class SchnittstelleQuelle {
         }
     }
 
-    public ResultSet queryWithReturn(String sql) throws SQLException {
-        //needed type but not working with sqlite
-        //Statement stmt = c.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
-        //Return the Resultset
-        try (Connection connection = this.getConnection()){
-            Statement stmt  = connection.createStatement();
-            return stmt.executeQuery(sql);
+    public int getNumberOfSources(String type) {
+        int typeCount = 0;
+        try (Connection connection = getConnection()){
+            ResultSet rs;
+            String selectStatement = PIECHART_STAT_1.replace("?", type);
+            Statement statement = connection.createStatement();
+            rs = statement.executeQuery(selectStatement);
+
+            rs.next();
+            typeCount =  rs.getInt(1);
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+        return typeCount;
+    }
+
+    public List<String> getAuthors() {
+        List<String> authorList = new ArrayList<>();
+        try (Connection connection = getConnection()) {
+            ResultSet rs;
+            Statement statement = connection.createStatement();
+            rs = statement.executeQuery(PIECHART_STAT_3);
+
+            while(rs.next()) {
+                authorList.add(rs.getString(INDEX_1));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return authorList;
+    }
+
+    public int getNumberOfSourcesFromAuthor(String author) {
+        int numberOfSources = 0;
+        try (Connection connection = getConnection(); PreparedStatement statement = connection.prepareStatement(PIECHART_STAT_4)) {
+            ResultSet rs;
+            statement.setString(INDEX_1, author);
+            rs = statement.executeQuery();
+
+            rs.next();
+            numberOfSources = rs.getInt(INDEX_1);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return numberOfSources;
     }
 }

@@ -54,27 +54,21 @@ public class AddZitateController {
         this.zitatTable.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> showZitatDeails(newValue));
 
-        this.zitatTable.setOnMouseMoved(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                goUp = (event.getY() < yMouseCoordinate);
-                yMouseCoordinate = event.getY();
-            }
+        this.zitatTable.setOnMouseMoved((MouseEvent event) -> {
+            goUp = (event.getY() < yMouseCoordinate);
+            yMouseCoordinate = event.getY();
         });
 
         this.zitatTable.setRowFactory(tv -> {
             TableRow<Zitat> row = new TableRow<>();
 
-            row.hoverProperty().addListener((observable) -> {
-                rowHover(row);
-            });
+            row.hoverProperty().addListener((observable) ->
+                rowHover(row)
+            );
 
-            row.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) {
-                    handleRowDoubleClick(event, row);
-                }
-            });
+            row.setOnMouseClicked((MouseEvent event) ->
+                handleRowDoubleClick(event, row)
+            );
             return row;
         });
     }

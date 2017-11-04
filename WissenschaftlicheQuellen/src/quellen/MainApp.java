@@ -12,11 +12,12 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import quellen.Interfaces.SourceDatabaseInterface;
+import quellen.dao.SourceDatabaseControl;
 import quellen.model.*;
 import quellen.controller.QuellenEditDialogController;
 import quellen.controller.QuellenOverviewController;
 import quellen.controller.RootLayoutController;
-import quellen.service.QuellenService;
 
 import static quellen.constants.Controller_Constants.*;
 
@@ -45,8 +46,8 @@ public class MainApp extends Application {
      */
     public MainApp() throws SQLException {
         //quellenData = Datenbank.getInstance().getQuellenFromDataBase();
-        QuellenService quellenService = new QuellenService();
-        quellenData = quellenService.getQuellenDataFromDB();
+        SourceDatabaseInterface quellenService = new SourceDatabaseControl();
+        quellenData = quellenService.getQuellenFromDataBase();
     }
 
     @Override
@@ -191,60 +192,26 @@ public class MainApp extends Application {
     }
 
     public void showPieChart() {
-        try {
-            // Load the fxml file and create a new stage for the popup.
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class.getResource(PIE_CHART_FXML));
-            AnchorPane page = (AnchorPane) loader.load();
-            Stage dialogStage = new Stage();
-            dialogStage.setTitle(KUCHEN_DIAGRAMM);
-            dialogStage.initModality(Modality.WINDOW_MODAL);
-            dialogStage.initOwner(primaryStage);
-            Scene scene = new Scene(page);
-            dialogStage.setScene(scene);
-
-            // Set the persons into the controller.
-            //BarChartController controller = loader.getController();
-
-            dialogStage.show();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        showScreen(PIE_CHART_FXML, KUCHEN_DIAGRAMM);
     }
 
 
     public void showTutorial() {
-        try {
-            // Load the fxml file and create a new stage for the popup.
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class.getResource(TUTORIAL_FXML));
-            AnchorPane page = (AnchorPane) loader.load();
-            Stage dialogStage = new Stage();
-            dialogStage.setTitle(TUTORIAL);
-            dialogStage.initModality(Modality.WINDOW_MODAL);
-            dialogStage.initOwner(primaryStage);
-            Scene scene = new Scene(page);
-            dialogStage.setScene(scene);
-
-
-            dialogStage.show();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        showScreen(TUTORIAL_FXML, TUTORIAL);
     }
-
-
 
     public void showAbout() {
+        showScreen(ABOUT_FXML, ABOUT);
+    }
+
+    private void showScreen(String resource, String titel) {
         try {
             // Load the fxml file and create a new stage for the popup.
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class.getResource(ABOUT_FXML));
+            loader.setLocation(MainApp.class.getResource(resource));
             AnchorPane page = (AnchorPane) loader.load();
             Stage dialogStage = new Stage();
-            dialogStage.setTitle(ABOUT);
+            dialogStage.setTitle(titel);
             dialogStage.initModality(Modality.WINDOW_MODAL);
             dialogStage.initOwner(primaryStage);
             Scene scene = new Scene(page);
@@ -257,4 +224,5 @@ public class MainApp extends Application {
             e.printStackTrace();
         }
     }
+
 }

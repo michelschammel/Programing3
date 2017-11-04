@@ -174,12 +174,14 @@ public class Controller_Constants {
     public static final String TUTORIAL = "Tutorial";
     public static final String ABOUT = "Über";
 
-
-
-
-
-
-
-
-
+    //PieChartController
+    public static final int INDEX_0 = 0;
+    public static final int INDEX_1 = 1;
+    public static final int INDEX_2 = 2;
+    public static final int INDEX_3 = 3;
+    public static final int INDEX_4 = 4;
+    public static final int INDEX_5 = 5;
+    public static final int INDEX_6 = 6;
+    public static final int INDEX_7 = 7;
+    public static final int INDEX_8 = 8;
 }

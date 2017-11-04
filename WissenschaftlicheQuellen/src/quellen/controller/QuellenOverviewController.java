@@ -5,11 +5,12 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
+import quellen.Interfaces.SourceDatabaseInterface;
 import quellen.MainApp;
+import quellen.dao.SourceDatabaseControl;
 import quellen.model.Quelle;
 import quellen.model.Zitat;
 import quellen.model.Tag;
-import quellen.service.QuellenService;
 import static quellen.constants.Controller_Constants.*;
 
 public class QuellenOverviewController {
@@ -152,7 +153,7 @@ public class QuellenOverviewController {
     private void handleDeleteQuelle() {
         int selectedIndex = quellenTable.getSelectionModel().getSelectedIndex();
         if (selectedIndex >= 0) {
-            QuellenService quellenService = new QuellenService();
+            SourceDatabaseInterface quellenService = new SourceDatabaseControl();
             quellenService.deleteQuelle(quellenTable.getSelectionModel().getSelectedItem());
             quellenTable.getItems().remove(selectedIndex);
         } else {
@@ -172,7 +173,7 @@ public class QuellenOverviewController {
             if (okClicked) {
                 //Get edited quelle
                 tempQuelle = this.mainApp.getUpdatedQuelle();
-                QuellenService quellenService = new QuellenService();
+                SourceDatabaseInterface quellenService = new SourceDatabaseControl();
                 //Insert edited quelle into DB and return the id of quelle
                 tempQuelle.setId(quellenService.insertNewQuelle(tempQuelle));
                 //insert quelle into mainApp
@@ -206,8 +207,8 @@ public class QuellenOverviewController {
                 //because the selected quelle was deleted we have to set the selection on the new quelle
                 this.quellenTable.getSelectionModel().select(index);
                 try {
-                    QuellenService quellenService = new QuellenService();
-                    quellenService.updateQuelle(selectedQuelle);
+                    SourceDatabaseInterface quellenService = new SourceDatabaseControl();
+                    quellenService.updateQuery(selectedQuelle);
                     //Datenbank.getInstance().updateQuery(selectedQuelle);
                 } catch (Exception e) {
                     e.printStackTrace();

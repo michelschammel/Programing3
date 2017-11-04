@@ -1,11 +1,16 @@
 package quellen.controller;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.chart.*;
+import quellen.Interfaces.SourceDatabaseInterface;
+import quellen.dao.SourceDatabaseControl;
+import quellen.enums.DatabaseTables;
 import quellen.model.Datenbank;
 
 import static quellen.constants.Controller_Constants.*;
@@ -17,45 +22,37 @@ import static quellen.constants.DB_Constants.*;
  * @author Roman Berezin
  */
 public class PieChartController {
-	String[] DatabaseTypes = {"Anderes", "Artikel", "Bücher", "Onlinequellen", "Quellen", "Tags", "TagsZitate",
-			"WissenschaftlicheArbeiten", "Zitate"};
 
 	@FXML
-	ObservableList<PieChart.Data> pieChartData;
+	private ObservableList<PieChart.Data> pieChartData;
 	@FXML
-	PieChart pieChart;
-	Datenbank db;
-
-
-	private void initialize() {
-
-	}
+	private PieChart pieChart;
+    private Datenbank db;
+    private SourceDatabaseInterface database = new SourceDatabaseControl();
 
 	@FXML
-	private void setStats1() throws SQLException {
+	private void setNumberOfDifferentSources() throws SQLException {
 		//initialize array and database connection
 		db = Datenbank.getInstance();
-		int[] pieZahlen = new int[9];
+		List<Integer> pieZahlen = new ArrayList<>();
 
 		//query database
 		try {
-			for (int i = 0; i < DatabaseTypes.length; i++) {
-				ResultSet result = db.queryWithReturn(PIECHART_STAT_1 + DatabaseTypes[i]);
-				pieZahlen[i] = result.getInt(1);
-				result.close();
+
+			for (DatabaseTables type : DatabaseTables.values()) {
+                pieZahlen.add(database.getNumberOfSources(type.name()));
 			}
 
-			//write data in piechart
-			pieChartData = FXCollections.observableArrayList(
-					   new PieChart.Data(SC_ANDERES, pieZahlen[0]),
-					   new PieChart.Data(SC_ARTIKEL, pieZahlen[1]),
-					   new PieChart.Data(SC_BUECHER, pieZahlen[2]),
-					   new PieChart.Data(SC_OQUELLEN, pieZahlen[3]),
-					   new PieChart.Data(SC_QUELLEN, pieZahlen[4]),
-					   new PieChart.Data(SC_TAGS, pieZahlen[5]),
-					   new PieChart.Data(SC_TAGSZITATE, pieZahlen[6]),
-					   new PieChart.Data(SC_WARBEITEN, pieZahlen[7]),
-					   new PieChart.Data(SC_ZITATE, pieZahlen[8]));
+            pieChartData = FXCollections.observableArrayList(
+                    new PieChart.Data(SC_ANDERES,    pieZahlen.get(INDEX_0)),
+                    new PieChart.Data(SC_ARTIKEL,    pieZahlen.get(INDEX_1)),
+                    new PieChart.Data(SC_BUECHER,    pieZahlen.get(INDEX_2)),
+                    new PieChart.Data(SC_OQUELLEN,   pieZahlen.get(INDEX_3)),
+                    new PieChart.Data(SC_QUELLEN,    pieZahlen.get(INDEX_4)),
+                    new PieChart.Data(SC_TAGS,       pieZahlen.get(INDEX_5)),
+                    new PieChart.Data(SC_TAGSZITATE, pieZahlen.get(INDEX_6)),
+                    new PieChart.Data(SC_WARBEITEN,  pieZahlen.get(INDEX_7)),
+                    new PieChart.Data(SC_ZITATE,     pieZahlen.get(INDEX_8)));
 			pieChart.setData(pieChartData);
 
 
@@ -64,53 +61,21 @@ public class PieChartController {
 		}
 	}
 
-
-	//not used currently
-	@FXML
-	private void setStats2() {
-		pieChartData = FXCollections.observableArrayList(
-				   new PieChart.Data("Iphone 5S", 13),
-				   new PieChart.Data("Samsung Grand", 25),
-				   new PieChart.Data("MOTO G", 10),
-				   new PieChart.Data("Nokia Lumia", 22));
-
-		pieChart.setData(pieChartData);
-
-	}
-
-
 	@FXML
 	private void setStats3() throws SQLException {
-
-		//initialize connection to database
-		db = Datenbank.getInstance();
-		ResultSet result = db.queryWithReturn(PIECHART_STAT_2);
-		//result.next();
-		int anzahlAutoren = result.getInt(1);
-		result.close();
-		ResultSet result2 = db.queryWithReturn(PIECHART_STAT_3);
-		result2.next();
-		int[] anzahlWerke = new int[anzahlAutoren];
-		String[] autoren = new String[anzahlAutoren];
-
 		//query data
-		for (int i = 0; i < anzahlAutoren; i++) {
-			String autor = result2.getString(1);
-			ResultSet tempResult = Datenbank.queryWithReturn(PIECHART_STAT_4 + autor + "\"");
-			tempResult.next();
-			autoren[i] = autor;
-			anzahlWerke[i] = tempResult.getInt(1);
-			tempResult.next();
-			result2.next();
-			tempResult.close();
+		List<String> authorList = database.getAuthors();
+		List<Integer> numberOfSources = new ArrayList<>();
+		for (String author : authorList) {
+			numberOfSources.add(database.getNumberOfSourcesFromAuthor(author));
 		}
-		result2.close();
 
 		//write data to piechart
 		pieChartData = FXCollections.observableArrayList();
-		for (int j = 0; j < anzahlAutoren; j++) {
-			pieChartData.add(new PieChart.Data(autoren[j], anzahlWerke[j]));
+		for (int j = 0; j < authorList.size(); j++) {
+			pieChartData.add(new PieChart.Data(authorList.get(j), numberOfSources.get(j)));
 		}
+
 		pieChart.setData(pieChartData);
 	}
 
@@ -128,11 +93,11 @@ public class PieChartController {
                 int date = Integer.parseInt(tempObject);
                 if (date < 1900) {
                     werkeInZeiten[0]++;
-                } else if (date >= 1900 && date < 2000) {
+                } else if (date < 2000) {
                     werkeInZeiten[1]++;
-                } else if (date >= 2000 && date < 2100) {
+                } else if ( date < 2100) {
                     werkeInZeiten[2]++;
-                } else if (date >= 2100) {
+                } else {
                     werkeInZeiten[3]++;
                 }
             }catch (Exception e) {

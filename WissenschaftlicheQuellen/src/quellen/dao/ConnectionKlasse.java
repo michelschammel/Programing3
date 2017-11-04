@@ -10,7 +10,7 @@ import java.util.Properties;
 /**
  * @author Cedric Schreienr
  */
-public class ConnectionKlasse {
+public class ConnectionKlasse{
     /**
      * Creates a connection to the DB
      */
