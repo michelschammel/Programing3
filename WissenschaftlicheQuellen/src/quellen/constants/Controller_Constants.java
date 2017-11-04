@@ -184,4 +184,9 @@ public class Controller_Constants {
     public static final int INDEX_6 = 6;
     public static final int INDEX_7 = 7;
     public static final int INDEX_8 = 8;
+
+    public static final String BEFORE_TWENTIETH_CENTURY = "vor 1900";
+    public static final String TWENTIETH_CENTURY = "20. Jh";
+    public static final String TWENTY_FIRST_CENTURY = "21. Jh";
+    public static final String FUTURE = "aus der Zukunft";
 }

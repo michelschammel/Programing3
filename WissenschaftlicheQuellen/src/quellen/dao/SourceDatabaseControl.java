@@ -558,10 +558,9 @@ public class SourceDatabaseControl implements SourceDatabaseInterface {
 
     public int getNumberOfSources(String type) {
         int typeCount = 0;
-        try (Connection connection = getConnection()){
+        try (Connection connection = getConnection(); Statement statement = connection.createStatement()){
             ResultSet rs;
             String selectStatement = PIECHART_STAT_1.replace("?", type);
-            Statement statement = connection.createStatement();
             rs = statement.executeQuery(selectStatement);
 
             rs.next();
@@ -574,9 +573,8 @@ public class SourceDatabaseControl implements SourceDatabaseInterface {
 
     public List<String> getAuthors() {
         List<String> authorList = new ArrayList<>();
-        try (Connection connection = getConnection()) {
+        try (Connection connection = getConnection(); Statement statement = connection.createStatement()) {
             ResultSet rs;
-            Statement statement = connection.createStatement();
             rs = statement.executeQuery(PIECHART_STAT_3);
 
             while(rs.next()) {
@@ -603,5 +601,23 @@ public class SourceDatabaseControl implements SourceDatabaseInterface {
             e.printStackTrace();
         }
         return numberOfSources;
+    }
+
+    public List<Integer> getSourceRealeaseDates() {
+        List<Integer> releaseDateList = new ArrayList<>();
+
+        try(Connection connection = getConnection(); Statement statement = connection.createStatement()) {
+            ResultSet rs;
+            rs = statement.executeQuery(PIECHART_STAT_5);
+
+            while(rs.next()) {
+                releaseDateList.add(rs.getInt(INDEX_1));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return releaseDateList;
     }
 }

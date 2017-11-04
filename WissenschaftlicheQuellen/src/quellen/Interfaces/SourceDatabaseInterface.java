@@ -20,4 +20,6 @@ public interface SourceDatabaseInterface {
     List<String> getAuthors();
 
     int getNumberOfSourcesFromAuthor(String author);
+
+    List<Integer> getSourceRealeaseDates();
 }

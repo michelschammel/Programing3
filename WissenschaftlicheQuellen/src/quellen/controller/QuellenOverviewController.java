@@ -209,7 +209,6 @@ public class QuellenOverviewController {
                 try {
                     SourceDatabaseInterface quellenService = new SourceDatabaseControl();
                     quellenService.updateQuery(selectedQuelle);
-                    //Datenbank.getInstance().updateQuery(selectedQuelle);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
