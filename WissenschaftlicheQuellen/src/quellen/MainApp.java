@@ -13,7 +13,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import quellen.Interfaces.SourceDatabaseInterface;
-import quellen.dao.SourceDatabaseControl;
+import quellen.dao.SourceDatabaseImpl;
 import quellen.model.*;
 import quellen.controller.QuellenEditDialogController;
 import quellen.controller.QuellenOverviewController;
@@ -46,7 +46,7 @@ public class MainApp extends Application {
      */
     public MainApp() throws SQLException {
         //quellenData = Datenbank.getInstance().getQuellenFromDataBase();
-        SourceDatabaseInterface quellenService = new SourceDatabaseControl();
+        SourceDatabaseInterface quellenService = new SourceDatabaseImpl();
         quellenData = quellenService.getQuellenFromDataBase();
     }
 

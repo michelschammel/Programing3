@@ -7,7 +7,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.chart.*;
 import quellen.Interfaces.SourceDatabaseInterface;
-import quellen.dao.SourceDatabaseControl;
+import quellen.dao.SourceDatabaseImpl;
 import quellen.enums.DatabaseTables;
 
 import static quellen.constants.Controller_Constants.*;
@@ -24,7 +24,7 @@ public class PieChartController {
 	private ObservableList<PieChart.Data> pieChartData;
 	@FXML
 	private PieChart pieChart;
-    private SourceDatabaseInterface database = new SourceDatabaseControl();
+    private SourceDatabaseInterface database = new SourceDatabaseImpl();
 
 	@FXML
 	private void setNumberOfDifferentSources() {

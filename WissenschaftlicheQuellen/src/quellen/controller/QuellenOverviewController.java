@@ -7,10 +7,12 @@ import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
 import quellen.Interfaces.SourceDatabaseInterface;
 import quellen.MainApp;
-import quellen.dao.SourceDatabaseControl;
+import quellen.dao.SourceDatabaseImpl;
 import quellen.model.Quelle;
 import quellen.model.Zitat;
 import quellen.model.Tag;
+import quellen.utilities.StringUtilities;
+
 import static quellen.constants.Controller_Constants.*;
 
 public class QuellenOverviewController {
@@ -153,7 +155,7 @@ public class QuellenOverviewController {
     private void handleDeleteQuelle() {
         int selectedIndex = quellenTable.getSelectionModel().getSelectedIndex();
         if (selectedIndex >= 0) {
-            SourceDatabaseInterface quellenService = new SourceDatabaseControl();
+            SourceDatabaseInterface quellenService = new SourceDatabaseImpl();
             quellenService.deleteQuelle(quellenTable.getSelectionModel().getSelectedItem());
             quellenTable.getItems().remove(selectedIndex);
         } else {
@@ -173,7 +175,7 @@ public class QuellenOverviewController {
             if (okClicked) {
                 //Get edited quelle
                 tempQuelle = this.mainApp.getUpdatedQuelle();
-                SourceDatabaseInterface quellenService = new SourceDatabaseControl();
+                SourceDatabaseInterface quellenService = new SourceDatabaseImpl();
                 //Insert edited quelle into DB and return the id of quelle
                 tempQuelle.setId(quellenService.insertNewQuelle(tempQuelle));
                 //insert quelle into mainApp
@@ -207,7 +209,7 @@ public class QuellenOverviewController {
                 //because the selected quelle was deleted we have to set the selection on the new quelle
                 this.quellenTable.getSelectionModel().select(index);
                 try {
-                    SourceDatabaseInterface quellenService = new SourceDatabaseControl();
+                    SourceDatabaseInterface quellenService = new SourceDatabaseImpl();
                     quellenService.updateQuery(selectedQuelle);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -270,56 +272,64 @@ public class QuellenOverviewController {
                 quelleList = tmpList;
             }
             this.searchQuelleList = FXCollections.observableArrayList();
-            mainApp.getQuellenList().forEach( quelle -> {
-                Boolean addQuelle = false;
+            Boolean addQuelle = false;
+            for (Quelle quelle : mainApp.getQuellenList()) {
+
                 if (searchAuthor) {
-                    if (quelle.getAutor().toLowerCase().contains(searchText)) {
-                        //Add to list
-                        addQuelle = true;
-                    }
+                    addQuelle = doesAuthorContainString(quelle, searchText);
                 }
 
                 if (searchSource && !addQuelle) {
-                    if (quelle.getTitel().toLowerCase().contains(searchText)) {
-                        addQuelle = true;
-                    }
+                    addQuelle = doesSourceContainString(quelle, searchText);
                 }
 
                 if (searchQuote && !addQuelle) {
-                    for (int i = 0; i < quelle.getZitatList().size(); i++) {
-                        if (quelle.getZitatList().get(i).getText().toLowerCase().contains(searchText)) {
-                            addQuelle = true;
-                            //quelle contains a zitat that fits the search criteria so we dont need
-                            //to search any further
-                            break;
-                        }
-                    }
+                    addQuelle = doesQuoteContainString(quelle, searchText);
                 }
 
                 if (searchTag && !addQuelle) {
-                    for (Zitat zitat : quelle.getZitatList()) {
-                        for (Tag tag : zitat.getTagList()) {
-                            if (tag.getText().toLowerCase().contains(searchText)) {
-                                addQuelle = true;
-                                break;
-                            }
-                        }
-                        if (addQuelle) {
-                            break;
-                        }
-                    }
+                    addQuelle = doesTagContainString(quelle, searchText);
                 }
 
-                if(addQuelle) {
+                if (addQuelle) {
                     searchQuelleList.add(quelle);
                 }
-            });
+            }
             tmpList = quelleList;
             quelleList = searchQuelleList;
             this.quellenTable.setItems(quelleList);
             this.quellenTable.getSelectionModel().select(0);
         }
     }
+
+    private boolean doesAuthorContainString(Quelle quelle, String searchString) {
+        return StringUtilities.doesStringContain(quelle.getAutor(), searchString);
+    }
+
+    private boolean doesSourceContainString(Quelle quelle, String searchString) {
+        return StringUtilities.doesStringContain(quelle.getTitel(), searchString);
+    }
+
+    private boolean doesQuoteContainString(Quelle quelle, String searchStrring) {
+        for (Zitat zitat : quelle.getZitatList()) {
+            if (StringUtilities.doesStringContain(zitat.getText(), searchStrring)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean doesTagContainString(Quelle quelle, String searchString) {
+        for (Zitat zitat : quelle.getZitatList()) {
+            for (Tag tag : zitat.getTagList()) {
+                if (StringUtilities.doesStringContain(tag.getText(), searchString)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
 
     public void reset() {
         this.quelleList = tmpList;

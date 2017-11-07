@@ -15,7 +15,7 @@ import static quellen.constants.DB_Constants.*;
 /**
  * @author Cedric Schreiner
  */
-public class SourceDatabaseControl implements SourceDatabaseInterface {
+public class SourceDatabaseImpl implements SourceDatabaseInterface {
     /**
      * get a connection to the DB
      * @return connection
