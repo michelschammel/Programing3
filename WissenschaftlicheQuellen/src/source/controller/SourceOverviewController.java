@@ -109,7 +109,7 @@ public class SourceOverviewController {
             // Fill the labels with info from the person object.
             titelLabel.setText(quelle.getTitel());
             autorLabel.setText(quelle.getAutor());
-            //jahrLabel.setText(quelle.getJahr());
+            //jahrLabel.setTitel(quelle.getJahr());
 
             //Add observable list date to zitat table for every quelle.
             zitatTable.setItems(quelle.getZitatList());
@@ -136,7 +136,7 @@ public class SourceOverviewController {
             // Person is null, remove all the text.
             titelLabel.setText(LEERER_STRING);
             autorLabel.setText(LEERER_STRING);
-            //jahrLabel.setText("");
+            //jahrLabel.setTitel("");
         }
     }
 
