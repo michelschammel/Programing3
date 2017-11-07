@@ -22,13 +22,6 @@ public class Source implements SourceInterface{
         this.year = year;
     }
 
-    public Source(String titel, String author, String year) {
-        this.quoteList = new ArrayList<>();
-        this.titel = titel;
-        this.author = author;
-        this.year = year;
-    }
-
     @Override
     public void setYear(String year) {
         this.year = year;

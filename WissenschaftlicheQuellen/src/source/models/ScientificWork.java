@@ -1,33 +1,33 @@
 package source.models;
 
-import source.Interfaces.OthersInterface;
 import source.Interfaces.QuoteInterface;
+import source.Interfaces.ScientificWorkInterface;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Cedric on 07.11.2017.
- * Others
+ * ScientificWork
  */
-public class Others implements OthersInterface {
+public class ScientificWork implements ScientificWorkInterface{
 
+    private String publisher;
+    private String institution;
     private String year;
     private String titel;
     private String author;
     private int id;
-    private String publisher;
-    private String edition;
     private List<QuoteInterface> quoteList;
 
-    public Others(int id, String titel, String author, String year, String publisher, String edition) {
+    public ScientificWork(int id, String titel, String author, String year, String publisher, String institution) {
         this.quoteList = new ArrayList<>();
+        this.id = id;
         this.titel = titel;
         this.author = author;
         this.year = year;
         this.publisher = publisher;
-        this.edition = edition;
-        this.id = id;
+        this.institution = institution;
     }
 
     @Override
@@ -82,12 +82,12 @@ public class Others implements OthersInterface {
 
     @Override
     public void addQuote(QuoteInterface quote) {
-        quoteList.add(quote);
+        this.quoteList.add(quote);
     }
 
     @Override
     public void removeQuote(QuoteInterface quote) {
-        quoteList.remove(quote);
+        this.quoteList.remove(quote);
     }
 
     @Override
@@ -96,8 +96,8 @@ public class Others implements OthersInterface {
     }
 
     @Override
-    public void setEdition(String edition) {
-        this.edition = edition;
+    public void setInstitution(String institution) {
+        this.institution = institution;
     }
 
     @Override
@@ -106,7 +106,7 @@ public class Others implements OthersInterface {
     }
 
     @Override
-    public String getEdition() {
-        return this.edition;
+    public String getInstitution() {
+        return this.institution;
     }
 }

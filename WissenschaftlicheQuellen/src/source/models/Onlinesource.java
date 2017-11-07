@@ -1,6 +1,6 @@
 package source.models;
 
-import source.Interfaces.OthersInterface;
+import source.Interfaces.OnlineSourceInterface;
 import source.Interfaces.QuoteInterface;
 
 import java.util.ArrayList;
@@ -8,26 +8,26 @@ import java.util.List;
 
 /**
  * Created by Cedric on 07.11.2017.
- * Others
+ * Onlinesource
  */
-public class Others implements OthersInterface {
+public class Onlinesource implements OnlineSourceInterface{
 
     private String year;
     private String titel;
     private String author;
     private int id;
-    private String publisher;
-    private String edition;
+    private String url;
+    private String pollingDate;
     private List<QuoteInterface> quoteList;
 
-    public Others(int id, String titel, String author, String year, String publisher, String edition) {
+    public Onlinesource(int id, String titel, String author, String year, String pollingDate, String url) {
         this.quoteList = new ArrayList<>();
+        this.id = id;
         this.titel = titel;
         this.author = author;
         this.year = year;
-        this.publisher = publisher;
-        this.edition = edition;
-        this.id = id;
+        this.pollingDate = pollingDate;
+        this.url = url;
     }
 
     @Override
@@ -82,31 +82,31 @@ public class Others implements OthersInterface {
 
     @Override
     public void addQuote(QuoteInterface quote) {
-        quoteList.add(quote);
+        this.quoteList.add(quote);
     }
 
     @Override
     public void removeQuote(QuoteInterface quote) {
-        quoteList.remove(quote);
+        this.quoteList.remove(quote);
     }
 
     @Override
-    public void setPublisher(String publisher) {
-        this.publisher = publisher;
+    public void setPollingDate(String pollingDate) {
+        this.pollingDate = pollingDate;
     }
 
     @Override
-    public void setEdition(String edition) {
-        this.edition = edition;
+    public void setURL(String url) {
+        this.url = url;
     }
 
     @Override
-    public String getPublisher() {
-        return this.publisher;
+    public String getPollingDate() {
+        return this.pollingDate;
     }
 
     @Override
-    public String getEdition() {
-        return this.edition;
+    public String getURL() {
+        return this.url;
     }
 }

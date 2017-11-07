@@ -1,6 +1,6 @@
 package source.models;
 
-import source.Interfaces.OthersInterface;
+import source.Interfaces.BookInterface;
 import source.Interfaces.QuoteInterface;
 
 import java.util.ArrayList;
@@ -8,9 +8,9 @@ import java.util.List;
 
 /**
  * Created by Cedric on 07.11.2017.
- * Others
+ * Book
  */
-public class Others implements OthersInterface {
+public class Book implements BookInterface{
 
     private String year;
     private String titel;
@@ -18,16 +18,20 @@ public class Others implements OthersInterface {
     private int id;
     private String publisher;
     private String edition;
+    private String isbn;
+    private String month;
     private List<QuoteInterface> quoteList;
 
-    public Others(int id, String titel, String author, String year, String publisher, String edition) {
+    public Book(int id, String titel, String author, String year, String publisher, String edition, String month, String isbn) {
         this.quoteList = new ArrayList<>();
+        this.id = id;
         this.titel = titel;
         this.author = author;
         this.year = year;
         this.publisher = publisher;
         this.edition = edition;
-        this.id = id;
+        this.month = month;
+        this.isbn = isbn;
     }
 
     @Override
@@ -82,12 +86,12 @@ public class Others implements OthersInterface {
 
     @Override
     public void addQuote(QuoteInterface quote) {
-        quoteList.add(quote);
+        this.quoteList.add(quote);
     }
 
     @Override
     public void removeQuote(QuoteInterface quote) {
-        quoteList.remove(quote);
+        this.quoteList.remove(quote);
     }
 
     @Override
@@ -101,6 +105,16 @@ public class Others implements OthersInterface {
     }
 
     @Override
+    public void setISBN(String isbn) {
+        this.isbn = isbn;
+    }
+
+    @Override
+    public void setMonth(String month) {
+        this.month = month;
+    }
+
+    @Override
     public String getPublisher() {
         return this.publisher;
     }
@@ -108,5 +122,15 @@ public class Others implements OthersInterface {
     @Override
     public String getEdition() {
         return this.edition;
+    }
+
+    @Override
+    public String getISBN() {
+        return this.isbn;
+    }
+
+    @Override
+    public String getMonth() {
+        return this.month;
     }
 }

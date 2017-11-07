@@ -3,7 +3,7 @@ package source.Interfaces;
 import java.util.List;
 
 public interface SourceInterface {
-    /*Setter*/
+
     void setYear(String year);
 
     void setTitel(String titel);
@@ -14,7 +14,6 @@ public interface SourceInterface {
 
     void setQuoteList(List<QuoteInterface> list);
 
-    /*Getter*/
     String getYear();
 
     String getTitel();

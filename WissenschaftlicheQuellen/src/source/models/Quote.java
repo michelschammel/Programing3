@@ -16,13 +16,7 @@ public class Quote implements QuoteInterface{
     private int sourceId;
     private List<TagInterface> tagList;
 
-    public Quote(String titel, int sourceId){
-        this.tagList = new ArrayList<>();
-        this.titel = titel;
-        this.sourceId = sourceId;
-    }
-
-    public Quote(String titel, int sourceId, int id) {
+    public Quote(int id, String titel, int sourceId) {
         this.tagList = new ArrayList<>();
         this.titel = titel;
         this.sourceId = sourceId;

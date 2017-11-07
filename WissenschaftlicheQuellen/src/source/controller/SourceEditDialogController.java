@@ -254,52 +254,43 @@ public class SourceEditDialogController {
         this.zitatTable.setContextMenu(contextMenu);
 
         //add eventlistener for both menuitems
-        newZitatItem.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                quelleEdited.getZitatList().add(new Zitat(BEARBEITE_MICH, quelleEdited.getId()));
+        newZitatItem.setOnAction((ActionEvent event) -> {
+            quelleEdited.getZitatList().add(new Zitat(BEARBEITE_MICH, quelleEdited.getId()));
+            zitatTable.setItems(quelleEdited.getZitatList());
+        });
+
+        deleteZitatItem.setOnAction((ActionEvent event) -> {
+            Zitat zitat = zitatTable.getSelectionModel().getSelectedItem();
+            quelleEdited.getZitatList().remove(zitat);
+        });
+
+        addZitatItem.setOnAction((ActionEvent event) -> {
+            try {
+                // Load the fxml file and create a new stage for the popup dialog.
+                FXMLLoader loader = new FXMLLoader();
+                loader.setLocation(MainApp.class.getResource(ADD_ZITATE_FXML));
+                AnchorPane page = (AnchorPane) loader.load();
+
+                // Create the addTag Stage.
+                Stage addZitatStage = new Stage();
+                addZitatStage.setTitle(FUEGE_ZITAT_HINZU);
+                addZitatStage.initModality(Modality.WINDOW_MODAL);
+                Scene scene = new Scene(page);
+                addZitatStage.setScene(scene);
+                addZitatStage.initOwner(dialogStage);
+                addZitatStage.setResizable(false);
+
+                // Set the quelle into the controller.
+                AddQuoteController controller = loader.getController();
+                controller.setZitatList(zitatList);
+                controller.setQuelle(quelleEdited);
                 zitatTable.setItems(quelleEdited.getZitatList());
-            }
-        });
+                controller.setStage(addZitatStage);
 
-        deleteZitatItem.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                Zitat zitat = zitatTable.getSelectionModel().getSelectedItem();
-                quelleEdited.getZitatList().remove(zitat);
-            }
-        });
-
-        addZitatItem.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                try {
-                    // Load the fxml file and create a new stage for the popup dialog.
-                    FXMLLoader loader = new FXMLLoader();
-                    loader.setLocation(MainApp.class.getResource(ADD_ZITATE_FXML));
-                    AnchorPane page = (AnchorPane) loader.load();
-
-                    // Create the addTag Stage.
-                    Stage addZitatStage = new Stage();
-                    addZitatStage.setTitle(FUEGE_ZITAT_HINZU);
-                    addZitatStage.initModality(Modality.WINDOW_MODAL);
-                    Scene scene = new Scene(page);
-                    addZitatStage.setScene(scene);
-                    addZitatStage.initOwner(dialogStage);
-                    addZitatStage.setResizable(false);
-
-                    // Set the quelle into the controller.
-                    AddQuoteController controller = loader.getController();
-                    controller.setZitatList(zitatList);
-                    controller.setQuelle(quelleEdited);
-                    zitatTable.setItems(quelleEdited.getZitatList());
-                    controller.setStage(addZitatStage);
-
-                    // Show the dialog and wait until the user closes it
-                    addZitatStage.showAndWait();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                // Show the dialog and wait until the user closes it
+                addZitatStage.showAndWait();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         });
     }
