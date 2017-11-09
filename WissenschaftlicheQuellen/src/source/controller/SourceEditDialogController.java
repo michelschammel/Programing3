@@ -374,7 +374,7 @@ public class SourceEditDialogController {
         rowConstraint.setVgrow(Priority.SOMETIMES);
 
         //check what quelle it is exactly
-        //the editdialog gets adjusted for every sort of Source
+        //the editdialog gets adjusted for every sort of SourceView
         if (quelle instanceof Buch) {
             adjustDialogForBuch(rowConstraint);
         } else if (quelle instanceof Artikel){

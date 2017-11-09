@@ -34,6 +34,10 @@ public class Book implements BookInterface{
         this.isbn = isbn;
     }
 
+    public Book() {
+        this.quoteList = new ArrayList<>();
+    }
+
     @Override
     public void setYear(String year) {
         this.year = year;
@@ -92,6 +96,11 @@ public class Book implements BookInterface{
     @Override
     public void removeQuote(QuoteInterface quote) {
         this.quoteList.remove(quote);
+    }
+
+    @Override
+    public List<Object> getAttributeList() {
+        return null;
     }
 
     @Override

@@ -30,6 +30,10 @@ public class Article implements ArticleInterface{
         this.magazine = magazine;
     }
 
+    public Article() {
+        this.quoteList = new ArrayList<>();
+    }
+
     @Override
     public void setYear(String year) {
         this.year = year;
@@ -88,6 +92,15 @@ public class Article implements ArticleInterface{
     @Override
     public void removeQuote(QuoteInterface quote) {
         this.quoteList.remove(quote);
+    }
+
+    @Override
+    public List<Object> getAttributeList() {
+        List<Object> attributeList = new ArrayList<>();
+        attributeList.add(this.id);
+        attributeList.add(this.edition);
+        attributeList.add(this.magazine);
+        return attributeList;
     }
 
     @Override

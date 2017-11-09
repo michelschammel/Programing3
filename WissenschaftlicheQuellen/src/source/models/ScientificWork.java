@@ -91,6 +91,11 @@ public class ScientificWork implements ScientificWorkInterface{
     }
 
     @Override
+    public List<Object> getAttributeList() {
+        return null;
+    }
+
+    @Override
     public void setPublisher(String publisher) {
         this.publisher = publisher;
     }

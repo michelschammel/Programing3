@@ -91,6 +91,11 @@ public class Onlinesource implements OnlineSourceInterface{
     }
 
     @Override
+    public List<Object> getAttributeList() {
+        return null;
+    }
+
+    @Override
     public void setPollingDate(String pollingDate) {
         this.pollingDate = pollingDate;
     }

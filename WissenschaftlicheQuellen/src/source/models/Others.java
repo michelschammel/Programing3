@@ -91,6 +91,11 @@ public class Others implements OthersInterface {
     }
 
     @Override
+    public List<Object> getAttributeList() {
+        return null;
+    }
+
+    @Override
     public void setPublisher(String publisher) {
         this.publisher = publisher;
     }

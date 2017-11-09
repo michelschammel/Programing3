@@ -35,4 +35,6 @@ public interface SourceInterface {
      * @param quote to be removed
      */
     void removeQuote(QuoteInterface quote);
+
+    List<Object> getAttributeList();
 }

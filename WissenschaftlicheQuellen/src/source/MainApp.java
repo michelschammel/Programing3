@@ -1,7 +1,10 @@
 package source;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.sql.SQLException;
+import java.util.List;
 
 import javafx.application.Application;
 import javafx.collections.FXCollections;
@@ -13,7 +16,9 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import source.Interfaces.SourceDatabaseInterface;
+import source.Interfaces.SourceInterface;
 import source.dao.SourceDatabaseImpl;
+import source.factories.SourceFactory;
 import source.model.*;
 import source.controller.SourceEditDialogController;
 import source.controller.SourceOverviewController;
@@ -42,9 +47,8 @@ public class MainApp extends Application {
 
     /**
      * The Constructor.
-     * @throws SQLException
      */
-    public MainApp() throws SQLException {
+    public MainApp() {
         //quellenData = Datenbank.getInstance().getQuellenFromDataBase();
         SourceDatabaseInterface quellenService = new SourceDatabaseImpl();
         quellenData = quellenService.getQuellenFromDataBase();
@@ -54,14 +58,36 @@ public class MainApp extends Application {
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle(WISSENSCHAFTLICHE_QUELLEN);
-
+        test();
         initRootLayout();
 
         showQuellenOverview();
     }
 
 
-
+    private void test() {
+        SourceInterface source = SourceFactory.produceSource(SourceFactory.ARTICLE);
+        Class myclass = source.getClass();
+        Field[] field = myclass.getDeclaredFields();
+        String methodName;
+        for (Field fie1 : field) {
+            methodName = "set" + Character.toUpperCase(fie1.getName().charAt(0)) + fie1.getName().substring(1);
+            try {
+                Method method = myclass.getMethod(methodName, fie1.getType());
+                System.out.println(methodName);
+                method.invoke(source, fie1.getType().cast("123"));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        for(Method method : myclass.getMethods()) {
+            System.out.println("Name: " + method.getName());
+        }
+        System.out.println("Author:" + source.getAuthor());
+        System.out.println("Titel:" + source.getTitel());
+        System.out.println("Jarh:" + source.getYear());
+        System.out.println("Id:" + source.getId());
+    }
 
     /**
      * Initializes the root layout.

@@ -1,4 +1,4 @@
-package source.fx_models;
+package source.viewmodels;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -6,7 +6,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import source.model.Zitat;
 
-public class Source {
+public class SourceView {
     private StringProperty autor;
     private StringProperty titel;
     private StringProperty jahr;
@@ -17,20 +17,20 @@ public class Source {
     /**
      * The Constructor.
      *
-     * @param autor
-     * @param titel
-     * @param jahr
+     * @param author name if the author
+     * @param titel title if the source
+     * @param year  the year were the source was published
      *
      */
-    public Source(int id, String titel, String autor, String jahr) {
-        this.autor = new SimpleStringProperty(autor);
+    public SourceView(int id, String titel, String author, String year) {
+        this.autor = new SimpleStringProperty(author);
         this.titel = new SimpleStringProperty(titel);
-        this.jahr = new SimpleStringProperty(jahr);
+        this.jahr = new SimpleStringProperty(year);
         this.id = id;
         zitatData= FXCollections.observableArrayList();
     }
 
-    public Source(String titel, String autor, String jahr) {
+    public SourceView(String titel, String autor, String jahr) {
         this.autor = new SimpleStringProperty(autor);
         this.titel = new SimpleStringProperty(titel);
         this.jahr = new SimpleStringProperty(jahr);
@@ -41,7 +41,7 @@ public class Source {
      * Creates a copy of an existing Object
      * @param quelle quelle to copy
      */
-    public Source(source.model.Quelle quelle) {
+    public SourceView(source.model.Quelle quelle) {
         this.autor = new SimpleStringProperty(quelle.getAutor());
         this.titel = new SimpleStringProperty(quelle.getTitel());
         this.jahr = new SimpleStringProperty(quelle.getJahr());

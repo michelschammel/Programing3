@@ -22,6 +22,10 @@ public class Source implements SourceInterface{
         this.year = year;
     }
 
+    public Source() {
+        this.quoteList = new ArrayList<>();
+    }
+
     @Override
     public void setYear(String year) {
         this.year = year;
@@ -80,5 +84,10 @@ public class Source implements SourceInterface{
     @Override
     public void removeQuote(QuoteInterface quote) {
         this.quoteList.remove(quote);
+    }
+
+    @Override
+    public List<Object> getAttributeList() {
+        return null;
     }
 }
