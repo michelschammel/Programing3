@@ -16,7 +16,7 @@ public abstract class SourceFactory {
     public static final String OTHER = "other";
     public static final String SCIENTIFIC_WORK = "scientific work";
 
-    private static SourceInterface produceSource(String sourceType) {
+    public static SourceInterface produceSource(String sourceType) {
         if (sourceType.equals(STANDARD)) {
             return new Source();
         } else if (sourceType.equals(BOOK)) {
