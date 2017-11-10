@@ -1,6 +1,7 @@
 package source;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 
 import javafx.application.Application;
 import javafx.collections.FXCollections;
@@ -11,6 +12,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import source.Interfaces.BookInterface;
 import source.Interfaces.SourceDatabaseInterface;
 import source.Interfaces.SourceInterface;
 import source.dao.SourceDatabaseImpl;
@@ -64,8 +66,12 @@ public class MainApp extends Application {
 
     private void test() {
         SourceInterface source = SourceFactory.produceSource(SourceFactory.BOOK);
+        source.setId(2);
+        source.setTitel("test");
         Object[][] o = SourceReflection.getSourceTemplate(source);
-        System.out.println(o);
+        for (Method method: source.getClass().getDeclaredMethods()){
+        }
+        //System.out.println(o);
     }
 
     /**

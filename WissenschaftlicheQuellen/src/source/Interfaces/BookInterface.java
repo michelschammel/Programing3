@@ -9,7 +9,7 @@ public interface BookInterface extends SourceInterface{
 
     void setEdition(String edition);
 
-    void setISBN(String isbn);
+    void setIsbn(String isbn);
 
     void setMonth(String month);
 
@@ -17,7 +17,7 @@ public interface BookInterface extends SourceInterface{
 
     String getEdition();
 
-    String getISBN();
+    String getIsbn();
 
     String getMonth();
 }

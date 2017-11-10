@@ -114,7 +114,7 @@ public class Book implements BookInterface{
     }
 
     @Override
-    public void setISBN(String isbn) {
+    public void setIsbn(String isbn) {
         this.isbn = isbn;
     }
 
@@ -134,7 +134,7 @@ public class Book implements BookInterface{
     }
 
     @Override
-    public String getISBN() {
+    public String getIsbn() {
         return this.isbn;
     }
 
