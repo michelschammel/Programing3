@@ -5,35 +5,55 @@ import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import source.viewmodels.interfaces.QuoteViewInterface;
-import source.viewmodels.interfaces.SourceViewInterface;
+import source.viewmodels.interfaces.ScientificWorkViewInterface;
 import static source.viewmodels.constants.ViewModelConstants.*;
 
-public class SourceView implements SourceViewInterface{
-
+public class ScientificWorkView implements ScientificWorkViewInterface {
     private StringProperty author;
     private StringProperty title;
     private StringProperty year;
+    private StringProperty publisher;
+    private StringProperty institution;
     private ObservableList<QuoteViewInterface> quoteList;
     private int id;
 
-    public SourceView() {
+    public ScientificWorkView() {
         quoteList= FXCollections.observableArrayList();
         this.author = new SimpleStringProperty(EMPTY);
         this.title = new SimpleStringProperty(EMPTY);
         this.year = new SimpleStringProperty(EMPTY);
+        this.publisher = new SimpleStringProperty(EMPTY);
+        this.institution = new SimpleStringProperty(EMPTY);
     }
 
-    /**
-     * Creates a copy of an existing Object
-     * @param quelle quelle to copy
-     */
-    public SourceView(source.model.Quelle quelle) {
-        this.author = new SimpleStringProperty(quelle.getAutor());
-        this.title = new SimpleStringProperty(quelle.getTitel());
-        this.year = new SimpleStringProperty(quelle.getJahr());
-        this.id = quelle.getId();
-        this.quoteList = FXCollections.observableArrayList();
-        //quelle.getZitatList().forEach(zitat -> quoteList.add(new Zitat(zitat)));
+    @Override
+    public void setPublisher(String publisher) {
+        this.publisher.setValue(publisher);
+    }
+
+    @Override
+    public void setInstitution(String institution) {
+        this.institution.setValue(institution);
+    }
+
+    @Override
+    public String getPublisher() {
+        return this.publisher.getValue();
+    }
+
+    @Override
+    public StringProperty getPublisherProperty() {
+        return this.publisher;
+    }
+
+    @Override
+    public String getInstitution() {
+        return this.institution.getValue();
+    }
+
+    @Override
+    public StringProperty getInstitutionProperty() {
+        return this.institution;
     }
 
     @Override
@@ -99,9 +119,5 @@ public class SourceView implements SourceViewInterface{
     @Override
     public void removeQuote(QuoteViewInterface quote) {
         this.quoteList.remove(quote);
-    }
-
-    public String toString() {
-        return "Author: " + this.author.getValue() + " | Title: " + this.title.getValue() + " | Year: " + this.year.getValue() + " | ID: " + this.id;
     }
 }

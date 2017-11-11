@@ -7,9 +7,9 @@ package source.models.interfaces;
 public interface OnlineSourceInterface extends SourceInterface{
     void setPollingDate(String pollingDate);
 
-    void setURL(String url);
+    void setUrl(String url);
 
     String getPollingDate();
 
-    String getURL();
+    String getUrl();
 }

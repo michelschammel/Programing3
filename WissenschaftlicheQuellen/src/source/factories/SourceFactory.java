@@ -15,6 +15,7 @@ public abstract class SourceFactory {
     public static final String ARTICLE = "article";
     public static final String OTHER = "other";
     public static final String SCIENTIFIC_WORK = "scientific work";
+    public static final String ONLINE_SOURCE = "online source";
 
     public static SourceInterface produceSource(String sourceType) {
         switch (sourceType) {
@@ -28,11 +29,9 @@ public abstract class SourceFactory {
                 return new Others();
             case SCIENTIFIC_WORK:
                 return new ScientificWork();
+            case ONLINE_SOURCE:
+                return new Onlinesource();
         }
         return null;
-    }
-
-    public static BookInterface produceBook() {
-        return (Book)produceSource(BOOK);
     }
 }

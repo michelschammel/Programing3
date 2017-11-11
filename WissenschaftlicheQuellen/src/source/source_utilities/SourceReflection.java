@@ -1,10 +1,10 @@
 package source.source_utilities;
 
-import com.sun.istack.internal.NotNull;
 import source.enums.SupportedTypes;
 import source.models.SourceTemplate;
 import source.models.interfaces.SourceInterface;
 import source.models.interfaces.SourceTemplateInterface;
+import source.utilities.SourceUtillities;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -14,9 +14,8 @@ import java.util.List;
 public abstract class SourceReflection {
 
     /**
-     * This methode creates a 2 dimensional Array
-     * The Array has 3 Columns, the first row contains the name of the attribute, the second contains the third.
-     * The third row is null and gets filled by the User. These are later used to set the attribute values of a object
+     * This Mehtod generates a sourcetemplate that contains for every attribute the name, class and value
+     * of the provided source
      * @return object template
      */
     public static List<SourceTemplateInterface> getSourceTemplate(SourceInterface source) {
@@ -28,16 +27,8 @@ public abstract class SourceReflection {
             for (Field field : sourceClass.getDeclaredFields()) {
                 templateRow = new SourceTemplate();
                 Class fieldClass;
-                //set attribute type, but if the getType() returns a primitive type call getWrapperClass
-//                if (field.getType().isPrimitive()) {
-//                    fieldClass = SourceTemplate.getWrapperclassFromPrimitve(field.getType());
-//                    fieldClass = S
-//                } else {
-//                    fieldClass = field.getType();
-//                }
 
                 fieldClass = SourceUtillities.getWrapperclassFromPrimitve(field.getType());
-
 
                 if (isTypeSupported(fieldClass)) {
                     //set attribute name
@@ -63,10 +54,6 @@ public abstract class SourceReflection {
             e.printStackTrace();
         }
         return null;
-    }
-
-    private static void test(){
-
     }
 
     private static Object getObjectValue(String attribute, SourceInterface source) {

@@ -12,16 +12,16 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import source.dao.Interfaces.SourceDatabaseInterface;
-import source.models.interfaces.SourceInterface;
+import source.models.ScientificWork;
+import source.models.interfaces.*;
 import source.dao.SourceDatabaseImpl;
 import source.factories.SourceFactory;
 import source.source_utilities.SourceConverter;
-import source.source_utilities.SourceReflection;
 import source.model.*;
 import source.controller.SourceEditDialogController;
 import source.controller.SourceOverviewController;
 import source.controller.RootLayoutController;
-import source.viewmodels.interfaces.SourceViewInterface;
+import source.viewmodels.interfaces.*;
 
 import static source.main_app.constants.MainAppConstants.*;
 
@@ -58,19 +58,73 @@ public class MainApp extends Application {
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle(WISSENSCHAFTLICHE_QUELLEN);
 
-        test();
+        //test();
+        testall();
         initRootLayout();
 
         showQuellenOverview();
     }
 
-    private void test() {
-        SourceInterface source = SourceFactory.produceSource(SourceFactory.BOOK);
-        source.setId(2);
-        source.setTitle("test");
-        //Object[][] o = SourceReflection.getSourceTemplate(source);
-        SourceViewInterface sourceview = SourceConverter.convertSourceToSourceView(source);
-        System.out.println(sourceview);
+    private void testall() {
+        SourceInterface source = SourceFactory.produceSource(SourceFactory.STANDARD);
+        source.setTitle("source title");
+        source.setAuthor("source author");
+        source.setId(1);
+        source.setYear("source year");
+        SourceViewInterface sourceView = SourceConverter.convertSourceToSourceView(source);
+        System.out.println(sourceView);
+
+        ArticleInterface article = (ArticleInterface) SourceFactory.produceSource(SourceFactory.ARTICLE);
+        article.setEdition("article edition");
+        article.setMagazine("article magazine");
+        article.setId(2);
+        article.setTitle("article title");
+        article.setAuthor("article author");
+        article.setYear("article year");
+        ArticleViewInterface articleView = (ArticleViewInterface) SourceConverter.convertSourceToSourceView(article);
+        System.out.println(articleView);
+
+        BookInterface book = (BookInterface) SourceFactory.produceSource(SourceFactory.BOOK);
+        book.setEdition("book edition");
+        book.setIsbn("book ISBN");
+        book.setMonth("book month");
+        book.setPublisher("book publisher");
+        book.setId(3);
+        book.setTitle("book title");
+        book.setAuthor("book author");
+        book.setYear("book year");
+        BookViewInterface bookView = (BookViewInterface) SourceConverter.convertSourceToSourceView(book);
+        System.out.println(bookView);
+
+        OnlineSourceInterface onlineSource = (OnlineSourceInterface) SourceFactory.produceSource(SourceFactory.ONLINE_SOURCE);
+        onlineSource.setPollingDate("online polling date");
+        onlineSource.setUrl("oneline url");
+        onlineSource.setAuthor("online author");
+        onlineSource.setId(4);
+        onlineSource.setTitle("onlone title");
+        onlineSource.setYear("online year");
+        OnlinesourceViewInterface onlinesourceView = (OnlinesourceViewInterface) SourceConverter.convertSourceToSourceView(onlineSource);
+        System.out.println(onlinesourceView);
+
+        OthersInterface others = (OthersInterface) SourceFactory.produceSource(SourceFactory.OTHER);
+        others.setEdition("other edition");
+        others.setPublisher("other publisher");
+        others.setAuthor("other author");
+        others.setId(5);
+        others.setTitle("other title");
+        others.setYear("other year");
+        OthersViewInterface othersView = (OthersViewInterface) SourceConverter.convertSourceToSourceView(others);
+        System.out.println(othersView);
+
+        ScientificWorkInterface scientificWork = (ScientificWorkInterface) SourceFactory.produceSource(SourceFactory.SCIENTIFIC_WORK);
+        scientificWork.setInstitution("work institution");
+        scientificWork.setPublisher("work publisher");
+        scientificWork.setAuthor("work author");
+        scientificWork.setId(6);
+        scientificWork.setTitle("work title");
+        scientificWork.setYear("work year");
+        ScientificWorkViewInterface scientificWorkView = (ScientificWorkViewInterface) SourceConverter.convertSourceToSourceView(scientificWork);
+        System.out.println(scientificWorkView);
     }
 
     /**
@@ -157,7 +211,7 @@ public class MainApp extends Application {
             );
             controller.setZitatList(zitatList);
 
-            //set selectedQuelle for the edit dialig
+            //set selectedQuelle for the edit dialog
             this.selectedQuelleForEdit = quelle;
 
             // Show the dialog and wait until the user closes it

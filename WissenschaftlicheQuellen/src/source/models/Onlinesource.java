@@ -30,6 +30,10 @@ public class Onlinesource implements OnlineSourceInterface{
         this.url = url;
     }
 
+    public Onlinesource() {
+        this.quoteList = new ArrayList<>();
+    }
+
     @Override
     public void setYear(String year) {
         this.year = year;
@@ -101,7 +105,7 @@ public class Onlinesource implements OnlineSourceInterface{
     }
 
     @Override
-    public void setURL(String url) {
+    public void setUrl(String url) {
         this.url = url;
     }
 
@@ -111,7 +115,7 @@ public class Onlinesource implements OnlineSourceInterface{
     }
 
     @Override
-    public String getURL() {
+    public String getUrl() {
         return this.url;
     }
 }

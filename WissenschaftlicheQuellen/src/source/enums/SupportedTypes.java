@@ -5,5 +5,5 @@ package source.enums;
  * This enum contains all types that are supported in "SourceReflection"
  */
 public enum SupportedTypes {
-    String, Integer
+    String, Integer, Double, Character, Float, Long, Short, Byte
 }

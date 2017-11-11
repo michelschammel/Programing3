@@ -6,12 +6,12 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import source.viewmodels.interfaces.BookViewInterface;
 import source.viewmodels.interfaces.QuoteViewInterface;
+import static source.viewmodels.constants.ViewModelConstants.*;
 
 public class BookView implements BookViewInterface{
-    private static final String EMPTY = "";
 
     private StringProperty author;
-    private StringProperty titel;
+    private StringProperty title;
     private StringProperty year;
     private StringProperty publisher;
     private StringProperty edition;
@@ -23,7 +23,7 @@ public class BookView implements BookViewInterface{
     public BookView() {
         this.quoteList = FXCollections.observableArrayList();
         this.author = new SimpleStringProperty(EMPTY);
-        this.titel = new SimpleStringProperty(EMPTY);
+        this.title = new SimpleStringProperty(EMPTY);
         this.year = new SimpleStringProperty(EMPTY);
         this.publisher = new SimpleStringProperty(EMPTY);
         this.edition = new SimpleStringProperty(EMPTY);
@@ -98,7 +98,7 @@ public class BookView implements BookViewInterface{
 
     @Override
     public void setTitle(String title) {
-        this.titel.setValue(title);
+        this.title.setValue(title);
     }
 
     @Override
@@ -123,12 +123,12 @@ public class BookView implements BookViewInterface{
 
     @Override
     public String getTitle() {
-        return this.titel.getValue();
+        return this.title.getValue();
     }
 
     @Override
     public StringProperty getTitleProperty() {
-        return this.titel;
+        return this.title;
     }
 
     @Override
@@ -157,6 +157,6 @@ public class BookView implements BookViewInterface{
     }
 
     public String toString() {
-        return "Author: " + this.author.getValue() + " | Title: " + this.titel.getValue() + " | Year: " + this.year.getValue() + " | ID: " + this.id;
+        return "Author: " + this.author.getValue() + " | Title: " + this.title.getValue() + " | Year: " + this.year.getValue() + " | ID: " + this.id;
     }
 }

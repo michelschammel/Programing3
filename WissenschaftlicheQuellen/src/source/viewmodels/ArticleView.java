@@ -4,36 +4,57 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import source.viewmodels.interfaces.ArticleViewInterface;
 import source.viewmodels.interfaces.QuoteViewInterface;
-import source.viewmodels.interfaces.SourceViewInterface;
 import static source.viewmodels.constants.ViewModelConstants.*;
 
-public class SourceView implements SourceViewInterface{
+public class ArticleView implements ArticleViewInterface{
 
     private StringProperty author;
     private StringProperty title;
     private StringProperty year;
+    private StringProperty magazine;
+    private StringProperty edition;
     private ObservableList<QuoteViewInterface> quoteList;
     private int id;
 
-    public SourceView() {
+    public ArticleView() {
         quoteList= FXCollections.observableArrayList();
         this.author = new SimpleStringProperty(EMPTY);
         this.title = new SimpleStringProperty(EMPTY);
         this.year = new SimpleStringProperty(EMPTY);
+        this.magazine = new SimpleStringProperty(EMPTY);
+        this.edition = new SimpleStringProperty(EMPTY);
     }
 
-    /**
-     * Creates a copy of an existing Object
-     * @param quelle quelle to copy
-     */
-    public SourceView(source.model.Quelle quelle) {
-        this.author = new SimpleStringProperty(quelle.getAutor());
-        this.title = new SimpleStringProperty(quelle.getTitel());
-        this.year = new SimpleStringProperty(quelle.getJahr());
-        this.id = quelle.getId();
-        this.quoteList = FXCollections.observableArrayList();
-        //quelle.getZitatList().forEach(zitat -> quoteList.add(new Zitat(zitat)));
+    @Override
+    public void setEdition(String edition) {
+        this.edition.setValue(edition);
+    }
+
+    @Override
+    public void setMagazine(String magazine) {
+        this.magazine.setValue(magazine);
+    }
+
+    @Override
+    public String getEdition() {
+        return this.edition.getValue();
+    }
+
+    @Override
+    public StringProperty getEditionProperty() {
+        return this.edition;
+    }
+
+    @Override
+    public String getMagazine() {
+        return this.magazine.getValue();
+    }
+
+    @Override
+    public StringProperty getMagazineProperty() {
+        return this.magazine;
     }
 
     @Override
@@ -99,9 +120,5 @@ public class SourceView implements SourceViewInterface{
     @Override
     public void removeQuote(QuoteViewInterface quote) {
         this.quoteList.remove(quote);
-    }
-
-    public String toString() {
-        return "Author: " + this.author.getValue() + " | Title: " + this.title.getValue() + " | Year: " + this.year.getValue() + " | ID: " + this.id;
     }
 }
