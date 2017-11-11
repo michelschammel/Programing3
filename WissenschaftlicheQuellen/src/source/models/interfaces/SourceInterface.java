@@ -1,4 +1,4 @@
-package source.Interfaces;
+package source.models.interfaces;
 
 import java.util.List;
 
@@ -6,7 +6,7 @@ public interface SourceInterface {
 
     void setYear(String year);
 
-    void setTitel(String titel);
+    void setTitle(String title);
 
     void setAuthor(String author);
 
@@ -16,7 +16,7 @@ public interface SourceInterface {
 
     String getYear();
 
-    String getTitel();
+    String getTitle();
 
     String getAuthor();
 

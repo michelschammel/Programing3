@@ -1,10 +1,10 @@
-package source.constants;
+package source.dao.constants;
 
 /**
  * Constants Class for all Selections/Updates/Deletes on the DB
  * @author Cedric Schreiner, Roman Berezin
  */
-public class DB_Constants {
+public abstract class DB_Constants {
     //Prepared Statements to update a quelle
     public static final String PS_UPDATA_QUELLE = "UPDATE Quellen SET autor = ?, titel = ?, jahr = ? WHERE quellenId = ?";
     public static final String PS_UPDATE_ANDERES = "UPDATE Anderes SET auflage = ?, herausgeber = ?, ausgabe = ? WHERE quellenId = ?";

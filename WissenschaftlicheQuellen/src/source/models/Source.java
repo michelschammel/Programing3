@@ -1,7 +1,7 @@
 package source.models;
 
-import source.Interfaces.QuoteInterface;
-import source.Interfaces.SourceInterface;
+import source.models.interfaces.QuoteInterface;
+import source.models.interfaces.SourceInterface;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,15 +9,15 @@ import java.util.List;
 public class Source implements SourceInterface{
 
     private String year;
-    private String titel;
+    private String title;
     private String author;
     private int id;
     private List<QuoteInterface> quoteList;
 
-    public Source(int id, String titel, String author, String year) {
+    public Source(int id, String title, String author, String year) {
         this.quoteList = new ArrayList<>();
         this.id = id;
-        this.titel = titel;
+        this.title = title;
         this.author = author;
         this.year = year;
     }
@@ -32,8 +32,8 @@ public class Source implements SourceInterface{
     }
 
     @Override
-    public void setTitel(String titel) {
-        this.titel = titel;
+    public void setTitle(String titel) {
+        this.title = titel;
     }
 
     @Override
@@ -57,8 +57,8 @@ public class Source implements SourceInterface{
     }
 
     @Override
-    public String getTitel() {
-        return this.titel;
+    public String getTitle() {
+        return this.title;
     }
 
     @Override

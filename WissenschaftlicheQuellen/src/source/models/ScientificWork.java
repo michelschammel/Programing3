@@ -1,7 +1,7 @@
 package source.models;
 
-import source.Interfaces.QuoteInterface;
-import source.Interfaces.ScientificWorkInterface;
+import source.models.interfaces.QuoteInterface;
+import source.models.interfaces.ScientificWorkInterface;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,19 +15,23 @@ public class ScientificWork implements ScientificWorkInterface{
     private String publisher;
     private String institution;
     private String year;
-    private String titel;
+    private String title;
     private String author;
     private int id;
     private List<QuoteInterface> quoteList;
 
-    public ScientificWork(int id, String titel, String author, String year, String publisher, String institution) {
+    public ScientificWork(int id, String title, String author, String year, String publisher, String institution) {
         this.quoteList = new ArrayList<>();
         this.id = id;
-        this.titel = titel;
+        this.title = title;
         this.author = author;
         this.year = year;
         this.publisher = publisher;
         this.institution = institution;
+    }
+
+    public ScientificWork() {
+        this.quoteList = new ArrayList<>();
     }
 
     @Override
@@ -36,8 +40,8 @@ public class ScientificWork implements ScientificWorkInterface{
     }
 
     @Override
-    public void setTitel(String titel) {
-        this.titel = titel;
+    public void setTitle(String titel) {
+        this.title = titel;
     }
 
     @Override
@@ -61,8 +65,8 @@ public class ScientificWork implements ScientificWorkInterface{
     }
 
     @Override
-    public String getTitel() {
-        return this.titel;
+    public String getTitle() {
+        return this.title;
     }
 
     @Override

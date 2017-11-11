@@ -1,7 +1,7 @@
 package source.models;
 
-import source.Interfaces.ArticleInterface;
-import source.Interfaces.QuoteInterface;
+import source.models.interfaces.ArticleInterface;
+import source.models.interfaces.QuoteInterface;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,17 +13,17 @@ import java.util.List;
 public class Article implements ArticleInterface{
 
     private String year;
-    private String titel;
+    private String title;
     private String author;
     private String edition;
     private String magazine;
     private int id;
     private List<QuoteInterface> quoteList;
 
-    public Article(int id, String titel, String author, String year, String edition, String magazine) {
+    public Article(int id, String title, String author, String year, String edition, String magazine) {
         this.quoteList = new ArrayList<>();
         this.year = year;
-        this.titel = titel;
+        this.title = title;
         this.author = author;
         this.id = id;
         this.edition = edition;
@@ -40,8 +40,8 @@ public class Article implements ArticleInterface{
     }
 
     @Override
-    public void setTitel(String titel) {
-        this.titel = titel;
+    public void setTitle(String titel) {
+        this.title = titel;
     }
 
     @Override
@@ -65,8 +65,8 @@ public class Article implements ArticleInterface{
     }
 
     @Override
-    public String getTitel() {
-        return this.titel;
+    public String getTitle() {
+        return this.title;
     }
 
     @Override

@@ -1,6 +1,6 @@
 package source.models;
 
-import source.Interfaces.TagInterface;
+import source.models.interfaces.TagInterface;
 
 /**
  * Created by Cedric on 07.11.2017.

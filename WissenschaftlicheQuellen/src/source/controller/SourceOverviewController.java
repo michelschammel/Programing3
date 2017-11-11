@@ -5,15 +5,15 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
-import source.Interfaces.SourceDatabaseInterface;
-import source.MainApp;
+import source.dao.Interfaces.SourceDatabaseInterface;
+import source.main_app.MainApp;
 import source.dao.SourceDatabaseImpl;
 import source.model.Quelle;
 import source.model.Zitat;
 import source.model.Tag;
 import source.utilities.StringUtilities;
 
-import static source.constants.SourceOverviewController.*;
+import static source.controller.constants.SourceOverviewControllerConstants.*;
 
 public class SourceOverviewController {
     @FXML

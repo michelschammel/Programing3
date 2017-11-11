@@ -1,4 +1,4 @@
-package source.Interfaces;
+package source.models.interfaces;
 
 /**
  * Created by Cedric on 07.11.2017.

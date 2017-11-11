@@ -1,4 +1,4 @@
-package source.Interfaces;
+package source.models.interfaces;
 
 import java.util.List;
 
@@ -7,7 +7,7 @@ import java.util.List;
  * Interface for Quote
  */
 public interface QuoteInterface {
-    void setTitel(String titel);
+    void setTitle(String titel);
 
     void setSourceId (int sourceId);
 
@@ -15,7 +15,7 @@ public interface QuoteInterface {
 
     void setTagList(List<TagInterface> list);
 
-    String getTitel();
+    String getTitle();
 
     int getSourceId();
 

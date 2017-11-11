@@ -16,13 +16,13 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import source.MainApp;
+import source.main_app.MainApp;
 import source.model.*;
 import java.io.IOException;
 
 
-import static source.constants.DB_Constants.*;
-import static source.constants.SourceEditDialogConstants.*;
+import static source.dao.constants.DB_Constants.*;
+import static source.controller.constants.SourceEditDialogConstants.*;
 
 
 /**

@@ -3,7 +3,7 @@ package source.controller;
 import javafx.fxml.FXML;
 import javafx.scene.image.*;
 
-import static source.constants.TutorialControllerConstants.*;
+import static source.controller.constants.TutorialControllerConstants.*;
 
 /**
  *

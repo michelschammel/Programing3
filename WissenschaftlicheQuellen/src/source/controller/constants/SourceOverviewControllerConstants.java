@@ -1,10 +1,10 @@
-package source.constants;
+package source.controller.constants;
 
 /**
  * Created by Cedric on 07.11.2017.
- * Constants for SourceOverviewController
+ * Constants for SourceOverviewControllerConstants
  */
-public abstract class SourceOverviewController {
+public abstract class SourceOverviewControllerConstants {
     public static final String LEERER_STRING = "";
 
     public static final String NICHTS_AUSGEWAEHLT = "Nichts ausgeählt";

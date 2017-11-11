@@ -2,15 +2,15 @@ package source.dao;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import source.Interfaces.SourceDatabaseInterface;
+import source.dao.Interfaces.SourceDatabaseInterface;
 import source.model.*;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static source.constants.SourceDatabaseImplConstants.*;
-import static source.constants.DB_Constants.*;
+import static source.dao.constants.SourceDatabaseImplConstants.*;
+import static source.dao.constants.DB_Constants.*;
 
 /**
  * @author Cedric Schreiner

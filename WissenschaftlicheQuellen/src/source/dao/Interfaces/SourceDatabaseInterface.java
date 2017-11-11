@@ -1,4 +1,4 @@
-package source.Interfaces;
+package source.dao.Interfaces;
 
 import javafx.collections.ObservableList;
 import source.model.Quelle;

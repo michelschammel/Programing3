@@ -1,7 +1,7 @@
 package source.models;
 
-import source.Interfaces.OthersInterface;
-import source.Interfaces.QuoteInterface;
+import source.models.interfaces.OthersInterface;
+import source.models.interfaces.QuoteInterface;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,21 +13,25 @@ import java.util.List;
 public class Others implements OthersInterface {
 
     private String year;
-    private String titel;
+    private String title;
     private String author;
     private int id;
     private String publisher;
     private String edition;
     private List<QuoteInterface> quoteList;
 
-    public Others(int id, String titel, String author, String year, String publisher, String edition) {
+    public Others(int id, String title, String author, String year, String publisher, String edition) {
         this.quoteList = new ArrayList<>();
-        this.titel = titel;
+        this.title = title;
         this.author = author;
         this.year = year;
         this.publisher = publisher;
         this.edition = edition;
         this.id = id;
+    }
+
+    public Others() {
+        this.quoteList = new ArrayList<>();
     }
 
     @Override
@@ -36,8 +40,8 @@ public class Others implements OthersInterface {
     }
 
     @Override
-    public void setTitel(String titel) {
-        this.titel = titel;
+    public void setTitle(String titel) {
+        this.title = titel;
     }
 
     @Override
@@ -61,8 +65,8 @@ public class Others implements OthersInterface {
     }
 
     @Override
-    public String getTitel() {
-        return this.titel;
+    public String getTitle() {
+        return this.title;
     }
 
     @Override

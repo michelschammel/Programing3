@@ -1,7 +1,7 @@
 package source.models;
 
-import source.Interfaces.QuoteInterface;
-import source.Interfaces.TagInterface;
+import source.models.interfaces.QuoteInterface;
+import source.models.interfaces.TagInterface;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,21 +11,21 @@ import java.util.List;
  * Quote
  */
 public class Quote implements QuoteInterface{
-    private String titel;
+    private String title;
     private int id;
     private int sourceId;
     private List<TagInterface> tagList;
 
-    public Quote(int id, String titel, int sourceId) {
+    public Quote(int id, String title, int sourceId) {
         this.tagList = new ArrayList<>();
-        this.titel = titel;
+        this.title = title;
         this.sourceId = sourceId;
         this.id = id;
     }
 
     @Override
-    public void setTitel(String titel) {
-        this.titel = titel;
+    public void setTitle(String titel) {
+        this.title = titel;
     }
 
     @Override
@@ -44,8 +44,8 @@ public class Quote implements QuoteInterface{
     }
 
     @Override
-    public String getTitel() {
-        return this.titel;
+    public String getTitle() {
+        return this.title;
     }
 
     @Override

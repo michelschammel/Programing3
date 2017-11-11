@@ -1,7 +1,10 @@
-package source.factories;
+package source.source_utilities;
 
-import source.Interfaces.SourceInterface;
+import com.sun.istack.internal.NotNull;
 import source.enums.SupportedTypes;
+import source.models.SourceTemplate;
+import source.models.interfaces.SourceInterface;
+import source.models.interfaces.SourceTemplateInterface;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -16,41 +19,46 @@ public abstract class SourceReflection {
      * The third row is null and gets filled by the User. These are later used to set the attribute values of a object
      * @return object template
      */
-    public static Object[][] getSourceTemplate(SourceInterface source) {
-        List<List<Object>> sourceTemplate = new ArrayList<>();
-        List<Object> templateRow;
+    public static List<SourceTemplateInterface> getSourceTemplate(SourceInterface source) {
+        List<SourceTemplateInterface> sourceTemplate = new ArrayList<>();
+        SourceTemplateInterface templateRow;
         try {
             Class sourceClass = source.getClass();
             Object fieldValue;
             for (Field field : sourceClass.getDeclaredFields()) {
-                templateRow = new ArrayList<>();
+                templateRow = new SourceTemplate();
                 Class fieldClass;
                 //set attribute type, but if the getType() returns a primitive type call getWrapperClass
-                if (field.getType().isPrimitive()) {
-                    fieldClass = getWrapperClass(field.getType());
-                } else {
-                    fieldClass = field.getType();
-                }
+//                if (field.getType().isPrimitive()) {
+//                    fieldClass = SourceTemplate.getWrapperclassFromPrimitve(field.getType());
+//                    fieldClass = S
+//                } else {
+//                    fieldClass = field.getType();
+//                }
+
+                fieldClass = SourceUtillities.getWrapperclassFromPrimitve(field.getType());
+
+
                 if (isTypeSupported(fieldClass)) {
                     //set attribute name
-                    templateRow.add(field.getName());
+                    templateRow.setAttributeName(field.getName());
 
+                    //get the value of the attribute
                     fieldValue = getObjectValue(field.getName(), source);
-
                     //add field class
-                    templateRow.add(fieldClass);
-                    //this field is null and should be set later by the user
-                    templateRow.add(fieldValue);
+                    templateRow.setAttributeClass(fieldClass);
+                    //add attribute value
+                    templateRow.setAttributeValue(fieldValue);
                     sourceTemplate.add(templateRow);
                 }
             }
 
             //Test to see what the list contains
-            for (List<Object> o : sourceTemplate) {
-                System.out.println("[" + o.get(0) + "][" + o.get(1) + "][" + o.get(2) + "]");
+            for (SourceTemplateInterface o : sourceTemplate) {
+                System.out.println("[" + o.getAttributeName() + "][" + o.getAttributeClass() + "][" + o.getAttributeValue() + "]");
             }
             //convert the list back do a normal 2 dimensional array
-            return sourceTemplate.stream().map(row -> row.toArray(new Object[0])).toArray(Object[][]::new);
+            return sourceTemplate;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -90,36 +98,6 @@ public abstract class SourceReflection {
             }
         }
         return isSupported;
-    }
-
-    /**
-     * Return the wrapper class of an primitive type
-     * @param primitiveType the primitive type
-     * @return wrapper class
-     */
-    private static Class<?> getWrapperClass(Class<?> primitiveType) {
-        if (primitiveType.isPrimitive()) {
-            String primitiveName = primitiveType.getName();
-            switch (primitiveName) {
-                case "int":
-                    return Integer.class;
-                case "double":
-                    return Double.class;
-                case "boolean":
-                    return Boolean.class;
-                case "byte":
-                    return Byte.class;
-                case "short":
-                    return Short.class;
-                case "long":
-                    return Long.class;
-                case "float":
-                    return Float.class;
-                case "char":
-                    return Character.class;
-            }
-        }
-        return null;
     }
 
 

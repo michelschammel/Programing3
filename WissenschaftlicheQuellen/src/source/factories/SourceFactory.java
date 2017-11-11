@@ -1,7 +1,7 @@
 package source.factories;
 
-import source.Interfaces.BookInterface;
-import source.Interfaces.SourceInterface;
+import source.models.interfaces.BookInterface;
+import source.models.interfaces.SourceInterface;
 import source.models.*;
 
 /**
@@ -17,12 +17,17 @@ public abstract class SourceFactory {
     public static final String SCIENTIFIC_WORK = "scientific work";
 
     public static SourceInterface produceSource(String sourceType) {
-        if (sourceType.equals(STANDARD)) {
-            return new Source();
-        } else if (sourceType.equals(BOOK)) {
-            return new Book();
-        } else if (sourceType.equals(ARTICLE)) {
-            return new Article();
+        switch (sourceType) {
+            case STANDARD:
+                return new Source();
+            case BOOK:
+                return new Book();
+            case ARTICLE:
+                return new Article();
+            case OTHER:
+                return new Others();
+            case SCIENTIFIC_WORK:
+                return new ScientificWork();
         }
         return null;
     }

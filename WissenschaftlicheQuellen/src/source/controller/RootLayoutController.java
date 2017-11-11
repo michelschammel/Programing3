@@ -2,7 +2,7 @@ package source.controller;
 
 
 import javafx.fxml.FXML;
-import source.MainApp;
+import source.main_app.MainApp;
 
 /**
  * @author Bjoern Schmidt

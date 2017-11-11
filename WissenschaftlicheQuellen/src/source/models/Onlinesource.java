@@ -1,7 +1,7 @@
 package source.models;
 
-import source.Interfaces.OnlineSourceInterface;
-import source.Interfaces.QuoteInterface;
+import source.models.interfaces.OnlineSourceInterface;
+import source.models.interfaces.QuoteInterface;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,17 +13,17 @@ import java.util.List;
 public class Onlinesource implements OnlineSourceInterface{
 
     private String year;
-    private String titel;
+    private String title;
     private String author;
     private int id;
     private String url;
     private String pollingDate;
     private List<QuoteInterface> quoteList;
 
-    public Onlinesource(int id, String titel, String author, String year, String pollingDate, String url) {
+    public Onlinesource(int id, String title, String author, String year, String pollingDate, String url) {
         this.quoteList = new ArrayList<>();
         this.id = id;
-        this.titel = titel;
+        this.title = title;
         this.author = author;
         this.year = year;
         this.pollingDate = pollingDate;
@@ -36,8 +36,8 @@ public class Onlinesource implements OnlineSourceInterface{
     }
 
     @Override
-    public void setTitel(String titel) {
-        this.titel = titel;
+    public void setTitle(String titel) {
+        this.title = titel;
     }
 
     @Override
@@ -61,8 +61,8 @@ public class Onlinesource implements OnlineSourceInterface{
     }
 
     @Override
-    public String getTitel() {
-        return this.titel;
+    public String getTitle() {
+        return this.title;
     }
 
     @Override

@@ -6,12 +6,12 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.chart.*;
-import source.Interfaces.SourceDatabaseInterface;
+import source.dao.Interfaces.SourceDatabaseInterface;
 import source.dao.SourceDatabaseImpl;
 import source.enums.DatabaseTables;
 
-import static source.constants.PieChartControllerConstants.*;
-import static source.constants.DB_Constants.*;
+import static source.controller.constants.PieChartControllerConstants.*;
+import static source.dao.constants.DB_Constants.*;
 
 
 /**

@@ -1,7 +1,6 @@
-package source;
+package source.main_app;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 
 import javafx.application.Application;
 import javafx.collections.FXCollections;
@@ -12,18 +11,19 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import source.Interfaces.BookInterface;
-import source.Interfaces.SourceDatabaseInterface;
-import source.Interfaces.SourceInterface;
+import source.dao.Interfaces.SourceDatabaseInterface;
+import source.models.interfaces.SourceInterface;
 import source.dao.SourceDatabaseImpl;
 import source.factories.SourceFactory;
-import source.factories.SourceReflection;
+import source.source_utilities.SourceConverter;
+import source.source_utilities.SourceReflection;
 import source.model.*;
 import source.controller.SourceEditDialogController;
 import source.controller.SourceOverviewController;
 import source.controller.RootLayoutController;
+import source.viewmodels.interfaces.SourceViewInterface;
 
-import static source.constants.MainAppConstants.*;
+import static source.main_app.constants.MainAppConstants.*;
 
 
 /**
@@ -67,11 +67,10 @@ public class MainApp extends Application {
     private void test() {
         SourceInterface source = SourceFactory.produceSource(SourceFactory.BOOK);
         source.setId(2);
-        source.setTitel("test");
-        Object[][] o = SourceReflection.getSourceTemplate(source);
-        for (Method method: source.getClass().getDeclaredMethods()){
-        }
-        //System.out.println(o);
+        source.setTitle("test");
+        //Object[][] o = SourceReflection.getSourceTemplate(source);
+        SourceViewInterface sourceview = SourceConverter.convertSourceToSourceView(source);
+        System.out.println(sourceview);
     }
 
     /**

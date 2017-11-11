@@ -1,7 +1,7 @@
 package source.models;
 
-import source.Interfaces.BookInterface;
-import source.Interfaces.QuoteInterface;
+import source.models.interfaces.BookInterface;
+import source.models.interfaces.QuoteInterface;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +13,7 @@ import java.util.List;
 public class Book implements BookInterface{
 
     private String year;
-    private String titel;
+    private String title;
     private String author;
     private int id;
     private String publisher;
@@ -22,10 +22,10 @@ public class Book implements BookInterface{
     private String month;
     private List<QuoteInterface> quoteList;
 
-    public Book(int id, String titel, String author, String year, String publisher, String edition, String month, String isbn) {
+    public Book(int id, String title, String author, String year, String publisher, String edition, String month, String isbn) {
         this.quoteList = new ArrayList<>();
         this.id = id;
-        this.titel = titel;
+        this.title = title;
         this.author = author;
         this.year = year;
         this.publisher = publisher;
@@ -44,8 +44,8 @@ public class Book implements BookInterface{
     }
 
     @Override
-    public void setTitel(String titel) {
-        this.titel = titel;
+    public void setTitle(String titel) {
+        this.title = titel;
     }
 
     @Override
@@ -69,8 +69,8 @@ public class Book implements BookInterface{
     }
 
     @Override
-    public String getTitel() {
-        return this.titel;
+    public String getTitle() {
+        return this.title;
     }
 
     @Override

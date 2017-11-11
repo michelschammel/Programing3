@@ -1,10 +1,10 @@
-package source.constants;
+package source.controller.constants;
 
 /**
  * Created by Cedric on 07.11.2017.
  * Constants for PieChartController
  */
-public class PieChartControllerConstants {
+public abstract class PieChartControllerConstants {
     public static final int INDEX_0 = 0;
     public static final int INDEX_1 = 1;
     public static final int INDEX_2 = 2;
