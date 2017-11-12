@@ -3,7 +3,6 @@ package controller;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -59,7 +58,7 @@ public class SourceEditDialogController {
     private Quelle quelle;
     private Quelle quelleEdited;
     private boolean okClicked = false;
-    private ObservableList<Zitat> zitatList;
+    private ObservableList<Zitat> quoteList;
     private boolean editmode = true;
 
     //all custom textFields
@@ -72,7 +71,6 @@ public class SourceEditDialogController {
     private TextField urlTextField;
     private TextField einrichtungsTextField;
     private TextField magazinTextField;
-    private TextField subCategoryField;
 
     /**
      * Initializes the controller class. This method is automatically called
@@ -122,6 +120,11 @@ public class SourceEditDialogController {
         });
     }
 
+    private void initializeList() {
+        this.quoteList = FXCollections.observableArrayList();
+        quoteList.addAll(quelle.getZitatList());
+    }
+
     public void disableSubCategory(boolean disable) {
         this.subCategory.setDisable(disable);
     }
@@ -163,73 +166,65 @@ public class SourceEditDialogController {
 
 
             //add eventlistener for all menuitems
-            newTagItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    if (zitatTable.getSelectionModel().getSelectedItem() != null) {
-                        //1. get zitatList of quelle
-                        //2. get the selected itemindex of zitattable
-                        //3. get the taglist of the selected zitat
-                        //4. add a new tag to the zitat
-                        Tag tag = new Tag(NEU);
-                        quelleEdited.getZitatList().get(zitatTable.getSelectionModel().getSelectedIndex()).getTagList().add(tag);
-                        //zitatList = quelleEdited.getZitatList();
-                        //zitatList.get(zitatTable.getSelectionModel().getSelectedIndex()).getTagList().add(tag);
-                    }
+            newTagItem.setOnAction((ActionEvent event) -> {
+                if (zitatTable.getSelectionModel().getSelectedItem() != null) {
+                    //1. get zitatList of quelle
+                    //2. get the selected itemindex of zitattable
+                    //3. get the taglist of the selected zitat
+                    //4. add a new tag to the zitat
+                    Tag tag = new Tag(NEU);
+                    quelleEdited.getZitatList().get(zitatTable.getSelectionModel().getSelectedIndex()).getTagList().add(tag);
+                    //zitatList = quelleEdited.getZitatList();
+                    //zitatList.get(zitatTable.getSelectionModel().getSelectedIndex()).getTagList().add(tag);
                 }
             });
 
-            deleteTagItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    Tag tag = tagTable.getSelectionModel().getSelectedItem();
-                    quelleEdited.getZitatList().get(zitatTable.getSelectionModel().getSelectedIndex()).getTagList().remove(tag);
-                }
+            deleteTagItem.setOnAction((ActionEvent event) -> {
+                Tag tag = tagTable.getSelectionModel().getSelectedItem();
+                quelleEdited.getZitatList().get(zitatTable.getSelectionModel().getSelectedIndex()).getTagList().remove(tag);
             });
 
-            addTag.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    try {
-                        // Load the fxml file and create a new stage for the popup dialog.
-                        FXMLLoader loader = new FXMLLoader();
-                        loader.setLocation(MainApp.class.getResource(ADD_TAGS_FXML));
-                        AnchorPane page = (AnchorPane) loader.load();
+            addTag.setOnAction((ActionEvent event) -> {
+                try {
+                    // Load the fxml file and create a new stage for the popup dialog.
+                    FXMLLoader loader = new FXMLLoader();
+                    loader.setLocation(MainApp.class.getResource(ADD_TAGS_FXML));
+                    AnchorPane page = loader.load();
 
-                        // Create the addTag Stage.
-                        Stage addTagStage = new Stage();
-                        addTagStage.setTitle(FUEGE_TAG_HINZU);
-                        addTagStage.initModality(Modality.WINDOW_MODAL);
-                        Scene scene = new Scene(page);
-                        addTagStage.setScene(scene);
-                        addTagStage.initOwner(dialogStage);
+                    // Create the addTag Stage.
+                    Stage addTagStage = new Stage();
+                    addTagStage.setTitle(FUEGE_TAG_HINZU);
+                    addTagStage.initModality(Modality.WINDOW_MODAL);
+                    Scene scene = new Scene(page);
+                    addTagStage.setScene(scene);
+                    addTagStage.initOwner(dialogStage);
 
-                        // Set the quelle into the controller.
-                        AddTagsController controller = loader.getController();
-                        ObservableList<Tag> tagList = FXCollections.observableArrayList();
-                        controller.setZitat(zitatTable.getSelectionModel().getSelectedItem());
-                        //prevent duplicates
-                        zitatList.forEach(zitat ->
-                                zitat.getTagList().forEach(tag -> {
-                                    boolean addTag = true;
-                                    for (int i = 0; i < tagList.size(); i++) {
-                                        if (tag.getText().equals(tagList.get(i).getText())) {
-                                            addTag = false;
-                                        }
+                    // Set the quelle into the controller.
+                    AddTagsController controller = loader.getController();
+                    ObservableList<Tag> tagList = FXCollections.observableArrayList();
+                    controller.setZitat(zitatTable.getSelectionModel().getSelectedItem());
+                    //prevent duplicates
+                    quoteList.forEach(zitat ->
+                            zitat.getTagList().forEach(tag -> {
+                                boolean addnewTag = true;
+                                for (Tag aTagList : tagList) {
+                                    if (tag.getText().equals(aTagList.getText())) {
+                                        addnewTag = false;
                                     }
-                                    if (addTag) {
-                                        tagList.add(tag);
-                                    }
-                                })
-                        );
-                        controller.setTagList(tagList);
+                                }
+                                if (addnewTag) {
+                                    tagList.add(tag);
+                                }
+                            })
+                    );
+                    controller.setTagList(tagList);
 
-                        // Show the dialog and wait until the user closes it
-                        addTagStage.showAndWait();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    // Show the dialog and wait until the user closes it
+                    addTagStage.showAndWait();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
+
             });
         }
     }
@@ -268,7 +263,7 @@ public class SourceEditDialogController {
                 // Load the fxml file and create a new stage for the popup dialog.
                 FXMLLoader loader = new FXMLLoader();
                 loader.setLocation(MainApp.class.getResource(ADD_ZITATE_FXML));
-                AnchorPane page = (AnchorPane) loader.load();
+                AnchorPane page = loader.load();
 
                 // Create the addTag Stage.
                 Stage addZitatStage = new Stage();
@@ -281,7 +276,7 @@ public class SourceEditDialogController {
 
                 // Set the quelle into the controller.
                 AddQuoteController controller = loader.getController();
-                controller.setZitatList(zitatList);
+                controller.setZitatList(quoteList);
                 controller.setQuelle(quelleEdited);
                 zitatTable.setItems(quelleEdited.getZitatList());
                 controller.setStage(addZitatStage);
@@ -363,6 +358,7 @@ public class SourceEditDialogController {
         jahrField.setText(quelle.getJahr());
 
         adjustGridPane();
+        initializeList();
     }
 
     private void adjustGridPane() {
@@ -423,6 +419,7 @@ public class SourceEditDialogController {
         this.cancelButton.setLayoutY(OK_AND_CANCEL_BUTTON_SET_LAYOUT_Y_FPR_BUCH);
         this.zitatTable.setPrefHeight(ZITAT_AND_TAG_TABLE_SET_PREF_HEIGHT_FOR_BUCH);
         this.tagTable.setPrefHeight(ZITAT_AND_TAG_TABLE_SET_PREF_HEIGHT_FOR_BUCH);
+        System.out.println(this.zitatTable.getScene());
         this.zitatTable.getScene().getWindow().setHeight(SET_WINDOW_HEIGHT_FOR_BUCH);
 
         //Create all needed labels for Buch
@@ -540,7 +537,7 @@ public class SourceEditDialogController {
     }
 
     public void setZitatList(ObservableList<Zitat> zitatList) {
-        this.zitatList = zitatList;
+        this.quoteList = zitatList;
     }
 
     /**

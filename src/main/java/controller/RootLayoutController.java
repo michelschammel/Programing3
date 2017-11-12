@@ -2,7 +2,17 @@ package controller;
 
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
 import main_app.MainApp;
+import utilities.ViewUtillities;
+
+import java.io.IOException;
+
+import static main_app.constants.MainAppConstants.*;
+import static main_app.constants.MainAppConstants.TUTORIAL;
 
 /**
  * @author Bjoern Schmidt
@@ -11,34 +21,49 @@ import main_app.MainApp;
 public class RootLayoutController {
 
     // Reference to the main application
-    private MainApp mainApp;
+    //private MainApp mainApp;
+    @FXML
+    private BorderPane rootBorderPane;
+    private Stage stage;
 
-    /**
-     * Is called by the main application to give a reference back to itself.
-     *
-     * @param mainApp
-     */
-    public void setMainApp(MainApp mainApp) {
-        this.mainApp = mainApp;
+    public void showSourceOverview() {
+        try {
+            // Load source overview.
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(MainApp.class.getResource(QUELLEN_OVERVIEW_FXML));
+            AnchorPane quellenOverview = loader.load();
+
+            // Set source overview into the center of root layout.
+            rootBorderPane.setCenter(quellenOverview);
+
+            // Give the controller access to the main app.
+            SourceOverviewController controller = loader.getController();
+            controller.setStage(stage);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
     @FXML
     private void handleShowPieChart() {
-        mainApp.showPieChart();
+        ViewUtillities.showScreen(PIE_CHART_FXML, KUCHEN_DIAGRAMM, this.stage);
     }
 
 
     @FXML
     private void handleShowAbout() {
-        mainApp.showAbout();
+        ViewUtillities.showScreen(ABOUT_FXML, TUTORIAL, this.stage);
     }
 
 
     @FXML
     private void handleShowTutorial() {
-        mainApp.showTutorial();
+        ViewUtillities.showScreen(TUTORIAL_FXML, ABOUT, this.stage);
     }
 
-
+    public void setStage(Stage stage) {
+        this.stage = stage;
+    }
 }

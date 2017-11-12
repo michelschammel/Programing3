@@ -39,8 +39,8 @@
                   <Label layoutX="14.0" layoutY="14.0" text="Zitate aus" />
                   <ButtonBar layoutX="253.0" layoutY="424.0" prefHeight="40.0" prefWidth="200.0">
                     <buttons>
-                        <Button mnemonicParsing="false" onAction="#handleNewQuelle" text="Neu" />
-                        <Button mnemonicParsing="false" onAction="#handleEditQuelle" text="Bearbeiten" textAlignment="CENTER" />
+                        <Button mnemonicParsing="false" onAction="#handleNewSource" text="Neu" />
+                        <Button mnemonicParsing="false" onAction="#handleEditSource" text="Bearbeiten" textAlignment="CENTER" />
                       <Button mnemonicParsing="false" onAction="#handleDeleteQuelle" text="Löschen" wrapText="true" />
                     </buttons>
                   </ButtonBar>
