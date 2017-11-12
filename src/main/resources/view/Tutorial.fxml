@@ -19,7 +19,7 @@
             </Label>
             <ImageView fx:id="myImage" fitHeight="414.0" fitWidth="686.0" focusTraversable="true" layoutX="18.0" layoutY="66.0" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@../resources/tut01.png" />
+                  <Image url="@../../java/resources/tut01.png" />
                </image></ImageView>
             <Button layoutX="654.0" layoutY="32.0" mnemonicParsing="false" onAction="#handleButtonNextAction" text="Weiter" textAlignment="CENTER" />
             <Button layoutX="18.0" layoutY="32.0" mnemonicParsing="false" onAction="#handleButtonBackAction" text="Zurück" />
