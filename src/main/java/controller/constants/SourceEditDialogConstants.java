@@ -7,8 +7,8 @@ package controller.constants;
 public abstract class SourceEditDialogConstants {
 
 //Constanten fuer aufrufe der fxml dateien
-    public static final String ADD_TAGS_FXML = "view/AddTags.fxml";
-    public static final String ADD_ZITATE_FXML = "view/AddZitate.fxml";
+    public static final String ADD_TAGS_FXML = "../view/AddTags.fxml";
+    public static final String ADD_ZITATE_FXML = "../view/AddZitate.fxml";
 
     public static final String NEUER_TAG = "neuer Tag";
     public static final String LOESCHE_TAG = "lösche Tag";

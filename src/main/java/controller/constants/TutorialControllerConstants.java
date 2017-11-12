@@ -23,20 +23,20 @@ public abstract class TutorialControllerConstants {
 
     public static final int TUT_ANZAHL_PLUS_EINS = 16;
 
-    public static final String PIC_TUT_01 = "../resources/tut01.png";
-    public static final String PIC_TUT_02 = "../resources/tut02.png";
-    public static final String PIC_TUT_03 = "../resources/tut03.png";
-    public static final String PIC_TUT_04 = "../resources/tut04.png";
-    public static final String PIC_TUT_05 = "../resources/tut05.png";
-    public static final String PIC_TUT_06 = "../resources/tut06.png";
-    public static final String PIC_TUT_07 = "../resources/tut07.png";
-    public static final String PIC_TUT_08 = "../resources/tut08.png";
-    public static final String PIC_TUT_09 = "../resources/tut09.png";
-    public static final String PIC_TUT_10 = "../resources/tut10.png";
-    public static final String PIC_TUT_11 = "../resources/tut11.png";
-    public static final String PIC_TUT_12 = "../resources/tut12.png";
-    public static final String PIC_TUT_13 = "../resources/tut13.png";
-    public static final String PIC_TUT_14 = "../resources/tut14.png";
-    public static final String PIC_TUT_15 = "../resources/tut15.png";
-    public static final String PIC_TUT = "../resources/tut.png";
+    public static final String PIC_TUT_01 = "../pictures/tut01.png";
+    public static final String PIC_TUT_02 = "../pictures/tut02.png";
+    public static final String PIC_TUT_03 = "../pictures/tut03.png";
+    public static final String PIC_TUT_04 = "../pictures/tut04.png";
+    public static final String PIC_TUT_05 = "../pictures/tut05.png";
+    public static final String PIC_TUT_06 = "../pictures/tut06.png";
+    public static final String PIC_TUT_07 = "../pictures/tut07.png";
+    public static final String PIC_TUT_08 = "../pictures/tut08.png";
+    public static final String PIC_TUT_09 = "../pictures/tut09.png";
+    public static final String PIC_TUT_10 = "../pictures/tut10.png";
+    public static final String PIC_TUT_11 = "../pictures/tut11.png";
+    public static final String PIC_TUT_12 = "../pictures/tut12.png";
+    public static final String PIC_TUT_13 = "../pictures/tut13.png";
+    public static final String PIC_TUT_14 = "../pictures/tut14.png";
+    public static final String PIC_TUT_15 = "../pictures/tut15.png";
+    public static final String PIC_TUT = "../pictures/tut.png";
 }

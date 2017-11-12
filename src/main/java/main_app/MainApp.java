@@ -219,9 +219,10 @@ public class MainApp extends Application {
             //
 
             ObservableList<Zitat> zitatList = FXCollections.observableArrayList();
-            quellenData.forEach( quelleList ->
-                zitatList.addAll(quelleList.getZitatList())
-            );
+
+            for (Quelle quelle1 : quellenData) {
+                zitatList.addAll(quelle1.getZitatList());
+            }
             controller.setZitatList(zitatList);
 
             //set selectedQuelle for the edit dialog
