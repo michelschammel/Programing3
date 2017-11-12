@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="496.0" prefWidth="722.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.TutorialController">
+   <children>
+      <Pane layoutY="1.0" prefHeight="496.0" prefWidth="722.0">
+         <children>
+            <Label layoutX="321.0" layoutY="14.0" text="Tutorial" textAlignment="CENTER" underline="true" wrapText="true">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Label>
+            <ImageView fx:id="myImage" fitHeight="414.0" fitWidth="686.0" focusTraversable="true" layoutX="18.0" layoutY="66.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../resources/tut01.png" />
+               </image></ImageView>
+            <Button layoutX="654.0" layoutY="32.0" mnemonicParsing="false" onAction="#handleButtonNextAction" text="Weiter" textAlignment="CENTER" />
+            <Button layoutX="18.0" layoutY="32.0" mnemonicParsing="false" onAction="#handleButtonBackAction" text="Zurück" />
+         </children>
+      </Pane>
+   </children>
+</AnchorPane>
