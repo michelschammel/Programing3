@@ -1,11 +1,10 @@
-package source_utilities;
+package utilities;
 
 import models.Quote;
 import models.interfaces.QuoteInterface;
 import models.interfaces.SourceInterface;
 import models.interfaces.SourceTemplateInterface;
 import models.interfaces.TagInterface;
-import utilities.SourceUtillities;
 import viewmodels.QuoteView;
 import viewmodels.TagView;
 import viewmodels.interfaces.QuoteViewInterface;

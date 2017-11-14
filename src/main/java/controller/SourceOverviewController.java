@@ -261,6 +261,7 @@ public class SourceOverviewController {
             Stage dialogStage = new Stage();
             dialogStage.setTitle(title);
             dialogStage.initModality(Modality.WINDOW_MODAL);
+            dialogStage.initOwner(stage);
             Scene scene = new Scene(page);
             dialogStage.setScene(scene);
 
@@ -277,7 +278,6 @@ public class SourceOverviewController {
             sourceList.add(quelle);
             SourceDatabaseInterface quellenService = new SourceDatabaseImpl();
             quellenService.updateQuery(quelle);
-            System.out.println("Get edited source");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -292,19 +292,6 @@ public class SourceOverviewController {
 
         alert.showAndWait();
     }
-
-//    /**
-//     * Is called by the main application to give a reference back to itself.
-//     *
-//     * @param mainApp
-//     */
-//    public void setMainApp(MainApp mainApp) {
-//        this.mainApp = mainApp;
-//        tmpList = mainApp.getQuellenList();
-//        sourceList = mainApp.getQuellenList();
-//        // Add observable list data to the source table.
-//        quellenTable.setItems(mainApp.getQuellenList());
-//    }
 
     /**
      * Is called when the user clicks the search Button

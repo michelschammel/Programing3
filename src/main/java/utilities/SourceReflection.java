@@ -1,4 +1,4 @@
-package source_utilities;
+package utilities;
 
 import enums.SupportedTypes;
 import models.SourceTemplate;
