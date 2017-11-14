@@ -17,9 +17,7 @@ import model.Quelle;
 import model.Zitat;
 import model.Tag;
 import utilities.StringUtilities;
-import utilities.ViewUtillities;
 
-import javax.swing.text.View;
 import java.io.IOException;
 
 import static controller.constants.SourceOverviewControllerConstants.*;
@@ -188,7 +186,7 @@ public class SourceOverviewController {
 //        try {
 //            if (okClicked) {
 //                //Get edited quelle
-//                tempQuelle = this.mainApp.getUpdatedQuelle();
+//                tempQuelle = this.mainApp.getUpdatedSource();
 //                SourceDatabaseInterface quellenService = new SourceDatabaseImpl();
 //                //Insert edited quelle into DB and return the id of quelle
 //                tempQuelle.setId(quellenService.insertNewQuelle(tempQuelle));
@@ -216,7 +214,7 @@ public class SourceOverviewController {
 //            if (okClicked) {
 //                //remove the old quelle
 //                this.mainApp.getQuellenList().remove(selectedQuelle);
-//                selectedQuelle =  mainApp.getUpdatedQuelle();
+//                selectedQuelle =  mainApp.getUpdatedSource();
 //                //add the edited version into table
 //                this.mainApp.getQuellenList().add(index, selectedQuelle);
 //                this.quellenTable.setItems(this.mainApp.getQuellenList());
@@ -239,16 +237,20 @@ public class SourceOverviewController {
     @FXML
     private void handleNewSource() {
         Quelle source = new Quelle("", "" ,"");
-        showEditSource("Neue Quelle", source);
+        showEditSource("Neue Quelle", source, false, true);
     }
 
     @FXML
     private void handleEditSource() {
         Quelle selectedSource = quellenTable.getSelectionModel().getSelectedItem();
-        showEditSource("Bearbeite Quelle", selectedSource);
+        if (selectedSource != null) {
+            showEditSource("Bearbeite Quelle", selectedSource, true, false);
+        } else {
+            nothingSelected(NICHTS_AUSGEWAEHLT, KEINE_QUELLE_AUSGEWAEHLT, BITTE_QUELLE_AUS_TABELLE);
+        }
     }
 
-    private void showEditSource(String title, Quelle selectedSource) {
+    private void showEditSource(String title, Quelle selectedSource, boolean editmode, boolean subcategory) {
         try {
             // Load the fxml file and create a new stage for the popup dialog.
             FXMLLoader loader = new FXMLLoader();
@@ -263,12 +265,19 @@ public class SourceOverviewController {
             dialogStage.setScene(scene);
 
             SourceEditDialogController controller = loader.getController();
-            controller.disableSubCategory(true);
+            controller.disableSubCategory(!subcategory);
+            controller.setEditmode(editmode);
             controller.setDialogStage(dialogStage);
             controller.setQuelle(selectedSource);
 
 
             dialogStage.showAndWait();
+            sourceList.remove(selectedSource);
+            Quelle quelle = controller.getUpdatedSource();
+            sourceList.add(quelle);
+            SourceDatabaseInterface quellenService = new SourceDatabaseImpl();
+            quellenService.updateQuery(quelle);
+            System.out.println("Get edited source");
         } catch (IOException e) {
             e.printStackTrace();
         }

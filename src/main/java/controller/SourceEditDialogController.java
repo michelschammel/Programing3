@@ -60,6 +60,7 @@ public class SourceEditDialogController {
     private boolean okClicked = false;
     private ObservableList<Zitat> quoteList;
     private boolean editmode = true;
+    private Quelle editedSource;
 
     //all custom textFields
     private TextField herausgeberTextField;
@@ -298,7 +299,7 @@ public class SourceEditDialogController {
         this.dialogStage = dialogStage;
     }
 
-    public Quelle getUpdatedQuelle() {
+    public Quelle getUpdatedSource() {
         if (okClicked) {
             quelleEdited.setTitel(this.titelField.getText());
             quelleEdited.setAutor(this.autorField.getText());
@@ -692,5 +693,9 @@ public class SourceEditDialogController {
                     this.adjustGridPane();
             }
         }
+    }
+
+    public Quelle getEditedSource() {
+        return this.editedSource;
     }
 }

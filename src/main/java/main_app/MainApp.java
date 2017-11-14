@@ -178,7 +178,7 @@ public class MainApp extends Application {
 //            dialogStage.showAndWait();
 //
 //            //get the updateded Quelle
-//            this.updatedQuelle = controller.getUpdatedQuelle();
+//            this.updatedQuelle = controller.getUpdatedSource();
 //
 //            return controller.isOkClicked();
 //        } catch (IOException e) {
