@@ -1,6 +1,7 @@
 package viewmodels.interfaces;
 
 import javafx.beans.property.StringProperty;
+import javafx.collections.ObservableList;
 
 public interface QuoteViewInterface {
     void setText(String text);
@@ -20,4 +21,6 @@ public interface QuoteViewInterface {
     void addTag(TagViewInterface tag);
 
     void removeTag(TagViewInterface tag);
+
+    ObservableList<TagViewInterface> getTagList();
 }

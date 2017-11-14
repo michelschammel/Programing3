@@ -121,4 +121,9 @@ public class ArticleView implements ArticleViewInterface{
     public void removeQuote(QuoteViewInterface quote) {
         this.quoteList.remove(quote);
     }
+
+    @Override
+    public ObservableList<QuoteViewInterface> getQuoteList() {
+        return this.quoteList;
+    }
 }

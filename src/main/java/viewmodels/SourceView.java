@@ -88,6 +88,11 @@ public class SourceView implements SourceViewInterface{
         this.quoteList.remove(quote);
     }
 
+    @Override
+    public ObservableList<QuoteViewInterface> getQuoteList() {
+        return this.quoteList;
+    }
+
     public String toString() {
         return "Author: " + this.author.getValue() + " | Title: " + this.title.getValue() + " | Year: " + this.year.getValue() + " | ID: " + this.id;
     }

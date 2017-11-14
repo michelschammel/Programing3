@@ -120,4 +120,9 @@ public class ScientificWorkView implements ScientificWorkViewInterface {
     public void removeQuote(QuoteViewInterface quote) {
         this.quoteList.remove(quote);
     }
+
+    @Override
+    public ObservableList<QuoteViewInterface> getQuoteList() {
+        return this.quoteList;
+    }
 }

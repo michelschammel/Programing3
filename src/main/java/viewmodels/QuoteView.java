@@ -64,4 +64,9 @@ public class QuoteView implements QuoteViewInterface{
     public void removeTag(TagViewInterface tag) {
         this.tagList.remove(tag);
     }
+
+    @Override
+    public ObservableList<TagViewInterface> getTagList() {
+        return this.tagList;
+    }
 }

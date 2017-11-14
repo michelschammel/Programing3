@@ -2,7 +2,6 @@ package source_utilities;
 
 import enums.SupportedTypes;
 import models.SourceTemplate;
-import models.interfaces.SourceInterface;
 import models.interfaces.SourceTemplateInterface;
 import utilities.SourceUtillities;
 
@@ -18,7 +17,7 @@ public abstract class SourceReflection {
      * of the provided source
      * @return object template
      */
-    public static List<SourceTemplateInterface> getSourceTemplate(SourceInterface source) {
+    public static List<SourceTemplateInterface> getTemplate(Object source) {
         List<SourceTemplateInterface> sourceTemplate = new ArrayList<>();
         SourceTemplateInterface templateRow;
         try {
@@ -37,6 +36,7 @@ public abstract class SourceReflection {
                     //get the value of the attribute
                     fieldValue = getObjectValue(field.getName(), source);
                     //add field class
+                    fieldClass = specialCase(fieldClass);
                     templateRow.setAttributeClass(fieldClass);
                     //add attribute value
                     templateRow.setAttributeValue(fieldValue);
@@ -56,7 +56,7 @@ public abstract class SourceReflection {
         return null;
     }
 
-    private static Object getObjectValue(String attribute, SourceInterface source) {
+    private static Object getObjectValue(String attribute, Object source) {
         Object value = null;
         String getterMethodName;
         Method method;
@@ -85,6 +85,14 @@ public abstract class SourceReflection {
             }
         }
         return isSupported;
+    }
+
+    private static Class specialCase(Class type) {
+        String s = type.getSimpleName();
+        if (s.equals("StringProperty")) {
+            return String.class;
+        }
+        return type;
     }
 
 

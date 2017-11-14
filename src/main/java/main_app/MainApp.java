@@ -40,8 +40,10 @@ public class MainApp extends Application {
         Quote quote1 = new Quote(2, "source1 text", 1);
         Quote quote2 = new Quote(3, "source2 text", 1);
         Quote quote3 = new Quote(4, "source3 text", 1);
-        Tag tag = new Tag("tag1", 1);
-        Tag tag1 = new Tag("tag2", 2);
+        TagInterface tag = new models.Tag("tag", 1);
+        TagInterface tag1 = new models.Tag("tag2", 2);
+        quote.addTag(tag);
+        quote.addTag(tag1);
 
         SourceInterface source = SourceFactory.produceSource(SourceFactory.STANDARD);
         source.setTitle("source title");
@@ -54,6 +56,8 @@ public class MainApp extends Application {
         source.addQuote(quote3);
         SourceViewInterface sourceView = SourceConverter.convertSourceToSourceView(source);
         System.out.println(sourceView);
+        SourceInterface sourceConvert = SourceConverter.convertSourceViewToSource(sourceView);
+        System.out.println(sourceConvert);
 
         ArticleInterface article = (ArticleInterface) SourceFactory.produceSource(SourceFactory.ARTICLE);
         article.setEdition("article edition");
@@ -128,64 +132,6 @@ public class MainApp extends Application {
             e.printStackTrace();
         }
     }
-
-//    /**
-//     * Opens a dialog to edit details for the specified quelle. If the user
-//     * clicks OK, the changes are saved into the provided source object and true
-//     * is returned.
-//     *
-//     * @param quelle the quelle object to be edited
-//     * @return true if the user clicked OK, false otherwise.
-//     */
-//    public boolean showQuellenEditDialog(Quelle quelle, boolean editmode, String titel) {
-//        try {
-//            // Load the fxml file and create a new stage for the popup dialog.
-//            FXMLLoader loader = new FXMLLoader();
-//            loader.setLocation(MainApp.class.getResource(QUELLEN_EDIT_DIALOG_FXML));
-//            AnchorPane page = loader.load();
-//
-//            // Create the dialog Stage.
-//            Stage dialogStage = new Stage();
-//            dialogStage.setTitle(titel);
-//            dialogStage.initModality(Modality.WINDOW_MODAL);
-//            dialogStage.initOwner(primaryStage);
-//            Scene scene = new Scene(page);
-//            dialogStage.setScene(scene);
-//
-//            // Set the quelle into the controller.
-//            SourceEditDialogController controller = loader.getController();
-//            controller.setDialogStage(dialogStage);
-//            controller.setQuelle(quelle);
-//
-//            if (editmode) {
-//                controller.disableSubCategory(true);
-//            } else {
-//                controller.setEditmode(false);
-//            }
-//            //
-//
-//            ObservableList<Zitat> zitatList = FXCollections.observableArrayList();
-//
-//            for (Quelle quelle1 : quellenData) {
-//                zitatList.addAll(quelle1.getZitatList());
-//            }
-//            controller.setZitatList(zitatList);
-//
-//            //set selectedQuelle for the edit dialog
-//            this.selectedQuelleForEdit = quelle;
-//
-//            // Show the dialog and wait until the user closes it
-//            dialogStage.showAndWait();
-//
-//            //get the updateded Quelle
-//            this.updatedQuelle = controller.getUpdatedSource();
-//
-//            return controller.isOkClicked();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//            return false;
-//        }
-//    }
 
     public static void main(String[] args) {
         launch(args);

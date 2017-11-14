@@ -1,6 +1,7 @@
 package viewmodels.interfaces;
 
 import javafx.beans.property.StringProperty;
+import javafx.collections.ObservableList;
 
 public interface SourceViewInterface {
 
@@ -30,4 +31,5 @@ public interface SourceViewInterface {
 
     void removeQuote(QuoteViewInterface quote);
 
+    public ObservableList<QuoteViewInterface> getQuoteList();
 }

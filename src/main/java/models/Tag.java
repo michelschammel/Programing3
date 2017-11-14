@@ -14,6 +14,9 @@ public class Tag implements TagInterface{
         this.text = text;
     }
 
+    public Tag() {
+    }
+
     public Tag(String text, int id) {
         this.text = text;
         this.id = id;
