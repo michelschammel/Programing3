@@ -11,23 +11,33 @@ import java.util.List;
  * creates all needed strings to add/update/delete a sourde
  */
 public abstract class DatabaseStringCreator {
-    private static final String PARENT_INTERFACE = "SourceInterface";
+    private static final String SOURCE_INTERFACE = "SourceInterface";
 
     public static Statement insertOrUpdateSource(SourceInterface source){
 
         List<ObjectTemplateInterface> sourceTemplates = SourceReflection.getTemplate(source);
 
         //if the source
-        Class c = source.getClass();
-        boolean isNoSourceInterfaceExtension = true;
-        for (Class cl : c.getInterfaces()) {
-            if (cl.getSimpleName().equals(PARENT_INTERFACE)) {
-                isNoSourceInterfaceExtension = false;
+        Class sourceClass = source.getClass();
+        boolean isSourceInterfaceExtension = true;
+        for (Class sourceInterfaceClass : sourceClass.getInterfaces()) {
+            if (sourceInterfaceClass.getSimpleName().equals(SOURCE_INTERFACE)) {
+                isSourceInterfaceExtension = false;
             }
         }
+        try {
+            //If the id of the source is 0 it has to be inserted, otherwise just update the source
+            if (source.getId() != 0) {
+                String insertSource = String.format("INSERT INTO Source(title, year, author) VALUES (%s, %s, %s)", source.getTitle(), source.getYear(), source.getAuthor());
 
-        if (isNoSourceInterfaceExtension) {
+            }
 
+
+            if (isSourceInterfaceExtension) {
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return null;
     }
