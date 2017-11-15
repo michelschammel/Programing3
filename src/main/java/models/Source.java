@@ -85,9 +85,4 @@ public class Source implements SourceInterface{
     public void removeQuote(QuoteInterface quote) {
         this.quoteList.remove(quote);
     }
-
-    @Override
-    public List<Object> getAttributeList() {
-        return null;
-    }
 }

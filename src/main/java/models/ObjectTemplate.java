@@ -1,8 +1,8 @@
 package models;
 
-import models.interfaces.SourceTemplateInterface;
+import models.interfaces.ObjectTemplateInterface;
 
-public class SourceTemplate implements SourceTemplateInterface{
+public class ObjectTemplate implements ObjectTemplateInterface {
     private String attributeName;
     private Class attributeClass;
     private Object attributeValue;

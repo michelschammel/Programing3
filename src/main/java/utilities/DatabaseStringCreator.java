@@ -1,9 +1,8 @@
 package utilities;
 
+import models.interfaces.ObjectTemplateInterface;
 import models.interfaces.SourceInterface;
-import models.interfaces.SourceTemplateInterface;
 
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 
@@ -12,13 +11,24 @@ import java.util.List;
  * creates all needed strings to add/update/delete a sourde
  */
 public abstract class DatabaseStringCreator {
+    private static final String PARENT_INTERFACE = "SourceInterface";
 
+    public static Statement insertOrUpdateSource(SourceInterface source){
 
-    public static Statement addSource(SourceInterface source, Statement statement) throws SQLException{
-        String addFundamentalSourceAttributes = String.format("INSERT INTO Source (title, author, year) VALUES('%s''%s''%s');", source.getTitle(), source.getAuthor(), source.getYear());
-        statement.addBatch(addFundamentalSourceAttributes);
+        List<ObjectTemplateInterface> sourceTemplates = SourceReflection.getTemplate(source);
 
-        List<SourceTemplateInterface> sourceTemplates = SourceReflection.getTemplate(source);
+        //if the source
+        Class c = source.getClass();
+        boolean isNoSourceInterfaceExtension = true;
+        for (Class cl : c.getInterfaces()) {
+            if (cl.getSimpleName().equals(PARENT_INTERFACE)) {
+                isNoSourceInterfaceExtension = false;
+            }
+        }
+
+        if (isNoSourceInterfaceExtension) {
+
+        }
         return null;
     }
 }

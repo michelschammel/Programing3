@@ -3,7 +3,7 @@ package utilities;
 import models.Quote;
 import models.interfaces.QuoteInterface;
 import models.interfaces.SourceInterface;
-import models.interfaces.SourceTemplateInterface;
+import models.interfaces.ObjectTemplateInterface;
 import models.interfaces.TagInterface;
 import viewmodels.QuoteView;
 import viewmodels.TagView;
@@ -50,13 +50,13 @@ public abstract class SourceConverter {
     }
 
     private static void setValues(Object sourceView, Object source) {
-        List<SourceTemplateInterface> sourceTemplate = SourceReflection.getTemplate(source);
+        List<ObjectTemplateInterface> sourceTemplate = SourceReflection.getTemplate(source);
         String methodName;
         String attributeName;
         Method method;
         if (sourceTemplate != null) {
             try {
-                for (SourceTemplateInterface templateRow : sourceTemplate) {
+                for (ObjectTemplateInterface templateRow : sourceTemplate) {
                     attributeName = templateRow.getAttributeName();
                     //build the string for the set"Attribute" method name
                     methodName = "set" + Character.toUpperCase(attributeName.charAt(0)) + attributeName.substring(1);

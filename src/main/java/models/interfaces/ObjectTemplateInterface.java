@@ -1,6 +1,6 @@
 package models.interfaces;
 
-public interface SourceTemplateInterface {
+public interface ObjectTemplateInterface {
     void setAttributeName(String attributeName);
 
     void setAttributeClass(Class attributeClass);

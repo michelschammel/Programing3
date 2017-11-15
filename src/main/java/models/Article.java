@@ -95,15 +95,6 @@ public class Article implements ArticleInterface{
     }
 
     @Override
-    public List<Object> getAttributeList() {
-        List<Object> attributeList = new ArrayList<>();
-        attributeList.add(this.id);
-        attributeList.add(this.edition);
-        attributeList.add(this.magazine);
-        return attributeList;
-    }
-
-    @Override
     public void setEdition(String edition) {
         this.edition = edition;
     }

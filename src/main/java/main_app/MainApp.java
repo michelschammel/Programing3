@@ -9,6 +9,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import models.Quote;
 import models.interfaces.*;
+import utilities.DatabaseStringCreator;
 import utilities.SourceConverter;
 import viewmodels.interfaces.*;
 
@@ -109,6 +110,8 @@ public class MainApp extends Application {
         scientificWork.setYear("work year");
         ScientificWorkViewInterface scientificWorkView = (ScientificWorkViewInterface) SourceConverter.convertSourceToSourceView(scientificWork);
         System.out.println(scientificWorkView);
+
+        DatabaseStringCreator.insertOrUpdateSource(scientificWork);
     }
 
     /**

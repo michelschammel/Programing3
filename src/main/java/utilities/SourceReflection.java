@@ -1,9 +1,8 @@
 package utilities;
 
 import enums.SupportedTypes;
-import models.SourceTemplate;
-import models.interfaces.SourceTemplateInterface;
-import utilities.SourceUtillities;
+import models.ObjectTemplate;
+import models.interfaces.ObjectTemplateInterface;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -17,14 +16,14 @@ public abstract class SourceReflection {
      * of the provided source
      * @return object template
      */
-    public static List<SourceTemplateInterface> getTemplate(Object source) {
-        List<SourceTemplateInterface> sourceTemplate = new ArrayList<>();
-        SourceTemplateInterface templateRow;
+    public static List<ObjectTemplateInterface> getTemplate(Object object) {
+        List<ObjectTemplateInterface> sourceTemplate = new ArrayList<>();
+        ObjectTemplateInterface templateRow;
         try {
-            Class sourceClass = source.getClass();
+            Class sourceClass = object.getClass();
             Object fieldValue;
             for (Field field : sourceClass.getDeclaredFields()) {
-                templateRow = new SourceTemplate();
+                templateRow = new ObjectTemplate();
                 Class fieldClass;
 
                 fieldClass = SourceUtillities.getWrapperclassFromPrimitve(field.getType());
@@ -34,7 +33,7 @@ public abstract class SourceReflection {
                     templateRow.setAttributeName(field.getName());
 
                     //get the value of the attribute
-                    fieldValue = getObjectValue(field.getName(), source);
+                    fieldValue = getObjectValue(field.getName(), object);
                     //add field class
                     fieldClass = specialCase(fieldClass);
                     templateRow.setAttributeClass(fieldClass);
@@ -45,7 +44,7 @@ public abstract class SourceReflection {
             }
 
             //Test to see what the list contains
-            for (SourceTemplateInterface o : sourceTemplate) {
+            for (ObjectTemplateInterface o : sourceTemplate) {
                 System.out.println("[" + o.getAttributeName() + "][" + o.getAttributeClass() + "][" + o.getAttributeValue() + "]");
             }
             //convert the list back do a normal 2 dimensional array
