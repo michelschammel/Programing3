@@ -43,9 +43,9 @@ public class AddTagsController {
 
         this.tagTable.setRowFactory(tv -> {
             TableRow<Tag> row = new TableRow<>();
-            row.setOnMouseClicked((MouseEvent event) -> {
-                    handleRowMouseClick(event, row);
-            });
+            row.setOnMouseClicked((MouseEvent event) ->
+                    handleRowMouseClick(event, row)
+            );
             return row;
         });
     }

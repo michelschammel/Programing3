@@ -7,7 +7,7 @@ import static viewmodels.constants.ViewModelConstants.*;
 
 public class TagView implements TagViewInterface{
 
-    private StringProperty text;
+    private final StringProperty text;
     private int id;
 
     public TagView() {

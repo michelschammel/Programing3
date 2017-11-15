@@ -34,7 +34,7 @@ public abstract class DatabaseStringCreator {
 
 
             if (isSourceInterfaceExtension) {
-
+                System.out.println("EXTRA");
             }
         } catch (Exception e) {
             e.printStackTrace();

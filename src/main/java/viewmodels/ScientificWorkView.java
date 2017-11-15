@@ -9,11 +9,11 @@ import viewmodels.interfaces.ScientificWorkViewInterface;
 import static viewmodels.constants.ViewModelConstants.*;
 
 public class ScientificWorkView implements ScientificWorkViewInterface {
-    private StringProperty author;
-    private StringProperty title;
-    private StringProperty year;
-    private StringProperty publisher;
-    private StringProperty institution;
+    private final StringProperty author;
+    private final StringProperty title;
+    private final StringProperty year;
+    private final StringProperty publisher;
+    private final StringProperty institution;
     private ObservableList<QuoteViewInterface> quoteList;
     private int id;
 

@@ -10,10 +10,10 @@ import viewmodels.interfaces.TagViewInterface;
 import static viewmodels.constants.ViewModelConstants.*;
 
 public class QuoteView implements QuoteViewInterface{
-    private StringProperty text;
+    private final StringProperty text;
     private int id;
     private int sourceId;
-    private ObservableList<TagViewInterface> tagList;
+    private final ObservableList<TagViewInterface> tagList;
 
     public QuoteView() {
         this.tagList = FXCollections.observableArrayList();

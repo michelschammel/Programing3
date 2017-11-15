@@ -31,5 +31,5 @@ public interface SourceViewInterface {
 
     void removeQuote(QuoteViewInterface quote);
 
-    public ObservableList<QuoteViewInterface> getQuoteList();
+    ObservableList<QuoteViewInterface> getQuoteList();
 }

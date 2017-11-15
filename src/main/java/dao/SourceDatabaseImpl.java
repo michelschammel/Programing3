@@ -4,7 +4,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import dao.Interfaces.SourceDatabaseInterface;
 import model.*;
-import utilities.DatabaseStringCreator;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -497,9 +496,9 @@ public class SourceDatabaseImpl implements SourceDatabaseInterface {
             connection.commit();
             connection.setAutoCommit(true);
 
-            quelle.getZitatList().forEach( zitat -> {
-                zitat.setQuellenId(quelle.getId());
-            });
+            quelle.getZitatList().forEach( zitat ->
+                zitat.setQuellenId(quelle.getId())
+            );
             //Update function inserts all zitate and tags
 
         } catch (SQLException e) {

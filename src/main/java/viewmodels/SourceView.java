@@ -10,10 +10,10 @@ import static viewmodels.constants.ViewModelConstants.*;
 
 public class SourceView implements SourceViewInterface{
 
-    private StringProperty author;
-    private StringProperty title;
-    private StringProperty year;
-    private ObservableList<QuoteViewInterface> quoteList;
+    private final StringProperty author;
+    private final StringProperty title;
+    private final StringProperty year;
+    private final ObservableList<QuoteViewInterface> quoteList;
     private int id;
 
     public SourceView() {

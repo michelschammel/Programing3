@@ -10,13 +10,13 @@ import static viewmodels.constants.ViewModelConstants.*;
 
 public class BookView implements BookViewInterface{
 
-    private StringProperty author;
-    private StringProperty title;
-    private StringProperty year;
-    private StringProperty publisher;
-    private StringProperty edition;
-    private StringProperty month;
-    private StringProperty isbn;
+    private final StringProperty author;
+    private final StringProperty title;
+    private final StringProperty year;
+    private final StringProperty publisher;
+    private final StringProperty edition;
+    private final StringProperty month;
+    private final StringProperty isbn;
     private ObservableList<QuoteViewInterface> quoteList;
     private int id;
 

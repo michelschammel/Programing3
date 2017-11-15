@@ -9,11 +9,11 @@ import viewmodels.interfaces.QuoteViewInterface;
 import static viewmodels.constants.ViewModelConstants.*;
 
 public class OnlinesourceView implements OnlinesourceViewInterface {
-    private StringProperty author;
-    private StringProperty title;
-    private StringProperty year;
-    private StringProperty url;
-    private StringProperty pollingDate;
+    private final StringProperty author;
+    private final StringProperty title;
+    private final StringProperty year;
+    private final StringProperty url;
+    private final StringProperty pollingDate;
     private ObservableList<QuoteViewInterface> quoteList;
     private int id;
 

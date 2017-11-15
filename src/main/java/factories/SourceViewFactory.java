@@ -1,4 +1,4 @@
-package src.main.java.factories;
+package factories;
 
 import viewmodels.*;
 import viewmodels.interfaces.SourceViewInterface;

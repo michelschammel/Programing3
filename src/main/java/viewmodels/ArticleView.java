@@ -10,12 +10,12 @@ import static viewmodels.constants.ViewModelConstants.*;
 
 public class ArticleView implements ArticleViewInterface{
 
-    private StringProperty author;
-    private StringProperty title;
-    private StringProperty year;
-    private StringProperty magazine;
-    private StringProperty edition;
-    private ObservableList<QuoteViewInterface> quoteList;
+    private final StringProperty author;
+    private final StringProperty title;
+    private final StringProperty year;
+    private final StringProperty magazine;
+    private final StringProperty edition;
+    private final ObservableList<QuoteViewInterface> quoteList;
     private int id;
 
     public ArticleView() {

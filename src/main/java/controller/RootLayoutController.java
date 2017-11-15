@@ -12,7 +12,6 @@ import utilities.ViewUtillities;
 import java.io.IOException;
 
 import static main_app.constants.MainAppConstants.*;
-import static main_app.constants.MainAppConstants.TUTORIAL;
 
 /**
  * @author Bjoern Schmidt
