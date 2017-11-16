@@ -5,6 +5,7 @@ import enums.SourceStandardAttributes;
 import models.interfaces.ObjectTemplateInterface;
 import models.interfaces.SourceInterface;
 
+import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -19,9 +20,6 @@ public abstract class DatabaseStringCreator {
     private static final String SOURCE_INTERFACE = "SourceInterface";
 
     public static void insertOrUpdateSource(SourceInterface source){
-
-        List<ObjectTemplateInterface> sourceTemplates = SourceReflection.getTemplate(source);
-
         //if the source
         Class sourceClass = source.getClass();
         boolean isSourceInterfaceExtension = true;
@@ -57,10 +55,35 @@ public abstract class DatabaseStringCreator {
 
     private static void updateSourceExtraAttributes(SourceInterface source) throws SQLException{
         List<ObjectTemplateInterface> template = SourceReflection.getTemplate(source);
+        boolean insertSource = (source.getId() == 0);
 
         if (template != null) {
+            //remove all standard attributes from the template, because we already inserted/updated them
             for (SourceStandardAttributes attribute : SourceStandardAttributes.values()) {
                 template.removeIf(templateRow -> templateRow.getAttributeName().equals(attribute.name()));
+            }
+
+            try {
+
+                if (!insertSource) {
+                    StringBuilder insertSourceCommand = new StringBuilder("INSERT INTO" + source.getClass().getSimpleName() + "(");
+                    for (ObjectTemplateInterface templateRow : template) {
+                        insertSourceCommand.append(templateRow.getAttributeName()).append(',');
+                    }
+
+                    insertSourceCommand.deleteCharAt(insertSourceCommand.lastIndexOf(","));
+                    insertSourceCommand.append(")VALUES(");
+                } else {
+                    StringBuilder updateSourceCommand = new StringBuilder("UPDATE" + source.getClass().getSimpleName() + "SET");
+                }
+
+                for (ObjectTemplateInterface templateRow : template) {
+                    String getterMethodName = "get" + Character.toUpperCase(templateRow.getAttributeName().charAt(0)) + templateRow.getAttributeName().substring(1);
+
+                    Method method = source.getClass().getDeclaredMethod(getterMethodName);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
