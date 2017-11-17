@@ -3,6 +3,7 @@ package utilities;
 import dao.ConnectionKlasse;
 import enums.SourceStandardAttributes;
 import models.interfaces.ObjectTemplateInterface;
+import models.interfaces.QuoteInterface;
 import models.interfaces.SourceInterface;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -94,6 +95,12 @@ public abstract class DatabaseStringCreator {
             }
         }
         return sourceCommand.toString();
+    }
+
+    private static void updateQuoteAndTags(SourceInterface source) {
+        for (QuoteInterface quote : source.getQuoteList()) {
+
+        }
     }
 
     private static Connection getConnection() {
