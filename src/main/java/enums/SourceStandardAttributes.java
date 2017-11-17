@@ -5,5 +5,5 @@ package enums;
  * Contains all standard attributes of a source
  */
 public enum SourceStandardAttributes {
-    year, author, title
+    year, author, title, id
 }

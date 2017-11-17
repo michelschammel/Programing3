@@ -102,12 +102,12 @@ public class MainApp extends Application {
         System.out.println(othersView);
 
         ScientificWorkInterface scientificWork = (ScientificWorkInterface) SourceFactory.produceSource(SourceFactory.SCIENTIFIC_WORK);
-        scientificWork.setInstitution("work institution");
-        scientificWork.setPublisher("work publisher");
-        scientificWork.setAuthor("work author");
-        scientificWork.setId(6);
-        scientificWork.setTitle("work title");
-        scientificWork.setYear("work year");
+        scientificWork.setInstitution("work institution33");
+        scientificWork.setPublisher("work publisher33");
+        scientificWork.setAuthor("work author334");
+        scientificWork.setId(0);
+        scientificWork.setTitle("work title33");
+        scientificWork.setYear("work year33");
         ScientificWorkViewInterface scientificWorkView = (ScientificWorkViewInterface) SourceConverter.convertSourceToSourceView(scientificWork);
         System.out.println(scientificWorkView);
 
