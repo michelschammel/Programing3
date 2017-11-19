@@ -271,6 +271,13 @@ public class SourceOverviewController {
             controller.setDialogStage(dialogStage);
             controller.setQuelle(selectedSource);
 
+            ObservableList<Zitat> quoteList = FXCollections.observableArrayList();
+
+            sourceList.forEach( source ->
+                quoteList.addAll(source.getZitatList())
+            );
+
+            controller.setZitatList(quoteList);
 
             dialogStage.showAndWait();
             sourceList.remove(selectedSource);

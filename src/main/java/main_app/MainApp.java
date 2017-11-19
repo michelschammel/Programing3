@@ -8,6 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import models.Quote;
+import models.Tag;
 import models.interfaces.*;
 import utilities.DatabaseStringCreator;
 import utilities.SourceConverter;
@@ -101,13 +102,22 @@ public class MainApp extends Application {
         OthersViewInterface othersView = (OthersViewInterface) SourceConverter.convertSourceToSourceView(others);
         System.out.println(othersView);
 
+        Quote quote4 = new Quote(12, "hier sollte geupdated werde", 24);
+        TagInterface tag5 = new Tag();
+        tag5.setText("update");
+        tag5.setId(14);
+        Quote quote5 = new Quote(0, "dies wird eingefügt", 24);
+        quote4.addTag(tag5);
+
         ScientificWorkInterface scientificWork = (ScientificWorkInterface) SourceFactory.produceSource(SourceFactory.SCIENTIFIC_WORK);
         scientificWork.setInstitution("work institution33");
         scientificWork.setPublisher("work publisher33");
         scientificWork.setAuthor("work author334");
-        scientificWork.setId(0);
+        scientificWork.setId(24);
         scientificWork.setTitle("work title33");
         scientificWork.setYear("work year33");
+        scientificWork.addQuote(quote4);
+        scientificWork.addQuote(quote5);
         ScientificWorkViewInterface scientificWorkView = (ScientificWorkViewInterface) SourceConverter.convertSourceToSourceView(scientificWork);
         System.out.println(scientificWorkView);
 

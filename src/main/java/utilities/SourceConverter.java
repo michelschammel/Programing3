@@ -1,6 +1,5 @@
 package utilities;
 
-import models.Quote;
 import models.interfaces.QuoteInterface;
 import models.interfaces.SourceInterface;
 import models.interfaces.ObjectTemplateInterface;
@@ -114,7 +113,7 @@ public abstract class SourceConverter {
     private static void convertSourceViewQuoteListToSourceQuoteList(SourceInterface source, SourceViewInterface sourceView) {
         QuoteInterface quote;
         for (QuoteViewInterface quoteView : sourceView.getQuoteList()) {
-            quote = new Quote();
+            quote = new models.Quote();
             quote.setId(quoteView.getId());
             quote.setSourceId(quoteView.getSourceId());
             quote.setText(quoteView.getText());

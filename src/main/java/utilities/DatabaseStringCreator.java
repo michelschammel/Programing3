@@ -2,14 +2,19 @@ package utilities;
 
 import dao.ConnectionKlasse;
 import enums.SourceStandardAttributes;
+import factories.QuoteFactory;
 import models.interfaces.ObjectTemplateInterface;
 import models.interfaces.QuoteInterface;
 import models.interfaces.SourceInterface;
+import models.interfaces.TagInterface;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 
 /**
  * Created by Cedric on 14.11.2017.
@@ -54,6 +59,7 @@ public abstract class DatabaseStringCreator {
             if (isSourceInterfaceExtension) {
                 statement.execute(updateSourceExtraAttributes(source, updateSource));
             }
+            updateQuotes(source, connection);
             connection.commit();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -69,38 +75,138 @@ public abstract class DatabaseStringCreator {
             for (SourceStandardAttributes attribute : SourceStandardAttributes.values()) {
                 template.removeIf(templateRow -> templateRow.getAttributeName().equals(attribute.name()));
             }
-
-            try {
-
-                if (!updateSource) {
-                    sourceCommand.append("INSERT INTO ").append(source.getClass().getSimpleName()).append("(id,");
-                    StringBuilder sourceValues = new StringBuilder(")VALUES(").append(source.getId()).append(',');
-                    for (ObjectTemplateInterface templateRow : template) {
-                        sourceCommand.append(templateRow.getAttributeName()).append(',');
-                        sourceValues.append("'").append(templateRow.getAttributeValue()).append("',");
-                    }
-                    sourceValues.deleteCharAt(sourceValues.lastIndexOf(",")).append(')');
-                    sourceCommand.deleteCharAt(sourceCommand.lastIndexOf(","));
-                    sourceCommand.append(sourceValues);
-                } else {
-                    sourceCommand.append("UPDATE").append(source.getClass().getSimpleName()).append(" SET ");
-                    for (ObjectTemplateInterface templateRow : template) {
-                        sourceCommand.append(templateRow.getAttributeName()).append("='").append(templateRow.getAttributeValue()).append("',");
-                    }
-                    sourceCommand.deleteCharAt(sourceCommand.lastIndexOf(","));
-
+            if (updateSource) {
+                sourceCommand.append("UPDATE ").append(source.getClass().getSimpleName()).append(" SET ");
+                for (ObjectTemplateInterface templateRow : template) {
+                    sourceCommand.append(templateRow.getAttributeName()).append("='").append(templateRow.getAttributeValue()).append("',");
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
+                sourceCommand.deleteCharAt(sourceCommand.lastIndexOf(","));
+            } else {
+                sourceCommand.append("INSERT INTO ").append(source.getClass().getSimpleName()).append("(id,");
+                StringBuilder sourceValues = new StringBuilder(")VALUES(").append(source.getId()).append(',');
+                for (ObjectTemplateInterface templateRow : template) {
+                    sourceCommand.append(templateRow.getAttributeName()).append(',');
+                    sourceValues.append("'").append(templateRow.getAttributeValue()).append("',");
+                }
+                sourceValues.deleteCharAt(sourceValues.lastIndexOf(",")).append(')');
+                sourceCommand.deleteCharAt(sourceCommand.lastIndexOf(","));
+                sourceCommand.append(sourceValues);
             }
         }
         return sourceCommand.toString();
     }
 
-    private static void updateQuoteAndTags(SourceInterface source) {
-        for (QuoteInterface quote : source.getQuoteList()) {
+    private static void updateQuotes(SourceInterface source, Connection connection) throws SQLException{
+        Statement statement = connection.createStatement();
+        List<QuoteInterface> databaseQuotes = new ArrayList<>();
+        ResultSet resultSet;
+        QuoteInterface quote;
 
+        resultSet = statement.executeQuery("SELECT * FROM Quote WHERE sourceId = " + source.getId());
+        while (resultSet.next()) {
+            quote = QuoteFactory.createQuote();
+            quote.setId(resultSet.getInt("id"));
+            quote.setSourceId(resultSet.getInt("sourceId"));
+            quote.setText(resultSet.getString("text"));
+            databaseQuotes.add(quote);
         }
+        boolean insertQuote;
+        for (QuoteInterface sourceQuote : source.getQuoteList()) {
+            insertQuote = true;
+            for (ListIterator<QuoteInterface> iterator = databaseQuotes.listIterator(); iterator.hasNext();) {
+                QuoteInterface databaseQuote = iterator.next();
+                if (databaseQuote.getId() == sourceQuote.getId()) {
+                    updateQuote(sourceQuote, connection);
+                    iterator.remove();
+                    insertQuote = false;
+                }
+            }
+            if (insertQuote) {
+                insertQuote(sourceQuote, connection);
+            }
+        }
+
+        for (QuoteInterface databaseQuote : databaseQuotes) {
+            deleteQuote(databaseQuote, connection);
+        }
+        //remove all quotes that are left in the databaseQuotes
+    }
+
+    private static void deleteQuote(QuoteInterface quote, Connection connection) throws SQLException{
+        Statement statement = connection.createStatement();
+        statement.execute("DELETE FROM Quote WHERE id = " + quote.getId());
+        updateTags(quote, connection);
+    }
+
+    private static void insertQuote(QuoteInterface quote, Connection connection) throws SQLException{
+        Statement statement = connection.createStatement();
+        statement.execute("INSERT INTO Quote (sourceId, text) VALUES (" + quote.getSourceId() + ",'" + quote.getText()+ "')");
+        updateTags(quote, connection);
+    }
+
+    private static void updateQuote(QuoteInterface quote, Connection connection) throws SQLException{
+        Statement statement = connection.createStatement();
+        statement.executeUpdate("UPDATE Quote SET text = '" + quote.getText() + "' WHERE id = " + quote.getId());
+        updateTags(quote, connection);
+    }
+
+    private static void updateTags(QuoteInterface quote, Connection connection) throws SQLException{
+        List<TagInterface> databaseTags = new ArrayList<>();
+        ResultSet resultSet;
+        Statement statement = connection.createStatement();
+        TagInterface tag;
+        resultSet  = statement.executeQuery("SELECT Tags.tagId, Tags.name FROM Tags INNER JOIN QuoteTags ON Tags.tagId = QuoteTags.tagId WHERE QuoteTags.quoteId = " + quote.getId());
+        while(resultSet.next()) {
+            tag = new models.Tag();
+            tag.setId(resultSet.getInt("tagId"));
+            tag.setText(resultSet.getString("name"));
+            databaseTags.add(tag);
+        }
+
+        boolean insertTag;
+        for (TagInterface quoteTag : quote.getTagList()) {
+            insertTag = true;
+            for (ListIterator<TagInterface> iterator = databaseTags.listIterator(); iterator.hasNext();) {
+                TagInterface databaseTag = iterator.next();
+                if (databaseTag.getId() == quoteTag.getId()) {
+                    updateTag(quoteTag, connection);
+                    iterator.remove();
+                    insertTag = false;
+                }
+            }
+            if (insertTag) {
+                insertTag(quoteTag, connection, quote);
+            }
+        }
+
+        for (TagInterface databaseTag : databaseTags) {
+            deleteTag(databaseTag, connection);
+        }
+    }
+
+    private static void deleteTag(TagInterface tag, Connection connection) throws  SQLException{
+        Statement statement = connection.createStatement();
+        statement.execute("DELETE FROM QuoteTags WHERE tagId = " + tag.getId());
+        statement.execute("DELETE FROM Tags WHERE tagId = " + tag.getId());
+    }
+
+    private static void insertTag(TagInterface tag, Connection connection, QuoteInterface quote) throws SQLException{
+        Statement statement = connection.createStatement();
+        ResultSet resultSet;
+        //insert the new tag
+        statement.execute("INSERT INTO Tags (name) VALUES ('" + tag.getText() + "')");
+        //get the generated id from the database
+        resultSet = statement.executeQuery("SELECT seq FROM sqlite_sequence WHERE name = 'Tags'");
+        resultSet.next();
+        //set the id
+        tag.setId(resultSet.getInt("seq"));
+        //insert the connection between quote and tag
+        statement.execute("INSERT INTO QuoteTags VALUES (" + quote.getId() + "," + tag.getId() + ")");
+    }
+
+    private static void updateTag(TagInterface tag, Connection connection) throws SQLException{
+        Statement statement = connection.createStatement();
+        statement.executeUpdate("UPDATE Tags SET name = '" + tag.getText() + "' WHERE tagId = " + tag.getId());
     }
 
     private static Connection getConnection() {

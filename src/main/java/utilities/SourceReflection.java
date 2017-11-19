@@ -42,12 +42,6 @@ public abstract class SourceReflection {
                     sourceTemplate.add(templateRow);
                 }
             }
-
-            //Test to see what the list contains
-            for (ObjectTemplateInterface o : sourceTemplate) {
-                System.out.println("[" + o.getAttributeName() + "][" + o.getAttributeClass() + "][" + o.getAttributeValue() + "]");
-            }
-            //convert the list back do a normal 2 dimensional array
             return sourceTemplate;
         } catch (Exception e) {
             e.printStackTrace();
@@ -64,7 +58,6 @@ public abstract class SourceReflection {
         try {
             method = source.getClass().getDeclaredMethod(getterMethodName);
             value = method.invoke(source);
-            System.out.println(getterMethodName + " | " + value);
         } catch (Exception e) {
             e.printStackTrace();
         }

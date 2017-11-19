@@ -19,6 +19,10 @@ public class Tag {
         this.tagId = tagId;
     }
 
+    public Tag() {
+        this.text = new SimpleStringProperty();
+    }
+
     public Tag(Tag tag) {
         this.text = new SimpleStringProperty(tag.getText());
     }

@@ -694,8 +694,4 @@ public class SourceEditDialogController {
             }
         }
     }
-
-    public Quelle getEditedSource() {
-        return this.editedSource;
-    }
 }
