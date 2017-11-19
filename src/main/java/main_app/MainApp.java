@@ -46,7 +46,7 @@ public class MainApp extends Application {
         quote.addTag(tag);
         quote.addTag(tag1);
 
-        SourceInterface source = SourceFactory.produceSource(SourceFactory.STANDARD);
+        SourceInterface source = SourceFactory.produceSource(SourceFactory.SOURCE);
         source.setTitle("source title");
         source.setAuthor("source author");
         source.setId(1);
@@ -92,7 +92,7 @@ public class MainApp extends Application {
         OnlinesourceViewInterface onlinesourceView = (OnlinesourceViewInterface) SourceConverter.convertSourceToSourceView(onlineSource);
         System.out.println(onlinesourceView);
 
-        OthersInterface others = (OthersInterface) SourceFactory.produceSource(SourceFactory.OTHER);
+        OthersInterface others = (OthersInterface) SourceFactory.produceSource(SourceFactory.OTHERS);
         others.setEdition("other edition");
         others.setPublisher("other publisher");
         others.setAuthor("other author");

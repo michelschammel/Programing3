@@ -21,20 +21,45 @@ import java.util.ListIterator;
  * creates all needed strings to add/update/delete a source
  */
 public abstract class DatabaseStringCreator {
-    private static final String SOURCE_INTERFACE = "SourceInterface";
     private static final String INSERT_BASE_SOURCE = "INSERT INTO Source(title, year, author) VALUES ('%s', '%s', '%s')";
     private static final String GET_SOURCE_ID = "SELECT seq FROM sqlite_sequence WHERE name = 'Source'";
     private static final String UPDATE_BASE_SOURCE = "UPDATE Source SET author = '%s', year = '%s', title = '%s' WHERE id = %d";
 
-    public static void insertOrUpdateSource(SourceInterface source){
-        //if the source
-        Class sourceClass = source.getClass();
-        boolean isSourceInterfaceExtension = true;
-        for (Class sourceInterfaceClass : sourceClass.getInterfaces()) {
-            if (sourceInterfaceClass.getSimpleName().equals(SOURCE_INTERFACE)) {
-                isSourceInterfaceExtension = false;
+    private static void deleteSource(SourceInterface source) {
+        try (Connection connection = getConnection()) {
+            connection.setAutoCommit(false);
+            for (QuoteInterface quote : source.getQuoteList()) {
+                deleteQuote(quote, connection);
             }
+
+            Statement statement = connection.createStatement();
+            statement.execute("DELETE FROM Source WHERE id = " + source.getId());
+
+            connection.commit();
+            connection.setAutoCommit(true);
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+    }
+
+    public static List<SourceInterface> getAllSourcesFromDatabase() {
+        try (Connection connection = getConnection()){
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    private static boolean isSourceExtension (SourceInterface source) {
+        Class sourceClass = source.getClass();
+        return (sourceClass.getSimpleName().equals("Source"));
+    }
+
+    public static void insertOrUpdateSource(SourceInterface source){
+        boolean isSourceExtension = isSourceExtension(source);
+
         try (Connection connection = getConnection()){
             //If the id of the source is 0 it has to be inserted, otherwise just update the source
             ResultSet resultSet;
@@ -56,11 +81,12 @@ public abstract class DatabaseStringCreator {
             }
 
             //if the source has some extra attributes they have to be inserted/updated too
-            if (isSourceInterfaceExtension) {
+            if (isSourceExtension) {
                 statement.execute(updateSourceExtraAttributes(source, updateSource));
             }
             updateQuotes(source, connection);
             connection.commit();
+            connection.setAutoCommit(true);
         } catch (SQLException e) {
             e.printStackTrace();
         }

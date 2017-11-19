@@ -9,22 +9,22 @@ import models.*;
  */
 public abstract class SourceFactory {
 
-    public static final String STANDARD = "standard";
-    public static final String BOOK = "book";
-    public static final String ARTICLE = "article";
-    public static final String OTHER = "other";
-    public static final String SCIENTIFIC_WORK = "scientific work";
-    public static final String ONLINE_SOURCE = "online source";
+    public static final String SOURCE = "Source";
+    public static final String BOOK = "Book";
+    public static final String ARTICLE = "Article";
+    public static final String OTHERS = "Others";
+    public static final String SCIENTIFIC_WORK = "ScientificWork";
+    public static final String ONLINE_SOURCE = "Onlinesource";
 
     public static SourceInterface produceSource(String sourceType) {
         switch (sourceType) {
-            case STANDARD:
+            case SOURCE:
                 return new Source();
             case BOOK:
                 return new Book();
             case ARTICLE:
                 return new Article();
-            case OTHER:
+            case OTHERS:
                 return new Others();
             case SCIENTIFIC_WORK:
                 return new ScientificWork();
