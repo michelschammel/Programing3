@@ -3,6 +3,7 @@ package utilities;
 import dao.ConnectionKlasse;
 import enums.SourceStandardAttributes;
 import factories.QuoteFactory;
+import factories.SourceFactory;
 import models.interfaces.ObjectTemplateInterface;
 import models.interfaces.QuoteInterface;
 import models.interfaces.SourceInterface;
@@ -25,6 +26,8 @@ public abstract class DatabaseStringCreator {
     private static final String GET_SOURCE_ID = "SELECT seq FROM sqlite_sequence WHERE name = 'Source'";
     private static final String UPDATE_BASE_SOURCE = "UPDATE Source SET author = '%s', year = '%s', title = '%s' WHERE id = %d";
 
+    private static final String[] databaseTables = {"Source", "Article", "Book", "Onlinesource", "Others", "ScientificWork"};
+
     private static void deleteSource(SourceInterface source) {
         try (Connection connection = getConnection()) {
             connection.setAutoCommit(false);
@@ -44,12 +47,74 @@ public abstract class DatabaseStringCreator {
 
     public static List<SourceInterface> getAllSourcesFromDatabase() {
         try (Connection connection = getConnection()){
+            connection.setAutoCommit(false);
+            List<SourceInterface> sourceList = new ArrayList<>();
+            SourceInterface source;
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM Source");
+            while(resultSet.next()) {
+                source = SourceFactory.produceSource(SourceFactory.SOURCE);
+                if (source != null) {
+                    source.setId(resultSet.getInt("id"));
+                    source.setAuthor(resultSet.getString("author"));
+                    source.setTitle(resultSet.getString("title"));
+                    source.setYear(resultSet.getString("year"));
+                    source.setQuoteList(getSourceQuotes(source, connection));
+                }
+            }
+
+            for (String tableName : databaseTables) {
+                if (!tableName.equals("Source")) {
+                    resultSet = statement.executeQuery("SELECT * FROM Source NATURAL JOIN " + tableName);
+
+                    while(resultSet.next()) {
+
+                    }
+                }
+            }
+
+            connection.commit();
+            connection.setAutoCommit(true);
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
         return null;
+    }
+
+    private static List<QuoteInterface> getSourceQuotes(SourceInterface source,Connection connection) throws SQLException {
+        List<QuoteInterface> quoteList = new ArrayList<>();
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery("SELECT * FROM Quote WHERE sourceId = " + source.getId());
+        QuoteInterface quote;
+
+        while(resultSet.next()) {
+            quote = QuoteFactory.createQuote();
+            quote.setText(resultSet.getString("text"));
+            quote.setSourceId(source.getId());
+            quote.setId(resultSet.getInt("id"));
+            quote.setTagList(getQuoteTags(quote, connection));
+            quoteList.add(quote);
+        }
+
+        return quoteList;
+    }
+
+    private static List<TagInterface> getQuoteTags(QuoteInterface quote, Connection connection) throws SQLException{
+        List<TagInterface> tagList = new ArrayList<>();
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery("SELECT Tags.tagId, Tags.name FROM Tags NATURAL JOIN QuoteTags WHERE QuoteTags.quoteId = " + quote.getId());
+        TagInterface tag;
+
+        while(resultSet.next()) {
+            tag = new models.Tag();
+            tag.setText(resultSet.getString("name"));
+            tag.setId(resultSet.getInt("tagId"));
+            tagList.add(tag);
+        }
+
+        return tagList;
     }
 
     private static boolean isSourceExtension (SourceInterface source) {
@@ -181,7 +246,7 @@ public abstract class DatabaseStringCreator {
         ResultSet resultSet;
         Statement statement = connection.createStatement();
         TagInterface tag;
-        resultSet  = statement.executeQuery("SELECT Tags.tagId, Tags.name FROM Tags INNER JOIN QuoteTags ON Tags.tagId = QuoteTags.tagId WHERE QuoteTags.quoteId = " + quote.getId());
+        resultSet  = statement.executeQuery("SELECT Tags.tagId, Tags.name FROM Tags NATURAL JOIN QuoteTags WHERE QuoteTags.quoteId = " + quote.getId());
         while(resultSet.next()) {
             tag = new models.Tag();
             tag.setId(resultSet.getInt("tagId"));
