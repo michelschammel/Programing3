@@ -2,6 +2,8 @@ package utilities;
 
 import enums.SourceStandardAttributes;
 import enums.SupportedTypes;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import models.ObjectTemplate;
 import models.interfaces.ObjectTemplateInterface;
@@ -80,12 +82,27 @@ public abstract class SourceUtillities {
 
     public static GridPane getUIGridPane(SourceViewInterface source) {
         List<ObjectTemplateInterface> template = getTemplate(source);
-        removeBasicAttributes(template);
+        //removeBasicAttributes(template);
+        Label label;
+        TextField text;
         GridPane gridPane = new GridPane();
         gridPane.addColumn(0);
         gridPane.addColumn(1);
+        moveListItem(template, "id", 0);
+        moveListItem(template, "title", 1);
+        moveListItem(template, "author", 2);
+        moveListItem(template, "year", 3);
 
-        return null;
+        if (template != null) {
+            for (int row = 0; row < template.size(); row++) {
+                label = new Label(template.get(row).getAttributeName());
+                text = new TextField(template.get(row).getAttributeValue().toString());
+                gridPane.add(label, 0, row);
+                gridPane.add(text, 1, row);
+            }
+        }
+
+        return gridPane;
     }
 
     private static void moveListItem(List<ObjectTemplateInterface> list, String itemToMove, int moveItemTo) {
@@ -98,7 +115,9 @@ public abstract class SourceUtillities {
             }
 
             if (itemIndex >= 0 && itemIndex != moveItemTo) {
-
+                ObjectTemplateInterface tmpRow = list.get(itemIndex);
+                list.set(itemIndex, list.get(moveItemTo));
+                list.set(moveItemTo, tmpRow);
             }
         }
     }

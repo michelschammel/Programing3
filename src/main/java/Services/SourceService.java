@@ -28,4 +28,10 @@ public abstract class SourceService {
         SourceInterface source = SourceUtillities.convertSourceViewToSource(sourceView);
         SourceDatabaseImpl.deleteSource(source);
     }
+
+    public static SourceViewInterface updateSource(SourceViewInterface sourceView) {
+        SourceInterface source = SourceUtillities.convertSourceViewToSource(sourceView);
+        SourceDatabaseImpl.insertOrUpdateSource(source);
+        return SourceUtillities.convertSourceToSourceView(source);
+    }
 }

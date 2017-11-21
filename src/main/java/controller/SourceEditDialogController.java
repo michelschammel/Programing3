@@ -17,6 +17,10 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import main_app.MainApp;
 import model.*;
+import viewmodels.interfaces.QuoteViewInterface;
+import viewmodels.interfaces.SourceViewInterface;
+import viewmodels.interfaces.TagViewInterface;
+
 import java.io.IOException;
 
 import static dao.constants.DB_Constants.*;
@@ -24,7 +28,7 @@ import static controller.constants.SourceEditDialogConstants.*;
 
 
 /**
- * Dialog to edit details of a quelle.
+ * Dialog to edit details of a source.
  * @author Cedric Schreiner, Roman Berezin
  */
 public class SourceEditDialogController {
@@ -44,23 +48,23 @@ public class SourceEditDialogController {
     @FXML
     private Button cancelButton;
     @FXML
-    private TableView<Zitat> zitatTable;
+    private TableView<QuoteViewInterface> zitatTable;
     @FXML
-    private TableView<Tag> tagTable;
+    private TableView<TagViewInterface> tagTable;
     @FXML
-    private TableColumn<Zitat, String> zitatColumn;
+    private TableColumn<QuoteViewInterface, String> zitatColumn;
     @FXML
-    private TableColumn<Tag, String> tagColumn;
+    private TableColumn<TagViewInterface, String> tagColumn;
     @FXML
     private ChoiceBox<String> subCategory;
 
     private Stage dialogStage;
-    private Quelle quelle;
-    private Quelle quelleEdited;
+    private SourceViewInterface source;
+    private SourceViewInterface sourceEdited;
     private boolean okClicked = false;
-    private ObservableList<Zitat> quoteList;
+    private ObservableList<QuoteViewInterface> quoteList;
     private boolean editmode = true;
-    private Quelle editedSource;
+    private SourceViewInterface editedSource;
 
     //all custom textFields
     private TextField herausgeberTextField;
@@ -80,19 +84,19 @@ public class SourceEditDialogController {
     @FXML
     private void initialize() {
         // Initialize the zitat table with the two columns.
-        this.zitatColumn.setCellValueFactory(cellData -> cellData.getValue().textProperty());
-        this.tagColumn.setCellValueFactory(cellData -> cellData.getValue().textProperty());
+        this.zitatColumn.setCellValueFactory(cellData -> cellData.getValue().getTextProperty());
+        this.tagColumn.setCellValueFactory(cellData -> cellData.getValue().getTextProperty());
 
         //Add a Cell Factory to be able to edit a column
         this.zitatColumn.setCellFactory(TextFieldTableCell.forTableColumn());
         this.tagColumn.setCellFactory(TextFieldTableCell.forTableColumn());
 
         // Clear zitat details.
-        showZitatDeatils(null);
+        showQuoteDetails(null);
 
-        // Listen for selection changes and show the quelle details when changed.
+        // Listen for selection changes and show the source details when changed.
         this.zitatTable.getSelectionModel().selectedItemProperty().addListener(
-                (observable, oldValue, newValue) -> showZitatDeatils(newValue));
+                (observable, oldValue, newValue) -> showQuoteDetails(newValue));
 
         //initialize the choicebox
         subCategory.setItems((FXCollections.observableArrayList(
@@ -106,12 +110,12 @@ public class SourceEditDialogController {
 
         //Set Rowfactory for zitatTable
         this.zitatTable.setRowFactory(tv -> {
-            TableRow<Zitat> row = new TableRow<>();
+            TableRow<QuoteViewInterface> row = new TableRow<>();
 
             row.hoverProperty().addListener((observable) -> {
-                final Zitat zitat = row.getItem();
-                if (row.isHover() && zitat != null) {
-                    Tooltip zitatToolTip = new Tooltip(zitat.getText());
+                final QuoteViewInterface quote = row.getItem();
+                if (row.isHover() && quote != null) {
+                    Tooltip zitatToolTip = new Tooltip(quote.getText());
                     zitatToolTip.setWrapText(true);
                     zitatToolTip.setMaxWidth(160);
                     row.setTooltip(zitatToolTip);
@@ -123,7 +127,7 @@ public class SourceEditDialogController {
 
     private void initializeList() {
         this.quoteList = FXCollections.observableArrayList();
-        quoteList.addAll(quelle.getZitatList());
+        quoteList.addAll(source.getQuoteList());
     }
 
     public void disableSubCategory(boolean disable) {
@@ -131,18 +135,18 @@ public class SourceEditDialogController {
     }
 
     /**
-     * Fills all text fields to show details about the quelle.
-     * If the specified quelle is null, all text fields are cleared.
+     * Fills all text fields to show details about the source.
+     * If the specified source is null, all text fields are cleared.
      *
-     * @param zitat the zitat or null
+     * @param quote the zitat or null
      */
-    private void showZitatDeatils(Zitat zitat) {
-        if (zitat != null) {
-            tagTable.setItems(zitat.getTagList());
+    private void showQuoteDetails(QuoteViewInterface quote) {
+        if (quote != null) {
+            tagTable.setItems(quote.getTagList());
         }
     }
 
-    public void setEditmode(boolean enable) {
+    void setEditmode(boolean enable) {
         this.editmode = enable;
     }
 
@@ -169,62 +173,63 @@ public class SourceEditDialogController {
             //add eventlistener for all menuitems
             newTagItem.setOnAction((ActionEvent event) -> {
                 if (zitatTable.getSelectionModel().getSelectedItem() != null) {
-                    //1. get zitatList of quelle
+                    //1. get zitatList of source
                     //2. get the selected itemindex of zitattable
                     //3. get the taglist of the selected zitat
                     //4. add a new tag to the zitat
-                    Tag tag = new Tag(NEU);
-                    quelleEdited.getZitatList().get(zitatTable.getSelectionModel().getSelectedIndex()).getTagList().add(tag);
-                    //zitatList = quelleEdited.getZitatList();
+                    TagViewInterface tag = new viewmodels.TagView();
+                    tag.setText(NEU);
+                    sourceEdited.getQuoteList().get(zitatTable.getSelectionModel().getSelectedIndex()).getTagList().add(tag);
+                    //zitatList = sourceEdited.getZitatList();
                     //zitatList.get(zitatTable.getSelectionModel().getSelectedIndex()).getTagList().add(tag);
                 }
             });
 
             deleteTagItem.setOnAction((ActionEvent event) -> {
-                Tag tag = tagTable.getSelectionModel().getSelectedItem();
-                quelleEdited.getZitatList().get(zitatTable.getSelectionModel().getSelectedIndex()).getTagList().remove(tag);
+                TagViewInterface tag = tagTable.getSelectionModel().getSelectedItem();
+                sourceEdited.getQuoteList().get(zitatTable.getSelectionModel().getSelectedIndex()).getTagList().remove(tag);
             });
 
             addTag.setOnAction((ActionEvent event) -> {
-                try {
-                    // Load the fxml file and create a new stage for the popup dialog.
-                    FXMLLoader loader = new FXMLLoader();
-                    loader.setLocation(MainApp.class.getResource(ADD_TAGS_FXML));
-                    AnchorPane page = loader.load();
-
-                    // Create the addTag Stage.
-                    Stage addTagStage = new Stage();
-                    addTagStage.setTitle(FUEGE_TAG_HINZU);
-                    addTagStage.initModality(Modality.WINDOW_MODAL);
-                    Scene scene = new Scene(page);
-                    addTagStage.setScene(scene);
-                    addTagStage.initOwner(dialogStage);
-
-                    // Set the quelle into the controller.
-                    AddTagsController controller = loader.getController();
-                    ObservableList<Tag> tagList = FXCollections.observableArrayList();
-                    controller.setZitat(zitatTable.getSelectionModel().getSelectedItem());
-                    //prevent duplicates
-                    quoteList.forEach(zitat ->
-                            zitat.getTagList().forEach(tag -> {
-                                boolean addnewTag = true;
-                                for (Tag aTagList : tagList) {
-                                    if (tag.getText().equals(aTagList.getText())) {
-                                        addnewTag = false;
-                                    }
-                                }
-                                if (addnewTag) {
-                                    tagList.add(tag);
-                                }
-                            })
-                    );
-                    controller.setTagList(tagList);
-
-                    // Show the dialog and wait until the user closes it
-                    addTagStage.showAndWait();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+//                try {
+//                    // Load the fxml file and create a new stage for the popup dialog.
+//                    FXMLLoader loader = new FXMLLoader();
+//                    loader.setLocation(MainApp.class.getResource(ADD_TAGS_FXML));
+//                    AnchorPane page = loader.load();
+//
+//                    // Create the addTag Stage.
+//                    Stage addTagStage = new Stage();
+//                    addTagStage.setTitle(FUEGE_TAG_HINZU);
+//                    addTagStage.initModality(Modality.WINDOW_MODAL);
+//                    Scene scene = new Scene(page);
+//                    addTagStage.setScene(scene);
+//                    addTagStage.initOwner(dialogStage);
+//
+//                    // Set the source into the controller.
+//                    AddTagsController controller = loader.getController();
+//                    ObservableList<Tag> tagList = FXCollections.observableArrayList();
+//                    controller.setZitat(zitatTable.getSelectionModel().getSelectedItem());
+//                    //prevent duplicates
+//                    quoteList.forEach(zitat ->
+//                            zitat.getTagList().forEach(tag -> {
+//                                boolean addnewTag = true;
+//                                for (Tag aTagList : tagList) {
+//                                    if (tag.getText().equals(aTagList.getText())) {
+//                                        addnewTag = false;
+//                                    }
+//                                }
+//                                if (addnewTag) {
+//                                    tagList.add(tag);
+//                                }
+//                            })
+//                    );
+//                    controller.setTagList(tagList);
+//
+//                    // Show the dialog and wait until the user closes it
+//                    addTagStage.showAndWait();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
 
             });
         }
@@ -250,113 +255,113 @@ public class SourceEditDialogController {
 
         //add eventlistener for both menuitems
         newZitatItem.setOnAction((ActionEvent event) -> {
-            quelleEdited.getZitatList().add(new Zitat(BEARBEITE_MICH, quelleEdited.getId()));
-            zitatTable.setItems(quelleEdited.getZitatList());
+            sourceEdited.getQuoteList().add(new viewmodels.QuoteView(BEARBEITE_MICH, sourceEdited.getId()));
+            zitatTable.setItems(sourceEdited.getQuoteList());
         });
 
         deleteZitatItem.setOnAction((ActionEvent event) -> {
-            Zitat zitat = zitatTable.getSelectionModel().getSelectedItem();
-            quelleEdited.getZitatList().remove(zitat);
+            QuoteViewInterface quote = zitatTable.getSelectionModel().getSelectedItem();
+            sourceEdited.getQuoteList().remove(quote);
         });
 
         addZitatItem.setOnAction((ActionEvent event) -> {
-            try {
-                // Load the fxml file and create a new stage for the popup dialog.
-                FXMLLoader loader = new FXMLLoader();
-                loader.setLocation(MainApp.class.getResource(ADD_ZITATE_FXML));
-                AnchorPane page = loader.load();
-
-                // Create the addTag Stage.
-                Stage addZitatStage = new Stage();
-                addZitatStage.setTitle(FUEGE_ZITAT_HINZU);
-                addZitatStage.initModality(Modality.WINDOW_MODAL);
-                Scene scene = new Scene(page);
-                addZitatStage.setScene(scene);
-                addZitatStage.initOwner(dialogStage);
-                addZitatStage.setResizable(false);
-
-                // Set the quelle into the controller.
-                AddQuoteController controller = loader.getController();
-                controller.setZitatList(quoteList);
-                controller.setQuelle(quelleEdited);
-                zitatTable.setItems(quelleEdited.getZitatList());
-                controller.setStage(addZitatStage);
-
-                // Show the dialog and wait until the user closes it
-                addZitatStage.showAndWait();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+//            try {
+//                // Load the fxml file and create a new stage for the popup dialog.
+//                FXMLLoader loader = new FXMLLoader();
+//                loader.setLocation(MainApp.class.getResource(ADD_ZITATE_FXML));
+//                AnchorPane page = loader.load();
+//
+//                // Create the addTag Stage.
+//                Stage addZitatStage = new Stage();
+//                addZitatStage.setTitle(FUEGE_ZITAT_HINZU);
+//                addZitatStage.initModality(Modality.WINDOW_MODAL);
+//                Scene scene = new Scene(page);
+//                addZitatStage.setScene(scene);
+//                addZitatStage.initOwner(dialogStage);
+//                addZitatStage.setResizable(false);
+//
+//                // Set the source into the controller.
+//                AddQuoteController controller = loader.getController();
+//                controller.setZitatList(quoteList);
+//                controller.setQuelle(sourceEdited);
+//                zitatTable.setItems(sourceEdited.getQuoteList());
+//                controller.setStage(addZitatStage);
+//
+//                // Show the dialog and wait until the user closes it
+//                addZitatStage.showAndWait();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
         });
     }
 
     /**
      * Sets the stage of this dialog.
      * 
-     * @param dialogStage
+     * @param dialogStage stage for the dialog
      */
-    public void setDialogStage(Stage dialogStage) {
+    void setDialogStage(Stage dialogStage) {
         this.dialogStage = dialogStage;
     }
 
-    public Quelle getUpdatedSource() {
+    SourceViewInterface getUpdatedSource() {
         if (okClicked) {
-            quelleEdited.setTitel(this.titelField.getText());
-            quelleEdited.setAutor(this.autorField.getText());
-            quelleEdited.setJahr(this.jahrField.getText());
-            if (quelle instanceof Buch) {
-                ((Buch) quelleEdited).setAuflage(this.auflageTextField.getText());
-                ((Buch) quelleEdited).setHerausgeber(this.herausgeberTextField.getText());
-                ((Buch) quelleEdited).setMonat(this.monatTextField.getText());
-                ((Buch) quelleEdited).setIsbn(this.isbnTextField.getText());
-                return this.quelleEdited;
-            } else if (quelle instanceof Artikel){
-                ((Artikel) quelleEdited).setAusgabe(this.ausgabeTextField.getText());
-                ((Artikel) quelleEdited).setMagazin(this.magazinTextField.getText());
-            } else if (quelle instanceof Onlinequelle){
-                ((Onlinequelle) quelleEdited).setUrl(this.urlTextField.getText());
-                ((Onlinequelle) quelleEdited).setAufrufdatum(this.aufrufDatumTextField.getText());
-            } else if (quelle instanceof Anderes) {
-                ((Anderes) quelleEdited).setAuflage(this.auflageTextField.getText());
-                ((Anderes) quelleEdited).setAusgabe(this.ausgabeTextField.getText());
-                ((Anderes) quelleEdited).setHerausgeber(this.herausgeberTextField.getText());
-            } else if (quelle instanceof  WissenschaftlicheArbeit) {
-                ((WissenschaftlicheArbeit) quelleEdited).setEinrichtung(this.einrichtungsTextField.getText());
-                ((WissenschaftlicheArbeit) quelleEdited).setHerausgeber(this.herausgeberTextField.getText());
+            sourceEdited.setTitle(this.titelField.getText());
+            sourceEdited.setAuthor(this.autorField.getText());
+            sourceEdited.setYear(this.jahrField.getText());
+            if (source instanceof Buch) {
+                ((Buch) sourceEdited).setAuflage(this.auflageTextField.getText());
+                ((Buch) sourceEdited).setHerausgeber(this.herausgeberTextField.getText());
+                ((Buch) sourceEdited).setMonat(this.monatTextField.getText());
+                ((Buch) sourceEdited).setIsbn(this.isbnTextField.getText());
+                return this.sourceEdited;
+            } else if (source instanceof Artikel){
+                ((Artikel) sourceEdited).setAusgabe(this.ausgabeTextField.getText());
+                ((Artikel) sourceEdited).setMagazin(this.magazinTextField.getText());
+            } else if (source instanceof Onlinequelle){
+                ((Onlinequelle) sourceEdited).setUrl(this.urlTextField.getText());
+                ((Onlinequelle) sourceEdited).setAufrufdatum(this.aufrufDatumTextField.getText());
+            } else if (source instanceof Anderes) {
+                ((Anderes) sourceEdited).setAuflage(this.auflageTextField.getText());
+                ((Anderes) sourceEdited).setAusgabe(this.ausgabeTextField.getText());
+                ((Anderes) sourceEdited).setHerausgeber(this.herausgeberTextField.getText());
+            } else if (source instanceof  WissenschaftlicheArbeit) {
+                ((WissenschaftlicheArbeit) sourceEdited).setEinrichtung(this.einrichtungsTextField.getText());
+                ((WissenschaftlicheArbeit) sourceEdited).setHerausgeber(this.herausgeberTextField.getText());
             }
-            return this.quelleEdited;
+            return this.sourceEdited;
         }
 
-        //the user canceld return the unchanged quelle
-        return this.quelle;
+        //the user canceld return the unchanged source
+        return this.source;
     }
 
     /**
-     * Sets the quelle to be edited in the dialog.
+     * Sets the source to be edited in the dialog.
      * 
-     * @param quelle
+     * @param source
      */
-    public void setQuelle(Quelle quelle) {
-        this.quelle = quelle;
-        //create a copy of quelle to work with
-        if (quelle instanceof Buch) {
-            this.quelleEdited = new Buch((Buch)quelle);
-        } else if (quelle instanceof Artikel){
-            this.quelleEdited = new Artikel((Artikel) quelle);
-        } else if (quelle instanceof Onlinequelle){
-            this.quelleEdited = new Onlinequelle((Onlinequelle)quelle);
-        } else if (quelle instanceof Anderes) {
-            this.quelleEdited = new Anderes((Anderes)quelle);
-        } else if (quelle instanceof  WissenschaftlicheArbeit) {
-            this.quelleEdited = new WissenschaftlicheArbeit((WissenschaftlicheArbeit)quelle);
-        } else {
-            this.quelleEdited = new Quelle(quelle);
-        }
-        this.zitatTable.setItems(this.quelleEdited.getZitatList());
+    public void setSource(SourceViewInterface source) {
+        this.source = source;
+        //create a copy of source to work with
+//        if (source instanceof Buch) {
+//            this.sourceEdited = new Buch((Buch) source);
+//        } else if (source instanceof Artikel){
+//            this.sourceEdited = new Artikel((Artikel) source);
+//        } else if (source instanceof Onlinequelle){
+//            this.sourceEdited = new Onlinequelle((Onlinequelle) source);
+//        } else if (source instanceof Anderes) {
+//            this.sourceEdited = new Anderes((Anderes) source);
+//        } else if (source instanceof  WissenschaftlicheArbeit) {
+//            this.sourceEdited = new WissenschaftlicheArbeit((WissenschaftlicheArbeit) source);
+//        } else {
+//            this.sourceEdited = new Quelle(source);
+//        }
+        this.zitatTable.setItems(this.sourceEdited.getQuoteList());
 
-        autorField.setText(quelle.getAutor());
-        titelField.setText(quelle.getTitel());
-        jahrField.setText(quelle.getJahr());
+        autorField.setText(source.getAuthor());
+        titelField.setText(source.getTitle());
+        jahrField.setText(source.getYear());
 
         adjustGridPane();
         initializeList();
@@ -369,20 +374,20 @@ public class SourceEditDialogController {
         rowConstraint.setPrefHeight(ROW_CONTRAINTS_HEIGHT);
         rowConstraint.setVgrow(Priority.SOMETIMES);
 
-        //check what quelle it is exactly
+        //check what source it is exactly
         //the editdialog gets adjusted for every sort of SourceView
-        if (quelle instanceof Buch) {
+        if (source instanceof Buch) {
             adjustDialogForBuch(rowConstraint);
-        } else if (quelle instanceof Artikel){
+        } else if (source instanceof Artikel){
             adjustDialogForArtikel(rowConstraint);
-        } else if (quelle instanceof Onlinequelle){
+        } else if (source instanceof Onlinequelle){
             adjustDialogForOnlinequelle(rowConstraint);
-        } else if (quelle instanceof Anderes) {
+        } else if (source instanceof Anderes) {
             adjustDialogForAnderes(rowConstraint);
-        } else if (quelle instanceof  WissenschaftlicheArbeit) {
+        } else if (source instanceof  WissenschaftlicheArbeit) {
             adjustDialogForWissenschaftlicheArbeit(rowConstraint);
         } else {
-            //normal quelle
+            //normal source
             this.anchorPane.setPrefHeight(ANCHOR_PANE_SET_PREF_HEIGHT_FOR_QUELLE);
             this.okButton.setLayoutY(OK_AND_CANCEL_BUTTON_SET_LAYOUT_Y_FOR_QUELLE);
             this.cancelButton.setLayoutY(OK_AND_CANCEL_BUTTON_SET_LAYOUT_Y_FOR_QUELLE);
@@ -411,7 +416,7 @@ public class SourceEditDialogController {
      * @param rowConstraint rowContraint for the Dialog
      */
     private void adjustDialogForBuch(RowConstraints rowConstraint) {
-        Buch buch = (Buch)this.quelle;
+        Buch buch = (Buch)this.source;
         subCategory.setValue(SC_BUECHER);
 
         //adjust anchorPane and Buttons for Dialog
@@ -448,7 +453,7 @@ public class SourceEditDialogController {
      * @param rowConstraint rowContraint for the Dialog
      */
     private void adjustDialogForArtikel(RowConstraints rowConstraint) {
-        Artikel artikel = (Artikel)this.quelle;
+        Artikel artikel = (Artikel)this.source;
 
         //adjust anchorPane and Buttons for Dialog
         this.anchorPane.setPrefHeight(ANCHOR_PANE_SET_PREF_HEIGHT_FOR_ARTIKEL);
@@ -479,7 +484,7 @@ public class SourceEditDialogController {
      * @param rowConstraint rowContraint for the Dialog
      */
     private void adjustDialogForOnlinequelle(RowConstraints rowConstraint) {
-        Onlinequelle onlinequelle = (Onlinequelle)this.quelle;
+        Onlinequelle onlinequelle = (Onlinequelle)this.source;
 
         //adjust anchorPane and Buttons for Dialog
         this.anchorPane.setPrefHeight(ANCHOR_PANE_SET_PREF_HEIGHT_FOR_ONLINEQUELLE);
@@ -509,7 +514,7 @@ public class SourceEditDialogController {
      * @param rowConstraint rowContraint for the Dialog
      */
     private void adjustDialogForAnderes(RowConstraints rowConstraint) {
-        Anderes anderes = (Anderes)this.quelle;
+        Anderes anderes = (Anderes)this.source;
 
         //adjust anchorPane and Buttons for Dialog
         this.anchorPane.setPrefHeight(ANCHOR_PANE_SET_PREF_HEIGHT_FOR_ANDERES);
@@ -537,8 +542,8 @@ public class SourceEditDialogController {
         subCategory.setValue(SC_ANDERES);
     }
 
-    public void setZitatList(ObservableList<Zitat> zitatList) {
-        this.quoteList = zitatList;
+    public void setQuoteList(ObservableList<QuoteViewInterface> quoteList) {
+        this.quoteList = quoteList;
     }
 
     /**
@@ -546,7 +551,7 @@ public class SourceEditDialogController {
      * @param rowConstraint rowContraint for the Dialog
      */
     public void adjustDialogForWissenschaftlicheArbeit(RowConstraints rowConstraint) {
-        WissenschaftlicheArbeit wissenschaftlicheArbeit = (WissenschaftlicheArbeit)this.quelle;
+        WissenschaftlicheArbeit wissenschaftlicheArbeit = (WissenschaftlicheArbeit)this.source;
 
         //adjust anchorPane and Buttons for Dialog
         this.anchorPane.setPrefHeight(ANCHOR_PANE_SET_PREF_HEIGHT_FOR_WISSENSCHAFTLICHE_ARBEIT);
@@ -586,10 +591,10 @@ public class SourceEditDialogController {
     @FXML
     private void handleOk() {
         if (isInputValid()) {
-            quelle.setAutor(autorField.getText());
-            quelle.setTitel(titelField.getText());
-            quelle.setJahr(jahrField.getText());
-            //quelle.setUnterkategorie(getSubCategory());
+            source.setAuthor(autorField.getText());
+            source.setTitle(titelField.getText());
+            source.setYear(jahrField.getText());
+            //source.setUnterkategorie(getSubCategory());
 
             okClicked = true;
             dialogStage.close();
@@ -643,55 +648,55 @@ public class SourceEditDialogController {
     }
 
     private void adjustNewDialog(String category) {
-        //child node count
-        int count = this.gridPane.getChildren().size();
-        //Create a RowContraints
-        RowConstraints rowConstraint = new RowConstraints();
-        rowConstraint.setMinHeight(ROW_CONTRAINTS_HEIGHT);
-        rowConstraint.setPrefHeight(ROW_CONTRAINTS_HEIGHT);
-        rowConstraint.setVgrow(Priority.SOMETIMES);
-        //Remove all items from another quelle
-        if (!editmode) {
-            if (count >= 8) {
-                this.gridPane.getChildren().remove(8, count);
-            }
-            switch (category) {
-                case SC_ARTIKEL:
-                    this.quelle = new Artikel(0, "", "", "", "", "", this.quelleEdited.getZitatList());
-                    this.quelleEdited = new Artikel((Artikel)this.quelle);
-                    this.adjustGridPane();
-                    break;
-
-                case SC_BUECHER:
-                    this.quelle = new Buch(0, "",  "", "", "", "", "", "", this.quelleEdited.getZitatList());
-                    this.quelleEdited = new Buch((Buch)this.quelle);
-                    this.adjustGridPane();
-                    break;
-
-                case SC_OQUELLEN:
-                    this.quelle = new Onlinequelle(0, "", "", "", "", "", this.quelleEdited.getZitatList());
-                    this.quelleEdited = new Onlinequelle((Onlinequelle)this.quelle);
-                    this.adjustGridPane();
-                    break;
-
-                case SC_WARBEITEN:
-                    this.quelle = new WissenschaftlicheArbeit(0, "", "", "", "", "", this.quelleEdited.getZitatList());
-                    this.quelleEdited = new WissenschaftlicheArbeit((WissenschaftlicheArbeit)this.quelle);
-                    this.adjustGridPane();
-                    break;
-
-                case SC_ANDERES:
-                    this.quelle = new Anderes("", "", "", "", "", "");
-                    this.quelleEdited = new Anderes((Anderes)this.quelle);
-                    this.adjustGridPane();
-                    break;
-
-                case SC_NONE:
-                    this.quelle = new Quelle("", "", "");
-                    this.quelle.setZitatListe(this.quelleEdited.getZitatList());
-                    this.quelleEdited = new Quelle(this.quelle);
-                    this.adjustGridPane();
-            }
-        }
+//        //child node count
+//        int count = this.gridPane.getChildren().size();
+//        //Create a RowContraints
+//        RowConstraints rowConstraint = new RowConstraints();
+//        rowConstraint.setMinHeight(ROW_CONTRAINTS_HEIGHT);
+//        rowConstraint.setPrefHeight(ROW_CONTRAINTS_HEIGHT);
+//        rowConstraint.setVgrow(Priority.SOMETIMES);
+//        //Remove all items from another source
+//        if (!editmode) {
+//            if (count >= 8) {
+//                this.gridPane.getChildren().remove(8, count);
+//            }
+//            switch (category) {
+//                case SC_ARTIKEL:
+//                    this.source = new Artikel(0, "", "", "", "", "", this.sourceEdited.getZitatList());
+//                    this.sourceEdited = new Artikel((Artikel)this.source);
+//                    this.adjustGridPane();
+//                    break;
+//
+//                case SC_BUECHER:
+//                    this.source = new Buch(0, "",  "", "", "", "", "", "", this.sourceEdited.getZitatList());
+//                    this.sourceEdited = new Buch((Buch)this.source);
+//                    this.adjustGridPane();
+//                    break;
+//
+//                case SC_OQUELLEN:
+//                    this.source = new Onlinequelle(0, "", "", "", "", "", this.sourceEdited.getZitatList());
+//                    this.sourceEdited = new Onlinequelle((Onlinequelle)this.source);
+//                    this.adjustGridPane();
+//                    break;
+//
+//                case SC_WARBEITEN:
+//                    this.source = new WissenschaftlicheArbeit(0, "", "", "", "", "", this.sourceEdited.getZitatList());
+//                    this.sourceEdited = new WissenschaftlicheArbeit((WissenschaftlicheArbeit)this.source);
+//                    this.adjustGridPane();
+//                    break;
+//
+//                case SC_ANDERES:
+//                    this.source = new Anderes("", "", "", "", "", "");
+//                    this.sourceEdited = new Anderes((Anderes)this.source);
+//                    this.adjustGridPane();
+//                    break;
+//
+//                case SC_NONE:
+//                    this.source = new Quelle("", "", "");
+//                    this.source.setZitatListe(this.sourceEdited.getZitatList());
+//                    this.sourceEdited = new Quelle(this.source);
+//                    this.adjustGridPane();
+//            }
+//        }
     }
 }

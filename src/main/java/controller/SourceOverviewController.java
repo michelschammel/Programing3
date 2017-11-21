@@ -9,7 +9,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.layout.AnchorPane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import main_app.MainApp;
 import utilities.StringUtilities;
 import viewmodels.interfaces.QuoteViewInterface;
 import viewmodels.interfaces.SourceViewInterface;
@@ -189,43 +192,44 @@ public class SourceOverviewController {
     }
 
     private void showEditSource(String title, SourceViewInterface selectedSource, boolean editmode, boolean subcategory) {
-//        try {
-//            // Load the fxml file and create a new stage for the popup dialog.
-//            FXMLLoader loader = new FXMLLoader();
-//            loader.setLocation(MainApp.class.getResource(QUELLEN_EDIT_DIALOG_FXML));
-//            AnchorPane page = loader.load();
-//
-//            // Create the dialog Stage.
-//            Stage dialogStage = new Stage();
-//            dialogStage.setTitle(title);
-//            dialogStage.initModality(Modality.WINDOW_MODAL);
-//            dialogStage.initOwner(stage);
-//            Scene scene = new Scene(page);
-//            dialogStage.setScene(scene);
-//
-//            SourceEditDialogController controller = loader.getController();
-//            controller.disableSubCategory(!subcategory);
-//            controller.setEditmode(editmode);
-//            controller.setDialogStage(dialogStage);
-//            controller.setQuelle(selectedSource);
-//
-//            ObservableList<QuoteViewInterface> quoteList = FXCollections.observableArrayList();
-//
-//            sourceList.forEach( source ->
-//                quoteList.addAll(source.getQuoteList())
-//            );
-//
-//            controller.setZitatList(quoteList);
-//
-//            dialogStage.showAndWait();
-//            sourceList.remove(selectedSource);
-//            SourceViewInterface source = controller.getUpdatedSource();
-//            sourceList.add(source);
+        try {
+            // Load the fxml file and create a new stage for the popup dialog.
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(MainApp.class.getResource(QUELLEN_EDIT_DIALOG_FXML));
+            AnchorPane page = loader.load();
+
+            // Create the dialog Stage.
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle(title);
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            dialogStage.initOwner(stage);
+            Scene scene = new Scene(page);
+            dialogStage.setScene(scene);
+
+            SourceEditDialogController controller = loader.getController();
+            controller.disableSubCategory(!subcategory);
+            controller.setEditmode(editmode);
+            controller.setDialogStage(dialogStage);
+            controller.setSource(selectedSource);
+
+            ObservableList<QuoteViewInterface> quoteList = FXCollections.observableArrayList();
+
+            sourceList.forEach( source ->
+                quoteList.addAll(source.getQuoteList())
+            );
+
+            controller.setQuoteList(quoteList);
+
+            dialogStage.showAndWait();
+            sourceList.remove(selectedSource);
+            SourceViewInterface source = controller.getUpdatedSource();
+            sourceList.add(source);
 //            SourceDatabaseInterface quellenService = new SourceDatabaseImpl();
 //            quellenService.updateQuery(quelle);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void nothingSelected(String title, String header, String content) {

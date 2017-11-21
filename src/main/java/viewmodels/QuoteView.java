@@ -20,6 +20,12 @@ public class QuoteView implements QuoteViewInterface{
         this.text = new SimpleStringProperty(EMPTY);
     }
 
+    public QuoteView(String text, int sourceId) {
+        this.tagList = FXCollections.observableArrayList();
+        this.text = new SimpleStringProperty(text);
+        this.sourceId = sourceId;
+    }
+
     @Override
     public void setText(String text) {
         this.text.setValue(text);
