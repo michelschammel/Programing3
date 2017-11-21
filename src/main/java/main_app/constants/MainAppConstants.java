@@ -11,7 +11,7 @@ public class MainAppConstants {
     public static final String ABOUT = "Über";
 
     public static final String ROOT_LAYOUT_FXML = "../view/RootLayout.fxml";
-    public static final String QUELLEN_OVERVIEW_FXML = "../view/quellenOverview.fxml";
+    public static final String QUELLEN_OVERVIEW_FXML = "../view/sourceOverview.fxml";
     public static final String QUELLEN_EDIT_DIALOG_FXML = "../view/QuellenEditDialog.fxml";
     public static final String PIE_CHART_FXML = "../view/PieChart.fxml";
     public static final String TUTORIAL_FXML = "../view/Tutorial.fxml";

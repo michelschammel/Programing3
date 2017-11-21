@@ -27,7 +27,7 @@ public abstract class DatabaseStringCreator {
 
     private static final String[] databaseTables = {"Source", "Article", "Book", "Onlinesource", "Others", "ScientificWork"};
 
-    private static void deleteSource(SourceInterface source) {
+    public static void deleteSource(SourceInterface source) {
         try (Connection connection = getConnection()) {
             connection.setAutoCommit(false);
             for (QuoteInterface quote : source.getQuoteList()) {

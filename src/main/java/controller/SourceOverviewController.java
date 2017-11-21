@@ -1,5 +1,7 @@
 package controller;
 
+import Services.SourceService;
+import factories.SourceViewFactory;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -17,6 +19,9 @@ import model.Quelle;
 import model.Zitat;
 import model.Tag;
 import utilities.StringUtilities;
+import viewmodels.interfaces.QuoteViewInterface;
+import viewmodels.interfaces.SourceViewInterface;
+import viewmodels.interfaces.TagViewInterface;
 
 import java.io.IOException;
 
@@ -25,19 +30,19 @@ import static main_app.constants.MainAppConstants.QUELLEN_EDIT_DIALOG_FXML;
 
 public class SourceOverviewController {
     @FXML
-    private TableView<Quelle> quellenTable;
+    private TableView<SourceViewInterface> sourceTable;
     @FXML
-    private TableView<Zitat> zitatTable;
+    private TableView<QuoteViewInterface> quoteTable;
     @FXML
-    private TableColumn<Quelle, String> titelColumn;
+    private TableColumn<SourceViewInterface, String> titelColumn;
     @FXML
-    private TableColumn<Quelle, String> autorColumn;
+    private TableColumn<SourceViewInterface, String> autorColumn;
     @FXML
-    private TableColumn<Zitat, String> zitatColumn;
+    private TableColumn<QuoteViewInterface, String> zitatColumn;
     @FXML
-    private TableView<Tag> tagTable;
+    private TableView<TagViewInterface> tagTable;
     @FXML
-    private TableColumn<Tag, String> tagColumn;
+    private TableColumn<TagViewInterface, String> tagColumn;
 
     @FXML
     private Label titelLabel;
@@ -57,9 +62,12 @@ public class SourceOverviewController {
 
     // Reference to the main application.
     //private MainApp mainApp;
-    private ObservableList<Quelle> tmpList;
-    private ObservableList<Quelle> searchQuelleList;
-    private ObservableList<Quelle> sourceList;
+//    private ObservableList<Quelle> tmpList;
+    private ObservableList<SourceViewInterface> tmpList;
+//    private ObservableList<Quelle> searchQuelleList;
+    private ObservableList<SourceViewInterface> searchSourceList;
+//    private ObservableList<Quelle> sourceList;
+    private ObservableList<SourceViewInterface> sourceList;
     private Stage stage;
 
     /**
@@ -71,28 +79,29 @@ public class SourceOverviewController {
         //initialize all lists that are used
         initializeSourceList();
         // Initialize the source table with the two columns.
-        titelColumn.setCellValueFactory(cellData -> cellData.getValue().titelProperty());
-        autorColumn.setCellValueFactory(cellData -> cellData.getValue().autorProperty());
+        titelColumn.setCellValueFactory(cellData -> cellData.getValue().getTitleProperty());
+        autorColumn.setCellValueFactory(cellData -> cellData.getValue().getAuthorProperty());
         // Initialize the zitat table with the column.
-        zitatColumn.setCellValueFactory(cellData -> cellData.getValue().textProperty());
+        zitatColumn.setCellValueFactory(cellData -> cellData.getValue().getTextProperty());
         // Initialize the tag table with the column.
-        tagColumn.setCellValueFactory(cellData -> cellData.getValue().textProperty());
+        tagColumn.setCellValueFactory(cellData -> cellData.getValue().getTextProperty());
 
         // Clear source details.
         showQuellenDetails(null);
 
         // Listen for selection changes and show the quelle details when changed.
-        quellenTable.getSelectionModel().selectedItemProperty().addListener(
+        sourceTable.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> showQuellenDetails(newValue));
 
         //Set Rowfactory for zitatTable
-        this.zitatTable.setRowFactory(tv -> {
-            TableRow<Zitat> row = new TableRow<>();
+        this.quoteTable.setRowFactory(tv -> {
+            TableRow<QuoteViewInterface> row = new TableRow<>();
 
             row.hoverProperty().addListener((observable) -> {
-                final Zitat zitat = row.getItem();
-                if (row.isHover() && zitat != null) {
-                    Tooltip zitatToolTip = new Tooltip(zitat.getText());
+//                final Zitat zitat = row.getItem();
+                final QuoteViewInterface quote = row.getItem();
+                if (row.isHover() && quote != null) {
+                    Tooltip zitatToolTip = new Tooltip(quote.getText());
                     zitatToolTip.setWrapText(true);
                     zitatToolTip.setMaxWidth(160);
                     row.setTooltip(zitatToolTip);
@@ -103,44 +112,47 @@ public class SourceOverviewController {
     }
 
     private void initializeSourceList() {
-        SourceDatabaseInterface sourceDatabase = new SourceDatabaseImpl();
+//        SourceDatabaseInterface sourceDatabase = new SourceDatabaseImpl();
         //initialize a specific list just to show sources from a search
-        searchQuelleList = FXCollections.observableArrayList();
+        searchSourceList = FXCollections.observableArrayList();
         //initialize the list that contains all existing sources
         this.sourceList = FXCollections.observableArrayList();
         //fill the source list with the data from the database
-        this.sourceList = sourceDatabase.getQuellenFromDataBase();
+//        this.sourceList = sourceDatabase.getQuellenFromDataBase();
+        this.sourceList = SourceService.getSourcesFromDatabase();
         //just a temporary list
         this.tmpList = sourceList;
         //set the list for the table
-        quellenTable.setItems(sourceList);
+        sourceTable.setItems(sourceList);
     }
 
     /**
      * Fills all text fields to show details about the quelle.
      * If the specified quelle is null, all text fields are cleared.
      *
-     * @param quelle the quelle or null
+     * @param source the quelle or null
      */
-    private void showQuellenDetails(Quelle quelle) {
-        ObservableList<Tag> tagList = FXCollections.observableArrayList();
-        if (quelle != null) {
-            zitatTable.setEditable(true);
+    private void showQuellenDetails(SourceViewInterface source) {
+        ObservableList<TagViewInterface> tagList = FXCollections.observableArrayList();
+        if (source != null) {
+            quoteTable.setEditable(true);
             // Fill the labels with info from the person object.
-            titelLabel.setText(quelle.getTitel());
-            autorLabel.setText(quelle.getAutor());
+//            titelLabel.setText(source.getTitel());
+            titelLabel.setText(source.getTitle());
+//            autorLabel.setText(source.getAutor());
+            autorLabel.setText(source.getAuthor());
             //jahrLabel.setTitel(quelle.getJahr());
 
             //Add observable list date to zitat table for every quelle.
-            zitatTable.setItems(quelle.getZitatList());
-
+//            zitatTable.setItems(source.getZitatList());
+            quoteTable.setItems(source.getQuoteList());
             //Iterate over the quelle list because every quelle can have multiple zitate
             //Add all tags to a new observable
             //prevent duplicates in tagList
-            quelle.getZitatList().forEach( zitat ->
-                    zitat.getTagList().forEach(tag -> {
+            source.getQuoteList().forEach( quote ->
+                    quote.getTagList().forEach(tag -> {
                         boolean addTag = true;
-                        for (Tag aTagList : tagList) {
+                        for (TagViewInterface aTagList : tagList) {
                             if (tag.getText().equals(aTagList.getText())) {
                                 addTag = false;
                             }
@@ -165,84 +177,26 @@ public class SourceOverviewController {
      */
     @FXML
     private void handleDeleteQuelle() {
-        int selectedIndex = quellenTable.getSelectionModel().getSelectedIndex();
+        int selectedIndex = sourceTable.getSelectionModel().getSelectedIndex();
         if (selectedIndex >= 0) {
-            SourceDatabaseInterface quellenService = new SourceDatabaseImpl();
-            quellenService.deleteQuelle(quellenTable.getSelectionModel().getSelectedItem());
-            quellenTable.getItems().remove(selectedIndex);
+//            SourceDatabaseInterface quellenService = new SourceDatabaseImpl();
+//            quellenService.deleteQuelle(sourceTable.getSelectionModel().getSelectedItem());
+            SourceService.deleteSource(sourceTable.getSelectionModel().getSelectedItem());
+            sourceTable.getItems().remove(selectedIndex);
         } else {
             nothingSelected(NICHTS_AUSGEWAEHLT, KEINE_QUELLE_AUSGEWAEHLT, BITTE_QUELLE_AUS_TABELLE);
         }
     }
 
-//    /**
-//     * Called when the user clicks the new button. Opens a dialog to edit
-//     * details for a new quelle.
-//     */
-//    @FXML
-//    private void handleNewSource() {
-//        Quelle tempQuelle = new Quelle(LEERER_STRING, LEERER_STRING, LEERER_STRING);
-//        boolean okClicked = mainApp.showQuellenEditDialog(tempQuelle, false, "Neue Quelle");
-//        try {
-//            if (okClicked) {
-//                //Get edited quelle
-//                tempQuelle = this.mainApp.getUpdatedSource();
-//                SourceDatabaseInterface quellenService = new SourceDatabaseImpl();
-//                //Insert edited quelle into DB and return the id of quelle
-//                tempQuelle.setId(quellenService.insertNewQuelle(tempQuelle));
-//                //insert quelle into mainApp
-//                this.mainApp.getQuellenList().add(tempQuelle);
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
-
-//    /**
-//     * Called when the user clicks the edit button. Opens a dialog to edit
-//     * details for the selected quelle.
-//     */
-//    @FXML
-//    private void handleEditSource() {
-//        //index is needed to insert the new Object at the same place
-//        int index;
-//        Quelle selectedQuelle = quellenTable.getSelectionModel().getSelectedItem();
-//        index = quellenTable.getSelectionModel().getSelectedIndex();
-//
-//        if (selectedQuelle != null) {
-//            boolean okClicked = mainApp.showQuellenEditDialog(selectedQuelle, true, "Bearbeite Quelle");
-//            if (okClicked) {
-//                //remove the old quelle
-//                this.mainApp.getQuellenList().remove(selectedQuelle);
-//                selectedQuelle =  mainApp.getUpdatedSource();
-//                //add the edited version into table
-//                this.mainApp.getQuellenList().add(index, selectedQuelle);
-//                this.quellenTable.setItems(this.mainApp.getQuellenList());
-//                //because the selected quelle was deleted we have to set the selection on the new quelle
-//                this.quellenTable.getSelectionModel().select(index);
-//                try {
-//                    SourceDatabaseInterface quellenService = new SourceDatabaseImpl();
-//                    quellenService.updateQuery(selectedQuelle);
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//                showQuellenDetails(selectedQuelle);
-//            }
-//
-//        } else {
-//            nothingSelected(NICHTS_AUSGEWAEHLT, KEINE_QUELLE_AUSGEWAEHLT, BITTE_QUELLE_AUS_TABELLE);
-//        }
-//    }
-
     @FXML
     private void handleNewSource() {
-        Quelle source = new Quelle("", "" ,"");
+        SourceViewInterface source = SourceViewFactory.produceSourceView(SourceViewFactory.SOURCE_VIEW);
         showEditSource("Neue Quelle", source, false, true);
     }
 
     @FXML
     private void handleEditSource() {
-        Quelle selectedSource = quellenTable.getSelectionModel().getSelectedItem();
+        SourceViewInterface selectedSource = sourceTable.getSelectionModel().getSelectedItem();
         if (selectedSource != null) {
             showEditSource("Bearbeite Quelle", selectedSource, true, false);
         } else {
@@ -250,44 +204,44 @@ public class SourceOverviewController {
         }
     }
 
-    private void showEditSource(String title, Quelle selectedSource, boolean editmode, boolean subcategory) {
-        try {
-            // Load the fxml file and create a new stage for the popup dialog.
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class.getResource(QUELLEN_EDIT_DIALOG_FXML));
-            AnchorPane page = loader.load();
-
-            // Create the dialog Stage.
-            Stage dialogStage = new Stage();
-            dialogStage.setTitle(title);
-            dialogStage.initModality(Modality.WINDOW_MODAL);
-            dialogStage.initOwner(stage);
-            Scene scene = new Scene(page);
-            dialogStage.setScene(scene);
-
-            SourceEditDialogController controller = loader.getController();
-            controller.disableSubCategory(!subcategory);
-            controller.setEditmode(editmode);
-            controller.setDialogStage(dialogStage);
-            controller.setQuelle(selectedSource);
-
-            ObservableList<Zitat> quoteList = FXCollections.observableArrayList();
-
-            sourceList.forEach( source ->
-                quoteList.addAll(source.getZitatList())
-            );
-
-            controller.setZitatList(quoteList);
-
-            dialogStage.showAndWait();
-            sourceList.remove(selectedSource);
-            Quelle quelle = controller.getUpdatedSource();
-            sourceList.add(quelle);
-            SourceDatabaseInterface quellenService = new SourceDatabaseImpl();
-            quellenService.updateQuery(quelle);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    private void showEditSource(String title, SourceViewInterface selectedSource, boolean editmode, boolean subcategory) {
+//        try {
+//            // Load the fxml file and create a new stage for the popup dialog.
+//            FXMLLoader loader = new FXMLLoader();
+//            loader.setLocation(MainApp.class.getResource(QUELLEN_EDIT_DIALOG_FXML));
+//            AnchorPane page = loader.load();
+//
+//            // Create the dialog Stage.
+//            Stage dialogStage = new Stage();
+//            dialogStage.setTitle(title);
+//            dialogStage.initModality(Modality.WINDOW_MODAL);
+//            dialogStage.initOwner(stage);
+//            Scene scene = new Scene(page);
+//            dialogStage.setScene(scene);
+//
+//            SourceEditDialogController controller = loader.getController();
+//            controller.disableSubCategory(!subcategory);
+//            controller.setEditmode(editmode);
+//            controller.setDialogStage(dialogStage);
+//            controller.setQuelle(selectedSource);
+//
+//            ObservableList<Zitat> quoteList = FXCollections.observableArrayList();
+//
+//            sourceList.forEach( source ->
+//                quoteList.addAll(source.getZitatList())
+//            );
+//
+//            controller.setZitatList(quoteList);
+//
+//            dialogStage.showAndWait();
+//            sourceList.remove(selectedSource);
+//            Quelle quelle = controller.getUpdatedSource();
+//            sourceList.add(quelle);
+//            SourceDatabaseInterface quellenService = new SourceDatabaseImpl();
+//            quellenService.updateQuery(quelle);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
     }
 
     private void nothingSelected(String title, String header, String content) {
@@ -319,57 +273,57 @@ public class SourceOverviewController {
             if (tmpList != null) {
                 sourceList = tmpList;
             }
-            this.searchQuelleList = FXCollections.observableArrayList();
-            Boolean addQuelle = false;
-            for (Quelle quelle : this.sourceList) {
-
+            this.searchSourceList = FXCollections.observableArrayList();
+            Boolean addSource;
+            for (SourceViewInterface source : this.sourceList) {
+                addSource = false;
                 if (searchAuthor) {
-                    addQuelle = doesAuthorContainString(quelle, searchText);
+                    addSource = doesAuthorContainString(source, searchText);
                 }
 
-                if (searchSource && !addQuelle) {
-                    addQuelle = doesSourceContainString(quelle, searchText);
+                if (searchSource && !addSource) {
+                    addSource = doesSourceContainString(source, searchText);
                 }
 
-                if (searchQuote && !addQuelle) {
-                    addQuelle = doesQuoteContainString(quelle, searchText);
+                if (searchQuote && !addSource) {
+                    addSource = doesQuoteContainString(source, searchText);
                 }
 
-                if (searchTag && !addQuelle) {
-                    addQuelle = doesTagContainString(quelle, searchText);
+                if (searchTag && !addSource) {
+                    addSource = doesTagContainString(source, searchText);
                 }
 
-                if (addQuelle) {
-                    searchQuelleList.add(quelle);
+                if (addSource) {
+                    searchSourceList.add(source);
                 }
             }
             tmpList = sourceList;
-            sourceList = searchQuelleList;
-            this.quellenTable.setItems(sourceList);
-            this.quellenTable.getSelectionModel().select(0);
+            sourceList = searchSourceList;
+            this.sourceTable.setItems(sourceList);
+            this.sourceTable.getSelectionModel().select(0);
         }
     }
 
-    private boolean doesAuthorContainString(Quelle quelle, String searchString) {
-        return StringUtilities.doesStringContain(quelle.getAutor(), searchString);
+    private boolean doesAuthorContainString(SourceViewInterface source, String searchString) {
+        return StringUtilities.doesStringContain(source.getAuthor(), searchString);
     }
 
-    private boolean doesSourceContainString(Quelle quelle, String searchString) {
-        return StringUtilities.doesStringContain(quelle.getTitel(), searchString);
+    private boolean doesSourceContainString(SourceViewInterface source, String searchString) {
+        return StringUtilities.doesStringContain(source.getTitle(), searchString);
     }
 
-    private boolean doesQuoteContainString(Quelle quelle, String searchStrring) {
-        for (Zitat zitat : quelle.getZitatList()) {
-            if (StringUtilities.doesStringContain(zitat.getText(), searchStrring)) {
+    private boolean doesQuoteContainString(SourceViewInterface source, String searchStrring) {
+        for (QuoteViewInterface quote : source.getQuoteList()) {
+            if (StringUtilities.doesStringContain(quote.getText(), searchStrring)) {
                 return true;
             }
         }
         return false;
     }
 
-    private boolean doesTagContainString(Quelle quelle, String searchString) {
-        for (Zitat zitat : quelle.getZitatList()) {
-            for (Tag tag : zitat.getTagList()) {
+    private boolean doesTagContainString(SourceViewInterface source, String searchString) {
+        for (QuoteViewInterface quote : source.getQuoteList()) {
+            for (TagViewInterface tag : quote.getTagList()) {
                 if (StringUtilities.doesStringContain(tag.getText(), searchString)) {
                     return true;
                 }
@@ -382,7 +336,7 @@ public class SourceOverviewController {
     @FXML
     private void reset() {
         this.sourceList = tmpList;
-        this.quellenTable.setItems(this.sourceList);
+        this.sourceTable.setItems(this.sourceList);
     }
 
     public void setStage(Stage stage) {
