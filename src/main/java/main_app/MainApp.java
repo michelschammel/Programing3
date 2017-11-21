@@ -7,8 +7,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import models.Quote;
-import models.Tag;
 import models.interfaces.*;
 import utilities.DatabaseStringCreator;
 import utilities.SourceConverter;
