@@ -1,7 +1,6 @@
 package utilities;
 
 import dao.ConnectionKlasse;
-import enums.SourceStandardAttributes;
 import factories.QuoteFactory;
 import factories.SourceFactory;
 import models.interfaces.ObjectTemplateInterface;
@@ -46,33 +45,53 @@ public abstract class DatabaseStringCreator {
     }
 
     public static List<SourceInterface> getAllSourcesFromDatabase() {
+        List<SourceInterface> sourceList = new ArrayList<>();
         try (Connection connection = getConnection()){
             connection.setAutoCommit(false);
-            List<SourceInterface> sourceList = new ArrayList<>();
+            List<ObjectTemplateInterface> template;
             SourceInterface source;
+            SourceInterface tmp;
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery("SELECT * FROM Source");
             while(resultSet.next()) {
-                source = SourceFactory.produceSource(SourceFactory.SOURCE);
-                if (source != null) {
-                    source.setId(resultSet.getInt("id"));
-                    source.setAuthor(resultSet.getString("author"));
-                    source.setTitle(resultSet.getString("title"));
-                    source.setYear(resultSet.getString("year"));
-                    source.setQuoteList(getSourceQuotes(source, connection));
+                tmp = SourceFactory.produceSource(SourceFactory.SOURCE);
+                if (tmp != null) {
+                    tmp.setId(resultSet.getInt("id"));
+                    tmp.setAuthor(resultSet.getString("author"));
+                    tmp.setTitle(resultSet.getString("title"));
+                    tmp.setYear(resultSet.getString("year"));
+                    tmp.setQuoteList(getSourceQuotes(tmp, connection));
+                    sourceList.add(tmp);
                 }
             }
 
             for (String tableName : databaseTables) {
                 if (!tableName.equals("Source")) {
-                    resultSet = statement.executeQuery("SELECT * FROM Source NATURAL JOIN " + tableName);
+                    source = SourceFactory.produceSource(tableName);
+                    if (source!= null) {
+                        resultSet = statement.executeQuery("SELECT * FROM Source NATURAL JOIN " + tableName);
+                        template = SourceReflection.getTemplate(source);
+                        SourceReflection.removeBasicAttributes(template);
 
-                    while(resultSet.next()) {
-
+                        while (resultSet.next()) {
+                            for (int i = 0; i < sourceList.size(); i++) {
+                                SourceInterface listSource = sourceList.get(i);
+                                if (listSource.getId() == resultSet.getInt("id")) {
+                                    source.setId(listSource.getId());
+                                    source.setAuthor(listSource.getAuthor());
+                                    source.setTitle(listSource.getAuthor());
+                                    source.setYear(listSource.getYear());
+                                    source.setQuoteList(listSource.getQuoteList());
+                                    for (ObjectTemplateInterface templateRow : template) {
+                                        SourceReflection.setObjectValue(templateRow.getAttributeName(), source, resultSet.getObject(templateRow.getAttributeName()));
+                                    }
+                                    sourceList.set(i, source);
+                                }
+                            }
+                        }
                     }
                 }
             }
-
             connection.commit();
             connection.setAutoCommit(true);
 
@@ -80,7 +99,7 @@ public abstract class DatabaseStringCreator {
             e.printStackTrace();
         }
 
-        return null;
+        return sourceList;
     }
 
     private static List<QuoteInterface> getSourceQuotes(SourceInterface source,Connection connection) throws SQLException {
@@ -119,7 +138,7 @@ public abstract class DatabaseStringCreator {
 
     private static boolean isSourceExtension (SourceInterface source) {
         Class sourceClass = source.getClass();
-        return (sourceClass.getSimpleName().equals("Source"));
+        return !(sourceClass.getSimpleName().equals("Source"));
     }
 
     public static void insertOrUpdateSource(SourceInterface source){
@@ -163,9 +182,8 @@ public abstract class DatabaseStringCreator {
 
         if (template != null) {
             //remove all standard attributes from the template, because we already inserted/updated them
-            for (SourceStandardAttributes attribute : SourceStandardAttributes.values()) {
-                template.removeIf(templateRow -> templateRow.getAttributeName().equals(attribute.name()));
-            }
+            SourceReflection.removeBasicAttributes(template);
+
             if (updateSource) {
                 sourceCommand.append("UPDATE ").append(source.getClass().getSimpleName()).append(" SET ");
                 for (ObjectTemplateInterface templateRow : template) {

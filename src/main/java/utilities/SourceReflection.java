@@ -1,5 +1,6 @@
 package utilities;
 
+import enums.SourceStandardAttributes;
 import enums.SupportedTypes;
 import models.ObjectTemplate;
 import models.interfaces.ObjectTemplateInterface;
@@ -49,19 +50,32 @@ public abstract class SourceReflection {
         return null;
     }
 
-    private static Object getObjectValue(String attribute, Object source) {
+    private static Object getObjectValue(String attribute, Object object) {
         Object value = null;
         String getterMethodName;
         Method method;
         attribute = Character.toUpperCase(attribute.charAt(0)) + attribute.substring(1);
         getterMethodName = "get" + attribute;
         try {
-            method = source.getClass().getDeclaredMethod(getterMethodName);
-            value = method.invoke(source);
+            method = object.getClass().getDeclaredMethod(getterMethodName);
+            value = method.invoke(object);
         } catch (Exception e) {
             e.printStackTrace();
         }
         return value;
+    }
+
+    public static void setObjectValue(String attribute, Object object, Object value) {
+        String setterMethodName;
+        Method method;
+        attribute = Character.toUpperCase(attribute.charAt(0)) + attribute.substring(1);
+        setterMethodName = "set" + attribute;
+        try {
+            method = object.getClass().getDeclaredMethod(setterMethodName, value.getClass());
+            method.invoke(object, value);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -85,6 +99,12 @@ public abstract class SourceReflection {
             return String.class;
         }
         return type;
+    }
+
+    public static void removeBasicAttributes(List<ObjectTemplateInterface> template) {
+        for (SourceStandardAttributes attribute : SourceStandardAttributes.values()) {
+            template.removeIf(templateRow -> templateRow.getAttributeName().equals(attribute.name()));
+        }
     }
 
 
