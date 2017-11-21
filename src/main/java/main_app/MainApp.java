@@ -1,6 +1,7 @@
 package main_app;
 
 import controller.RootLayoutController;
+import dao.SourceDatabaseImpl;
 import factories.SourceFactory;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -8,11 +9,8 @@ import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import models.interfaces.*;
-import utilities.DatabaseStringCreator;
-import utilities.SourceConverter;
+import utilities.SourceUtillities;
 import viewmodels.interfaces.*;
-
-import java.util.List;
 
 import static main_app.constants.MainAppConstants.*;
 
@@ -37,7 +35,7 @@ public class MainApp extends Application {
     }
 
     private void testall() {
-        List<SourceInterface> list = DatabaseStringCreator.getAllSourcesFromDatabase();
+//        List<SourceInterface> list = SourceDatabaseImpl.getAllSourcesFromDatabase();
 //        Quote quote = new Quote(1, "source text", 1);
 //        Quote quote1 = new Quote(2, "source1 text", 1);
 //        Quote quote2 = new Quote(3, "source2 text", 1);
@@ -56,9 +54,9 @@ public class MainApp extends Application {
 //        source.addQuote(quote1);
 //        source.addQuote(quote2);
 //        source.addQuote(quote3);
-        SourceViewInterface sourceView = SourceConverter.convertSourceToSourceView(source);
+        SourceViewInterface sourceView = SourceUtillities.convertSourceToSourceView(source);
         System.out.println(sourceView);
-        SourceInterface sourceConvert = SourceConverter.convertSourceViewToSource(sourceView);
+        SourceInterface sourceConvert = SourceUtillities.convertSourceViewToSource(sourceView);
         System.out.println(sourceConvert);
 
         ArticleInterface article = (ArticleInterface) SourceFactory.produceSource(SourceFactory.ARTICLE);
@@ -68,7 +66,7 @@ public class MainApp extends Application {
         article.setTitle("article title");
         article.setAuthor("article author");
         article.setYear("article year");
-        ArticleViewInterface articleView = (ArticleViewInterface) SourceConverter.convertSourceToSourceView(article);
+        ArticleViewInterface articleView = (ArticleViewInterface) SourceUtillities.convertSourceToSourceView(article);
         System.out.println(articleView);
 
         BookInterface book = (BookInterface) SourceFactory.produceSource(SourceFactory.BOOK);
@@ -80,7 +78,7 @@ public class MainApp extends Application {
         book.setTitle("book title");
         book.setAuthor("book author");
         book.setYear("book year");
-        BookViewInterface bookView = (BookViewInterface) SourceConverter.convertSourceToSourceView(book);
+        BookViewInterface bookView = (BookViewInterface) SourceUtillities.convertSourceToSourceView(book);
         System.out.println(bookView);
 
         OnlineSourceInterface onlineSource = (OnlineSourceInterface) SourceFactory.produceSource(SourceFactory.ONLINE_SOURCE);
@@ -90,7 +88,7 @@ public class MainApp extends Application {
         onlineSource.setId(44);
         onlineSource.setTitle("online title");
         onlineSource.setYear("online year");
-        OnlinesourceViewInterface onlinesourceView = (OnlinesourceViewInterface) SourceConverter.convertSourceToSourceView(onlineSource);
+        OnlinesourceViewInterface onlinesourceView = (OnlinesourceViewInterface) SourceUtillities.convertSourceToSourceView(onlineSource);
         System.out.println(onlinesourceView);
 
         OthersInterface others = (OthersInterface) SourceFactory.produceSource(SourceFactory.OTHERS);
@@ -100,7 +98,7 @@ public class MainApp extends Application {
         others.setId(45);
         others.setTitle("other title");
         others.setYear("other year");
-        OthersViewInterface othersView = (OthersViewInterface) SourceConverter.convertSourceToSourceView(others);
+        OthersViewInterface othersView = (OthersViewInterface) SourceUtillities.convertSourceToSourceView(others);
         System.out.println(othersView);
 
 //        Quote quote4 = new Quote(12, "hier sollte geupdated werde", 24);
@@ -119,15 +117,15 @@ public class MainApp extends Application {
         scientificWork.setYear("work year33");
 //        scientificWork.addQuote(quote4);
 //        scientificWork.addQuote(quote5);
-        ScientificWorkViewInterface scientificWorkView = (ScientificWorkViewInterface) SourceConverter.convertSourceToSourceView(scientificWork);
+        ScientificWorkViewInterface scientificWorkView = (ScientificWorkViewInterface) SourceUtillities.convertSourceToSourceView(scientificWork);
         System.out.println(scientificWorkView);
 
-        DatabaseStringCreator.insertOrUpdateSource(source);
-        DatabaseStringCreator.insertOrUpdateSource(article);
-        DatabaseStringCreator.insertOrUpdateSource(book);
-        DatabaseStringCreator.insertOrUpdateSource(onlineSource);
-        DatabaseStringCreator.insertOrUpdateSource(others);
-        DatabaseStringCreator.insertOrUpdateSource(scientificWork);
+        SourceDatabaseImpl.insertOrUpdateSource(source);
+        SourceDatabaseImpl.insertOrUpdateSource(article);
+        SourceDatabaseImpl.insertOrUpdateSource(book);
+        SourceDatabaseImpl.insertOrUpdateSource(onlineSource);
+        SourceDatabaseImpl.insertOrUpdateSource(others);
+        SourceDatabaseImpl.insertOrUpdateSource(scientificWork);
     }
 
     /**

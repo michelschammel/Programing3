@@ -6,7 +6,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.chart.*;
-import dao.Interfaces.SourceDatabaseInterface;
 import dao.SourceDatabaseImpl;
 import enums.DatabaseTables;
 
@@ -24,7 +23,6 @@ public class PieChartController {
 	private ObservableList<PieChart.Data> pieChartData;
 	@FXML
 	private PieChart pieChart;
-    private SourceDatabaseInterface database = new SourceDatabaseImpl();
 
 	@FXML
 	private void setNumberOfDifferentSources() {
@@ -32,7 +30,7 @@ public class PieChartController {
 
 		//query database
 		for (DatabaseTables type : DatabaseTables.values()) {
-			pieZahlen.add(database.getNumberOfSources(type.name()));
+			pieZahlen.add(SourceDatabaseImpl.getNumberOfSources(type.name()));
 		}
 
 		pieChartData = FXCollections.observableArrayList(
@@ -51,10 +49,10 @@ public class PieChartController {
 	@FXML
 	private void setStats3() {
 		//query data
-		List<String> authorList = database.getAuthors();
+		List<String> authorList = SourceDatabaseImpl.getAuthors();
 		List<Integer> numberOfSources = new ArrayList<>();
 		for (String author : authorList) {
-			numberOfSources.add(database.getNumberOfSourcesFromAuthor(author));
+			numberOfSources.add(SourceDatabaseImpl.getNumberOfSourcesFromAuthor(author));
 		}
 
 		//write data to piechart
@@ -70,7 +68,7 @@ public class PieChartController {
 	private void setStats4() {
 	    SourceTime sourceTime = new SourceTime();
 
-		List<Integer> releaseDateList = database.getSourceRealeaseDates();
+		List<Integer> releaseDateList = SourceDatabaseImpl.getSourceRealeaseDates();
 		for (int realeaseDate : releaseDateList) {
 			if (realeaseDate < 1900) {
 				sourceTime.beforeTwentiethCentury++;

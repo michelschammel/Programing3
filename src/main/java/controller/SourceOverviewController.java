@@ -9,15 +9,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
-import dao.Interfaces.SourceDatabaseInterface;
-import javafx.scene.layout.AnchorPane;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
-import main_app.MainApp;
-import dao.SourceDatabaseImpl;
-import model.Quelle;
-import model.Zitat;
-import model.Tag;
 import utilities.StringUtilities;
 import viewmodels.interfaces.QuoteViewInterface;
 import viewmodels.interfaces.SourceViewInterface;
@@ -62,11 +54,8 @@ public class SourceOverviewController {
 
     // Reference to the main application.
     //private MainApp mainApp;
-//    private ObservableList<Quelle> tmpList;
     private ObservableList<SourceViewInterface> tmpList;
-//    private ObservableList<Quelle> searchQuelleList;
     private ObservableList<SourceViewInterface> searchSourceList;
-//    private ObservableList<Quelle> sourceList;
     private ObservableList<SourceViewInterface> sourceList;
     private Stage stage;
 
@@ -75,7 +64,7 @@ public class SourceOverviewController {
      * after the fxml file has been loaded.
      */
     @FXML
-    private void initialize() {
+    public void initialize() {
         //initialize all lists that are used
         initializeSourceList();
         // Initialize the source table with the two columns.
@@ -137,14 +126,9 @@ public class SourceOverviewController {
         if (source != null) {
             quoteTable.setEditable(true);
             // Fill the labels with info from the person object.
-//            titelLabel.setText(source.getTitel());
             titelLabel.setText(source.getTitle());
-//            autorLabel.setText(source.getAutor());
             autorLabel.setText(source.getAuthor());
-            //jahrLabel.setTitel(quelle.getJahr());
-
             //Add observable list date to zitat table for every quelle.
-//            zitatTable.setItems(source.getZitatList());
             quoteTable.setItems(source.getQuoteList());
             //Iterate over the quelle list because every quelle can have multiple zitate
             //Add all tags to a new observable
@@ -225,18 +209,18 @@ public class SourceOverviewController {
 //            controller.setDialogStage(dialogStage);
 //            controller.setQuelle(selectedSource);
 //
-//            ObservableList<Zitat> quoteList = FXCollections.observableArrayList();
+//            ObservableList<QuoteViewInterface> quoteList = FXCollections.observableArrayList();
 //
 //            sourceList.forEach( source ->
-//                quoteList.addAll(source.getZitatList())
+//                quoteList.addAll(source.getQuoteList())
 //            );
 //
 //            controller.setZitatList(quoteList);
 //
 //            dialogStage.showAndWait();
 //            sourceList.remove(selectedSource);
-//            Quelle quelle = controller.getUpdatedSource();
-//            sourceList.add(quelle);
+//            SourceViewInterface source = controller.getUpdatedSource();
+//            sourceList.add(source);
 //            SourceDatabaseInterface quellenService = new SourceDatabaseImpl();
 //            quellenService.updateQuery(quelle);
 //        } catch (IOException e) {
@@ -339,9 +323,8 @@ public class SourceOverviewController {
         this.sourceTable.setItems(this.sourceList);
     }
 
-    public void setStage(Stage stage) {
+    void setStage(Stage stage) {
         this.stage = stage;
     }
 
 }
-

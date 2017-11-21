@@ -1,10 +1,10 @@
 package Services;
 
+import dao.SourceDatabaseImpl;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import models.interfaces.SourceInterface;
-import utilities.DatabaseStringCreator;
-import utilities.SourceConverter;
+import utilities.SourceUtillities;
 import viewmodels.interfaces.SourceViewInterface;
 import java.util.List;
 
@@ -15,17 +15,17 @@ import java.util.List;
 public abstract class SourceService {
 
     public static ObservableList<SourceViewInterface> getSourcesFromDatabase() {
-        List<SourceInterface> sourceList = DatabaseStringCreator.getAllSourcesFromDatabase();
+        List<SourceInterface> sourceList = SourceDatabaseImpl.getAllSourcesFromDatabase();
         ObservableList<SourceViewInterface> sourceViewList = FXCollections.observableArrayList();
         for (SourceInterface source : sourceList) {
-            SourceViewInterface sourceView = SourceConverter.convertSourceToSourceView(source);
+            SourceViewInterface sourceView = SourceUtillities.convertSourceToSourceView(source);
             sourceViewList.add(sourceView);
         }
         return sourceViewList;
     }
 
     public static void deleteSource(SourceViewInterface sourceView) {
-        SourceInterface source = SourceConverter.convertSourceViewToSource(sourceView);
-        DatabaseStringCreator.deleteSource(source);
+        SourceInterface source = SourceUtillities.convertSourceViewToSource(sourceView);
+        SourceDatabaseImpl.deleteSource(source);
     }
 }

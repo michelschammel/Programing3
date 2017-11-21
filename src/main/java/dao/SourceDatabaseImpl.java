@@ -1,13 +1,17 @@
 package dao;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import dao.Interfaces.SourceDatabaseInterface;
-import model.*;
+import factories.QuoteFactory;
+import factories.SourceFactory;
+import models.interfaces.ObjectTemplateInterface;
+import models.interfaces.QuoteInterface;
+import models.interfaces.SourceInterface;
+import models.interfaces.TagInterface;
+import utilities.SourceUtillities;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 
 import static dao.constants.SourceDatabaseImplConstants.*;
 import static dao.constants.DB_Constants.*;
@@ -15,552 +19,9 @@ import static dao.constants.DB_Constants.*;
 /**
  * @author Cedric Schreiner
  */
-public class SourceDatabaseImpl implements SourceDatabaseInterface {
-    /**
-     * get a connection to the DB
-     * @return connection
-     */
-    private Connection getConnection() {
-        ConnectionKlasse con = new ConnectionKlasse();
+public abstract class SourceDatabaseImpl  {
 
-        return con.getConnection();
-    }
-
-    /**
-     * get All Quellen from the DB
-     * @return all source as ObservableList
-     */
-    public ObservableList<Quelle> getQuellenFromDataBase() {
-        ResultSet rsQuellen;
-
-        try (Connection connection = this.getConnection()){
-            //Create a new Observablelist
-            ObservableList<Quelle> quelleList = FXCollections.observableArrayList();
-
-            //Step 1: Get all different types of source from the DB
-            //First get all "anderes"
-            Statement statement = connection.createStatement();
-            rsQuellen = statement.executeQuery(S_GET_ANDERES);
-            Anderes anderes;
-            while (rsQuellen.next()) {
-                anderes = new Anderes(rsQuellen.getInt("quellenId"),
-                        rsQuellen.getString("titel"),
-                        rsQuellen.getString("autor"),
-                        rsQuellen.getString("jahr"),
-                        rsQuellen.getString("herausgeber"),
-                        rsQuellen.getString("auflage"),
-                        rsQuellen.getString("ausgabe"));
-                quelleList.add(anderes);
-            }
-
-            //get all "artikel"
-            rsQuellen = statement.executeQuery(S_GET_ARTIKEl);
-            Artikel artikel;
-            while (rsQuellen.next()) {
-                artikel = new Artikel(rsQuellen.getInt("quellenId"),
-                        rsQuellen.getString("titel"),
-                        rsQuellen.getString("autor"),
-                        rsQuellen.getString("jahr"),
-                        rsQuellen.getString("ausgabe"),
-                        rsQuellen.getString("magazin"));
-                quelleList.add(artikel);
-            }
-
-            //get all "buecher"
-            rsQuellen = statement.executeQuery(S_GET_BUECHER);
-            Buch buch;
-            while (rsQuellen.next()) {
-                buch = new Buch(rsQuellen.getInt("quellenId"),
-                        rsQuellen.getString("titel"),
-                        rsQuellen.getString("autor"),
-                        rsQuellen.getString("jahr"),
-                        rsQuellen.getString("Verlag"),
-                        rsQuellen.getString("Auflage"),
-                        rsQuellen.getString("Monat"),
-                        rsQuellen.getString("ISBN"));
-                quelleList.add(buch);
-            }
-
-            //get all "onlinequellen"
-            rsQuellen = statement.executeQuery(S_GET_ONLINEQUELLEN);
-            Onlinequelle onlinequelle;
-            while (rsQuellen.next()) {
-                onlinequelle = new Onlinequelle(rsQuellen.getInt("quellenId"),
-                        rsQuellen.getString("titel"),
-                        rsQuellen.getString("autor"),
-                        rsQuellen.getString("jahr"),
-                        rsQuellen.getString("abrufdatum"),
-                        rsQuellen.getString("url"));
-                quelleList.add(onlinequelle);
-            }
-
-            //get all "wissenschaftliche arbeiten"
-            rsQuellen = statement.executeQuery(S_GET_WISSENSCHAFTLICHE_ARBEITEN);
-            WissenschaftlicheArbeit wissenschaftlicheArbeit;
-            while (rsQuellen.next()) {
-                wissenschaftlicheArbeit = new WissenschaftlicheArbeit(rsQuellen.getInt("quellenId"),
-                        rsQuellen.getString("titel"),
-                        rsQuellen.getString("autor"),
-                        rsQuellen.getString("jahr"),
-                        rsQuellen.getString("herausgeber"),
-                        rsQuellen.getString("hochschule"));
-                quelleList.add(wissenschaftlicheArbeit);
-            }
-
-            //get the leftover quelle
-            rsQuellen = statement.executeQuery(S_GET_QUELLEN);
-            Quelle LeftOverquelle;
-            while (rsQuellen.next()) {
-                LeftOverquelle = new Quelle(rsQuellen.getInt("quellenId"),
-                        rsQuellen.getString("titel"),
-                        rsQuellen.getString("autor"),
-                        rsQuellen.getString("jahr"));
-                quelleList.add(LeftOverquelle);
-            }
-
-            //Step 2: Get all Zitate of all source
-            quelleList.forEach( quelle -> {
-                final ResultSet rsZitate;
-                Zitat zitat;
-                try {
-                    PreparedStatement preparedStatement = connection.prepareStatement(PS_GET_ZITATTE);
-                    preparedStatement.setInt(1, quelle.getId());
-                    rsZitate = preparedStatement.executeQuery();
-                    while (rsZitate.next()) {
-                        zitat = new Zitat(rsZitate.getString("text"),
-                                rsZitate.getInt("quellenId"),
-                                rsZitate.getInt("zitatId"));
-                        quelle.addZitat(zitat);
-                    }
-                } catch (SQLException e) {
-                    System.out.println(e.getMessage());
-                }
-            });
-
-            //Step 3: Get all Tags for a Zitat
-            quelleList.forEach( quelle -> quelle.getZitatList().forEach( zitat -> {
-                final ResultSet rsTags;
-                Tag tag;
-                try {
-                    PreparedStatement preparedStatement = connection.prepareStatement(PS_GET_TAGS);
-                    preparedStatement.setInt(1, zitat.getZitatId());
-                    rsTags = preparedStatement.executeQuery();
-                    while (rsTags.next()) {
-                        tag = new Tag(rsTags.getString("name"),
-                                rsTags.getInt("tagId"));
-                        zitat.addTag(tag);
-                    }
-                } catch (SQLException e) {
-                    System.out.println(e.getMessage());
-                }
-            }));
-
-            return quelleList;
-
-        } catch (SQLException e) {
-            return null;
-        }
-    }
-
-    /**
-     * gets called to update a quelle in the DB
-     * this method checks what instance of quelle it is and updates it.
-     * it even checks what Zitate/Tags are still in the DB but are not anymore in quelle and deletes them.
-     * @param quelle quelle to update
-     */
-    public void updateQuery(Quelle quelle) {
-        if (quelle.getId() != 0) {
-            try (Connection connection = this.getConnection()) {
-                try {
-                    //Preparestatemt for the update
-                    PreparedStatement pStatementQuelle = connection.prepareStatement(PS_UPDATA_QUELLE);
-                    //Deactivate autoCommit, without this we can commit both statements at the same time and if a error occurs
-                    //we can just do a rollback
-                    connection.setAutoCommit(false);
-                    //Every quelle is a instance of quelle so we can update it without problem
-                    pStatementQuelle.setString(1, quelle.getAutor());
-                    pStatementQuelle.setString(2, quelle.getTitel());
-                    pStatementQuelle.setString(3, quelle.getJahr());
-                    pStatementQuelle.setInt(4, quelle.getId());
-                    pStatementQuelle.executeUpdate();
-
-                    //Now we check what instance it is
-                    //For every instance we need a different update statement
-                    if (quelle instanceof Anderes) {
-                        //Preparestatemt for the update
-                        PreparedStatement pStatementAnderes = connection.prepareStatement(PS_UPDATE_ANDERES);
-
-                        //Cast quelle into anderes
-                        Anderes anderes = (Anderes) quelle;
-
-                        //fill statement with values
-                        pStatementAnderes.setString(1, anderes.getAuflage());
-                        pStatementAnderes.setString(2, anderes.getHerausgeber());
-                        pStatementAnderes.setString(3, anderes.getAusgabe());
-                        pStatementAnderes.setInt(4, anderes.getId());
-                        pStatementAnderes.executeUpdate();
-
-                    } else if (quelle instanceof Artikel) {
-                        //Preparestatemt for the update
-                        PreparedStatement pStatementArtikel = connection.prepareStatement(PS_UPDATE_ARTIKEL);
-
-                        //Cast quelle into artikel
-                        Artikel artikel = (Artikel) quelle;
-
-                        //fill statement with values
-                        pStatementArtikel.setString(1, artikel.getAusgabe());
-                        pStatementArtikel.setString(2, artikel.getMagazin());
-                        pStatementArtikel.setInt(3, artikel.getId());
-                        pStatementArtikel.executeUpdate();
-
-                    } else if (quelle instanceof Buch) {
-                        //Preparestatemt for the update
-                        PreparedStatement pStatementBuch = connection.prepareStatement(PS_UPDATE_BUCH);
-
-                        //Cast quelle into buch
-                        Buch buch = (Buch) quelle;
-
-                        //fill statement with values
-                        pStatementBuch.setString(1, buch.getIsbn());
-                        pStatementBuch.setString(2, buch.getHerausgeber());
-                        pStatementBuch.setString(3, buch.getAuflage());
-                        pStatementBuch.setString(4, buch.getMonat());
-                        pStatementBuch.setInt(5, buch.getId());
-                        pStatementBuch.executeUpdate();
-
-                    } else if (quelle instanceof Onlinequelle) {
-                        //Preparestatemt for the update
-                        PreparedStatement pStatementOnlineQuelle = connection.prepareStatement(PS_UPDATE_ONLINEQUELLE);
-
-                        //Cast quelle into onlinequelle
-                        Onlinequelle onlinequelle = (Onlinequelle) quelle;
-
-                        //fill statement with values
-                        pStatementOnlineQuelle.setString(1, onlinequelle.getUrl());
-                        pStatementOnlineQuelle.setString(2, onlinequelle.getAufrufdatum());
-                        pStatementOnlineQuelle.setInt(3, onlinequelle.getId());
-                        pStatementOnlineQuelle.executeUpdate();
-
-                    } else if (quelle instanceof WissenschaftlicheArbeit) {
-                        //Preparestatemt for the update
-                        PreparedStatement pStatementWissenschaftlicheArbeit = connection.prepareStatement(PS_UPDATE_WISSENSCHAFTLICHEARBEIT);
-
-                        //Cast quelle into wissenschaftlicheArbeit
-                        WissenschaftlicheArbeit wissenschaftlicheArbeit = (WissenschaftlicheArbeit) quelle;
-
-                        //fill statement with values
-                        pStatementWissenschaftlicheArbeit.setString(1, wissenschaftlicheArbeit.getEinrichtung());
-                        pStatementWissenschaftlicheArbeit.setString(2, wissenschaftlicheArbeit.getHerausgeber());
-                        pStatementWissenschaftlicheArbeit.setInt(3, wissenschaftlicheArbeit.getId());
-                        pStatementWissenschaftlicheArbeit.executeUpdate();
-                    }
-
-                    //We just updated the Quelle without zitate/tags
-                    //Update zitate
-                    quelle.getZitatList().forEach(zitat -> {
-                        ResultSet rsZitatId;
-                        try {
-                            if (zitat.getZitatId() != 0) {
-                                //Zitat exists in the DB
-                                PreparedStatement preparedStatementA = connection.prepareStatement(PS_UPDATE_ZITAT);
-                                preparedStatementA.setString(1, zitat.getText());
-                                preparedStatementA.setInt(2, zitat.getZitatId());
-                                preparedStatementA.executeUpdate();
-                            } else {
-                                //Insert Zitat into DB
-                                PreparedStatement preparedStatemenB = connection.prepareStatement(PS_INSERT_ZITAT);
-                                preparedStatemenB.setString(1, zitat.getText());
-                                preparedStatemenB.setInt(2, zitat.getQuellenId());
-                                preparedStatemenB.execute();
-                                //Get ZitatId
-                                Statement statement = connection.createStatement();
-                                rsZitatId = statement.executeQuery(PS_GET_LAST_INSERTED_ZITAT_ID);
-                                rsZitatId.next();
-                                zitat.setZitatId(rsZitatId.getInt("seq"));
-
-                            }
-                        } catch (SQLException e) {
-                            e.printStackTrace();
-                        }
-                    });
-
-                    //Update all Tags
-                    quelle.getZitatList().forEach(zitat -> zitat.getTagList().forEach(tag -> {
-
-                        ResultSet rsTagId;
-                        try {
-                            if (tag.getTagId() != 0) {
-                                //Tag exists in the DB
-                                System.out.println("Tag vorhanden und wird geupdated");
-                                PreparedStatement preparedStatement = connection.prepareStatement(PS_UPDATE_TAG);
-                                preparedStatement.setString(1, tag.getText());
-                                preparedStatement.setInt(2, tag.getTagId());
-                                preparedStatement.executeUpdate();
-                            } else {
-                                //Insert Tag into DB
-                                System.out.println("Tag wird neu eingefügt");
-                                PreparedStatement preparedStatement = connection.prepareStatement(PS_INSERT_TAG);
-                                preparedStatement.setString(1, tag.getText());
-                                preparedStatement.execute();
-
-                                //Get TagId
-                                Statement statement = connection.createStatement();
-                                rsTagId = statement.executeQuery(PS_GET_LAST_INSERTED_TAG_ID);
-                                //Has only 1 value
-                                rsTagId.next();
-
-                                PreparedStatement preparedStatementTag = connection.prepareStatement(PS_INSERT_TAG_ZITAT_CONNECTION);
-                                preparedStatementTag.setInt(1, zitat.getZitatId());
-                                preparedStatementTag.setInt(2, rsTagId.getInt("seq"));
-                                preparedStatementTag.execute();
-                                tag.setTagId(rsTagId.getInt("seq"));
-                            }
-                        } catch (SQLException e) {
-                            e.printStackTrace();
-                        }
-                    }));
-
-                    //Delete all tags in the db that were removed from a zitat
-                    quelle.getZitatList().forEach(zitat -> {
-                        try {
-                            ArrayList<Integer> arrayList = new ArrayList<>();
-                            ResultSet rsTagIds;
-                            //Get all tagIds that are used in this zitat
-                            PreparedStatement preparedStatementGetTagIds = connection.prepareStatement(PS_GET_TAG_ID_OF_ZITAT);
-                            preparedStatementGetTagIds.setInt(1, zitat.getZitatId());
-                            rsTagIds = preparedStatementGetTagIds.executeQuery();
-                            while (rsTagIds.next()) {
-                                arrayList.add(rsTagIds.getInt("tagId"));
-                            }
-                            //check if they are still in use
-                            zitat.getTagList().forEach(tag -> {
-                                for (int i = 0; i < arrayList.size(); i++) {
-                                    if (arrayList.get(i) == tag.getTagId()) {
-                                        //Tag is still used
-                                        arrayList.remove(i);
-                                    }
-                                }
-                            });
-                            //Arraylist contains all  tag ids that are not used anymore
-                            //Delete tag and connection to zitat from DB
-                            arrayList.forEach(tagId -> {
-                                try {
-                                    PreparedStatement preparedStatementDeleteTagZitatConnection = connection.prepareStatement(PS_DELETE_TAG_ZITAT_CONNECTION_WITH_TAG_ID);
-                                    preparedStatementDeleteTagZitatConnection.setInt(1, tagId);
-                                    preparedStatementDeleteTagZitatConnection.execute();
-                                    PreparedStatement preparedStatementDeleteTag = connection.prepareStatement(PS_DELETE_TAG);
-                                    preparedStatementDeleteTag.setInt(1, tagId);
-                                    preparedStatementDeleteTag.execute();
-                                } catch (SQLException e) {
-                                    e.printStackTrace();
-                                }
-                            });
-
-                        } catch (SQLException e) {
-                            e.printStackTrace();
-                        }
-                    });
-
-
-                    //Delete zitate that were removed from the quelle
-                    //Get all zitate
-                    ResultSet rsZitate;
-                    PreparedStatement preparedStatementGetZitate = connection.prepareStatement(PS_GET_ZITATTE);
-                    preparedStatementGetZitate.setInt(1, quelle.getId());
-                    rsZitate = preparedStatementGetZitate.executeQuery();
-                    ArrayList<Integer> arrayList = new ArrayList<>();
-                    while (rsZitate.next()) {
-                        arrayList.add(rsZitate.getInt("zitatId"));
-                    }
-
-                    quelle.getZitatList().forEach(zitat -> {
-                        for (int i = 0; i < arrayList.size(); i++) {
-                            if (arrayList.get(i) == zitat.getZitatId()) {
-                                //Zitat is still available in quelle
-                                arrayList.remove(i);
-                            }
-                        }
-                    });
-
-                    //arrayList contains all zitatIds that we need to delete
-                    arrayList.forEach(zitatId -> {
-                        ResultSet rsTagIdsLambda;
-                        try {
-                            //First delete zitat
-                            PreparedStatement preparedStatementDeleteZitat = connection.prepareStatement(PS_DELETE_ZITAT);
-                            preparedStatementDeleteZitat.setInt(1, zitatId);
-                            preparedStatementDeleteZitat.execute();
-
-                            //get all tagIds that we need to delete
-                            PreparedStatement preparedStatementGetTagId = connection.prepareStatement(PS_GET_TAG_ID_CONNECTION);
-                            preparedStatementGetTagId.setInt(1, zitatId);
-                            rsTagIdsLambda = preparedStatementGetTagId.executeQuery();
-                            while (rsTagIdsLambda.next()) {
-                                PreparedStatement preparedStatementDeleteTags = connection.prepareStatement(PS_DELETE_TAG);
-                                preparedStatementDeleteTags.setInt(1, rsTagIdsLambda.getInt("tagId"));
-                                preparedStatementDeleteTags.execute();
-                            }
-
-                            //Delete connection between tag and zitat
-                            PreparedStatement preparedStatementDeleteConnection = connection.prepareStatement(PS_DELETE_TAG_ZITAT_CONNECTION_WITH_ZITAT_ID);
-                            preparedStatementDeleteConnection.setInt(1, zitatId);
-                            preparedStatementDeleteConnection.execute();
-                        } catch (SQLException error) {
-                            error.printStackTrace();
-                        }
-                    });
-
-                    //Commit both statements
-                    connection.commit();
-                    //turn autocommit on
-                    connection.setAutoCommit(true);
-                } catch (SQLException e) {
-                    try {
-                        connection.rollback();
-                    } catch (SQLException error) {
-                        error.printStackTrace();
-                    }
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        } else {
-            insertNewQuelle(quelle);
-        }
-    }
-
-    /**
-     * Insert a new Quelle
-     * @param quelle
-     * @return
-     */
-    public int insertNewQuelle(Quelle quelle) {
-        try (Connection connection = this.getConnection()){
-            connection.setAutoCommit(false);
-            ResultSet rsQuellenID;
-            //Insert the standard attributes of Quelle (Author, Titel, Year)
-            PreparedStatement preparedStatementInsertQuelle = connection.prepareStatement(PS_INSERT_QUELLE);
-            preparedStatementInsertQuelle.setString(1, quelle.getAutor());
-            preparedStatementInsertQuelle.setString(2, quelle.getTitel());
-            preparedStatementInsertQuelle.setString(3, quelle.getJahr());
-            preparedStatementInsertQuelle.execute();
-            Statement statementGetQuellenId = connection.createStatement();
-            rsQuellenID = statementGetQuellenId.executeQuery(PS_GET_LAST_INSERTED_QUELLEN_ID);
-            rsQuellenID.next();
-            quelle.setId(rsQuellenID.getInt("seq"));
-
-            //Check what instance quelle is an insert the leftover attributes
-            if (quelle instanceof Anderes) {
-                PreparedStatement preparedStatementInsertAnderes = connection.prepareStatement(PS_INSERT_ANDERES);
-                Anderes anderes = (Anderes)quelle;
-                preparedStatementInsertAnderes.setInt(1, anderes.getId());
-                preparedStatementInsertAnderes.setString(2, anderes.getAuflage());
-                preparedStatementInsertAnderes.setString(3, anderes.getHerausgeber());
-                preparedStatementInsertAnderes.setString(4, anderes.getAusgabe());
-                preparedStatementInsertAnderes.execute();
-
-            } else if (quelle instanceof  Artikel) {
-                PreparedStatement preparedStatementInsertArtikel = connection.prepareStatement(PS_INSERT_ARTIKEL);
-                Artikel artikel = (Artikel)quelle;
-                preparedStatementInsertArtikel.setInt(1, artikel.getId());
-                preparedStatementInsertArtikel.setString(2, artikel.getAusgabe());
-                preparedStatementInsertArtikel.setString(3, artikel.getMagazin());
-                preparedStatementInsertArtikel.execute();
-
-            } else if (quelle instanceof Buch) {
-                PreparedStatement preparedStatementInsertBuch = connection.prepareStatement(PS_INSERT_BUCH);
-                Buch buch = (Buch)quelle;
-                preparedStatementInsertBuch.setInt(1, buch.getId());
-                preparedStatementInsertBuch.setString(2, buch.getIsbn());
-                preparedStatementInsertBuch.setString(3, buch.getHerausgeber());
-                preparedStatementInsertBuch.setString(4, buch.getAuflage());
-                preparedStatementInsertBuch.setString(5, buch.getMonat());
-                preparedStatementInsertBuch.execute();
-
-            } else if (quelle instanceof  Onlinequelle) {
-                PreparedStatement preparedStatementInsertOnlinequelle = connection.prepareStatement(PS_INSERT_ONLINEQUELLE);
-                Onlinequelle onlinequelle = (Onlinequelle)quelle;
-                preparedStatementInsertOnlinequelle.setInt(1, onlinequelle.getId());
-                preparedStatementInsertOnlinequelle.setString(2, onlinequelle.getUrl());
-                preparedStatementInsertOnlinequelle.setString(3, onlinequelle.getAufrufdatum());
-                preparedStatementInsertOnlinequelle.execute();
-
-            } else if (quelle instanceof WissenschaftlicheArbeit) {
-                PreparedStatement preparedStatementInsertWArbeit = connection.prepareStatement(PS_INSERT_WISSENSCHAFTLICHE_ARBEIT);
-                WissenschaftlicheArbeit wissenschaftlicheArbeit = (WissenschaftlicheArbeit)quelle;
-                preparedStatementInsertWArbeit.setInt(1, wissenschaftlicheArbeit.getId());
-                preparedStatementInsertWArbeit.setString(2, wissenschaftlicheArbeit.getEinrichtung());
-                preparedStatementInsertWArbeit.setString(3, wissenschaftlicheArbeit.getHerausgeber());
-                preparedStatementInsertWArbeit.execute();
-            }
-            connection.commit();
-            connection.setAutoCommit(true);
-
-            quelle.getZitatList().forEach( zitat ->
-                zitat.setQuellenId(quelle.getId())
-            );
-            //Update function inserts all zitate and tags
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        //Just send the quelle to the update function
-        //this Method then inserts Zitate and Tags
-        this.updateQuery(quelle);
-        return quelle.getId();
-    }
-
-    /**
-     * Delete quelle from DB
-     * @param quelle quelle to delete
-     */
-    public void deleteQuelle(Quelle quelle) {
-        try (Connection connection = this.getConnection()) {
-            //delete zitatlist from quelle;
-            quelle.getZitatList().clear();
-            this.updateQuery(quelle);
-
-            //Delete quelle without zitat
-            connection.setAutoCommit(false);
-            PreparedStatement preparedStatementDeleteQuelle = connection.prepareStatement(PS_DELETE_QUELLE);
-            preparedStatementDeleteQuelle.setInt(1, quelle.getId());
-            preparedStatementDeleteQuelle.execute();
-
-            if (quelle instanceof Anderes) {
-                PreparedStatement preparedStatementDeleteAnderes = connection.prepareStatement(PS_DELETE_ANDERES);
-                preparedStatementDeleteAnderes.setInt(1, quelle.getId());
-                preparedStatementDeleteAnderes.execute();
-
-            } else if (quelle instanceof Artikel) {
-                PreparedStatement preparedStatementDeleteArtikel = connection.prepareStatement(PS_DELETE_ARTIKEL);
-                preparedStatementDeleteArtikel.setInt(1, quelle.getId());
-                preparedStatementDeleteArtikel.execute();
-
-            } else if (quelle instanceof Buch) {
-                PreparedStatement preparedStatementDeleteBuch = connection.prepareStatement(PS_DELETE_BUCH);
-                preparedStatementDeleteBuch.setInt(1, quelle.getId());
-                preparedStatementDeleteBuch.execute();
-
-            } else if (quelle instanceof Onlinequelle) {
-                PreparedStatement preparedStatementDeleteOnlineQuelle = connection.prepareStatement(PS_DELETE_ONLINEQUELLE);
-                preparedStatementDeleteOnlineQuelle.setInt(1, quelle.getId());
-                preparedStatementDeleteOnlineQuelle.execute();
-
-            } else if (quelle instanceof WissenschaftlicheArbeit) {
-                PreparedStatement preparedStatementWissenschaftlichArbeit = connection.prepareStatement(PS_DELETE_WARBEIT);
-                preparedStatementWissenschaftlichArbeit.setInt(1, quelle.getId());
-                preparedStatementWissenschaftlichArbeit.execute();
-
-            }
-            connection.commit();
-            connection.setAutoCommit(true);
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public int getNumberOfSources(String type) {
+    public static int getNumberOfSources(String type) {
         int typeCount = 0;
         try (Connection connection = getConnection(); Statement statement = connection.createStatement()){
             ResultSet rs;
@@ -575,7 +36,7 @@ public class SourceDatabaseImpl implements SourceDatabaseInterface {
         return typeCount;
     }
 
-    public List<String> getAuthors() {
+    public static List<String> getAuthors() {
         List<String> authorList = new ArrayList<>();
         try (Connection connection = getConnection(); Statement statement = connection.createStatement()) {
             ResultSet rs;
@@ -591,7 +52,7 @@ public class SourceDatabaseImpl implements SourceDatabaseInterface {
         return authorList;
     }
 
-    public int getNumberOfSourcesFromAuthor(String author) {
+    public static int getNumberOfSourcesFromAuthor(String author) {
         int numberOfSources = 0;
         try (Connection connection = getConnection(); PreparedStatement statement = connection.prepareStatement(PIECHART_STAT_4)) {
             ResultSet rs;
@@ -607,7 +68,7 @@ public class SourceDatabaseImpl implements SourceDatabaseInterface {
         return numberOfSources;
     }
 
-    public List<Integer> getSourceRealeaseDates() {
+    public static List<Integer> getSourceRealeaseDates() {
         List<Integer> releaseDateList = new ArrayList<>();
 
         try(Connection connection = getConnection(); Statement statement = connection.createStatement()) {
@@ -623,5 +84,307 @@ public class SourceDatabaseImpl implements SourceDatabaseInterface {
         }
 
         return releaseDateList;
+    }
+
+    private static final String INSERT_BASE_SOURCE = "INSERT INTO Source(title, year, author) VALUES ('%s', '%s', '%s')";
+    private static final String GET_SOURCE_ID = "SELECT seq FROM sqlite_sequence WHERE name = 'Source'";
+    private static final String UPDATE_BASE_SOURCE = "UPDATE Source SET author = '%s', year = '%s', title = '%s' WHERE id = %d";
+
+    private static final String[] databaseTables = {"Source", "Article", "Book", "Onlinesource", "Others", "ScientificWork"};
+
+    public static void deleteSource(SourceInterface source) {
+        try (Connection connection = getConnection()) {
+            connection.setAutoCommit(false);
+            for (QuoteInterface quote : source.getQuoteList()) {
+                deleteQuote(quote, connection);
+            }
+
+            Statement statement = connection.createStatement();
+            statement.execute("DELETE FROM Source WHERE id = " + source.getId());
+
+            connection.commit();
+            connection.setAutoCommit(true);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static List<SourceInterface> getAllSourcesFromDatabase() {
+        List<SourceInterface> sourceList = new ArrayList<>();
+        try (Connection connection = getConnection()){
+            connection.setAutoCommit(false);
+            List<ObjectTemplateInterface> template;
+            SourceInterface source;
+            SourceInterface tmp;
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM Source");
+            while(resultSet.next()) {
+                tmp = SourceFactory.produceSource(SourceFactory.SOURCE);
+                if (tmp != null) {
+                    tmp.setId(resultSet.getInt("id"));
+                    tmp.setAuthor(resultSet.getString("author"));
+                    tmp.setTitle(resultSet.getString("title"));
+                    tmp.setYear(resultSet.getString("year"));
+                    tmp.setQuoteList(getSourceQuotes(tmp, connection));
+                    sourceList.add(tmp);
+                }
+            }
+
+            for (String tableName : databaseTables) {
+                if (!tableName.equals("Source")) {
+                    source = SourceFactory.produceSource(tableName);
+                    if (source!= null) {
+                        resultSet = statement.executeQuery("SELECT * FROM Source NATURAL JOIN " + tableName);
+                        template = SourceUtillities.getTemplate(source);
+                        SourceUtillities.removeBasicAttributes(template);
+
+                        while (resultSet.next()) {
+                            for (int i = 0; i < sourceList.size(); i++) {
+                                SourceInterface listSource = sourceList.get(i);
+                                if (listSource.getId() == resultSet.getInt("id")) {
+                                    source.setId(listSource.getId());
+                                    source.setAuthor(listSource.getAuthor());
+                                    source.setTitle(listSource.getAuthor());
+                                    source.setYear(listSource.getYear());
+                                    source.setQuoteList(listSource.getQuoteList());
+                                    for (ObjectTemplateInterface templateRow : template) {
+                                        SourceUtillities.setObjectValue(templateRow.getAttributeName(), source, resultSet.getObject(templateRow.getAttributeName()));
+                                    }
+                                    sourceList.set(i, source);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            connection.commit();
+            connection.setAutoCommit(true);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return sourceList;
+    }
+
+    private static List<QuoteInterface> getSourceQuotes(SourceInterface source,Connection connection) throws SQLException {
+        List<QuoteInterface> quoteList = new ArrayList<>();
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery("SELECT * FROM Quote WHERE sourceId = " + source.getId());
+        QuoteInterface quote;
+
+        while(resultSet.next()) {
+            quote = QuoteFactory.createQuote();
+            quote.setText(resultSet.getString("text"));
+            quote.setSourceId(source.getId());
+            quote.setId(resultSet.getInt("id"));
+            quote.setTagList(getQuoteTags(quote, connection));
+            quoteList.add(quote);
+        }
+
+        return quoteList;
+    }
+
+    private static List<TagInterface> getQuoteTags(QuoteInterface quote, Connection connection) throws SQLException{
+        List<TagInterface> tagList = new ArrayList<>();
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery("SELECT Tags.tagId, Tags.name FROM Tags NATURAL JOIN QuoteTags WHERE QuoteTags.quoteId = " + quote.getId());
+        TagInterface tag;
+
+        while(resultSet.next()) {
+            tag = new models.Tag();
+            tag.setText(resultSet.getString("name"));
+            tag.setId(resultSet.getInt("tagId"));
+            tagList.add(tag);
+        }
+
+        return tagList;
+    }
+
+    private static boolean isSourceExtension (SourceInterface source) {
+        Class sourceClass = source.getClass();
+        return !(sourceClass.getSimpleName().equals("Source"));
+    }
+
+    public static void insertOrUpdateSource(SourceInterface source){
+        boolean isSourceExtension = isSourceExtension(source);
+
+        try (Connection connection = getConnection()){
+            //If the id of the source is 0 it has to be inserted, otherwise just update the source
+            ResultSet resultSet;
+            Statement statement = connection.createStatement();
+            boolean updateSource;
+            connection.setAutoCommit(false);
+            if (source.getId() == 0) {
+                String insertSource = String.format(INSERT_BASE_SOURCE, source.getTitle(), source.getYear(), source.getAuthor());
+                statement.execute(insertSource);
+                Statement getSourceId = connection.createStatement();
+                resultSet = getSourceId.executeQuery(GET_SOURCE_ID);
+                resultSet.next();
+                source.setId(resultSet.getInt(1));
+                updateSource = false;
+            } else {
+                String updateSourceCommand = String.format(UPDATE_BASE_SOURCE, source.getAuthor(), source.getYear(), source.getTitle(), source.getId());
+                statement.executeUpdate(updateSourceCommand);
+                updateSource = true;
+            }
+
+            //if the source has some extra attributes they have to be inserted/updated too
+            if (isSourceExtension) {
+                statement.execute(updateSourceExtraAttributes(source, updateSource));
+            }
+            updateQuotes(source, connection);
+            connection.commit();
+            connection.setAutoCommit(true);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static String updateSourceExtraAttributes(SourceInterface source, boolean updateSource) throws SQLException{
+        List<ObjectTemplateInterface> template = SourceUtillities.getTemplate(source);
+        StringBuilder sourceCommand = new StringBuilder();
+
+        if (template != null) {
+            //remove all standard attributes from the template, because we already inserted/updated them
+            SourceUtillities.removeBasicAttributes(template);
+
+            if (updateSource) {
+                sourceCommand.append("UPDATE ").append(source.getClass().getSimpleName()).append(" SET ");
+                for (ObjectTemplateInterface templateRow : template) {
+                    sourceCommand.append(templateRow.getAttributeName()).append("='").append(templateRow.getAttributeValue()).append("',");
+                }
+                sourceCommand.deleteCharAt(sourceCommand.lastIndexOf(","));
+            } else {
+                sourceCommand.append("INSERT INTO ").append(source.getClass().getSimpleName()).append("(id,");
+                StringBuilder sourceValues = new StringBuilder(")VALUES(").append(source.getId()).append(',');
+                for (ObjectTemplateInterface templateRow : template) {
+                    sourceCommand.append(templateRow.getAttributeName()).append(',');
+                    sourceValues.append("'").append(templateRow.getAttributeValue()).append("',");
+                }
+                sourceValues.deleteCharAt(sourceValues.lastIndexOf(",")).append(')');
+                sourceCommand.deleteCharAt(sourceCommand.lastIndexOf(","));
+                sourceCommand.append(sourceValues);
+            }
+        }
+        return sourceCommand.toString();
+    }
+
+    private static void updateQuotes(SourceInterface source, Connection connection) throws SQLException{
+        Statement statement = connection.createStatement();
+        List<QuoteInterface> databaseQuotes = new ArrayList<>();
+        ResultSet resultSet;
+        QuoteInterface quote;
+
+        resultSet = statement.executeQuery("SELECT * FROM Quote WHERE sourceId = " + source.getId());
+        while (resultSet.next()) {
+            quote = QuoteFactory.createQuote();
+            quote.setId(resultSet.getInt("id"));
+            quote.setSourceId(resultSet.getInt("sourceId"));
+            quote.setText(resultSet.getString("text"));
+            databaseQuotes.add(quote);
+        }
+        boolean insertQuote;
+        for (QuoteInterface sourceQuote : source.getQuoteList()) {
+            insertQuote = true;
+            for (ListIterator<QuoteInterface> iterator = databaseQuotes.listIterator(); iterator.hasNext();) {
+                QuoteInterface databaseQuote = iterator.next();
+                if (databaseQuote.getId() == sourceQuote.getId()) {
+                    updateQuote(sourceQuote, connection);
+                    iterator.remove();
+                    insertQuote = false;
+                }
+            }
+            if (insertQuote) {
+                insertQuote(sourceQuote, connection);
+            }
+        }
+
+        for (QuoteInterface databaseQuote : databaseQuotes) {
+            deleteQuote(databaseQuote, connection);
+        }
+        //remove all quotes that are left in the databaseQuotes
+    }
+
+    private static void deleteQuote(QuoteInterface quote, Connection connection) throws SQLException{
+        Statement statement = connection.createStatement();
+        statement.execute("DELETE FROM Quote WHERE id = " + quote.getId());
+        updateTags(quote, connection);
+    }
+
+    private static void insertQuote(QuoteInterface quote, Connection connection) throws SQLException{
+        Statement statement = connection.createStatement();
+        statement.execute("INSERT INTO Quote (sourceId, text) VALUES (" + quote.getSourceId() + ",'" + quote.getText()+ "')");
+        updateTags(quote, connection);
+    }
+
+    private static void updateQuote(QuoteInterface quote, Connection connection) throws SQLException{
+        Statement statement = connection.createStatement();
+        statement.executeUpdate("UPDATE Quote SET text = '" + quote.getText() + "' WHERE id = " + quote.getId());
+        updateTags(quote, connection);
+    }
+
+    private static void updateTags(QuoteInterface quote, Connection connection) throws SQLException{
+        List<TagInterface> databaseTags = new ArrayList<>();
+        ResultSet resultSet;
+        Statement statement = connection.createStatement();
+        TagInterface tag;
+        resultSet  = statement.executeQuery("SELECT Tags.tagId, Tags.name FROM Tags NATURAL JOIN QuoteTags WHERE QuoteTags.quoteId = " + quote.getId());
+        while(resultSet.next()) {
+            tag = new models.Tag();
+            tag.setId(resultSet.getInt("tagId"));
+            tag.setText(resultSet.getString("name"));
+            databaseTags.add(tag);
+        }
+
+        boolean insertTag;
+        for (TagInterface quoteTag : quote.getTagList()) {
+            insertTag = true;
+            for (ListIterator<TagInterface> iterator = databaseTags.listIterator(); iterator.hasNext();) {
+                TagInterface databaseTag = iterator.next();
+                if (databaseTag.getId() == quoteTag.getId()) {
+                    updateTag(quoteTag, connection);
+                    iterator.remove();
+                    insertTag = false;
+                }
+            }
+            if (insertTag) {
+                insertTag(quoteTag, connection, quote);
+            }
+        }
+
+        for (TagInterface databaseTag : databaseTags) {
+            deleteTag(databaseTag, connection);
+        }
+    }
+
+    private static void deleteTag(TagInterface tag, Connection connection) throws  SQLException{
+        Statement statement = connection.createStatement();
+        statement.execute("DELETE FROM QuoteTags WHERE tagId = " + tag.getId());
+        statement.execute("DELETE FROM Tags WHERE tagId = " + tag.getId());
+    }
+
+    private static void insertTag(TagInterface tag, Connection connection, QuoteInterface quote) throws SQLException{
+        Statement statement = connection.createStatement();
+        ResultSet resultSet;
+        //insert the new tag
+        statement.execute("INSERT INTO Tags (name) VALUES ('" + tag.getText() + "')");
+        //get the generated id from the database
+        resultSet = statement.executeQuery("SELECT seq FROM sqlite_sequence WHERE name = 'Tags'");
+        resultSet.next();
+        //set the id
+        tag.setId(resultSet.getInt("seq"));
+        //insert the connection between quote and tag
+        statement.execute("INSERT INTO QuoteTags VALUES (" + quote.getId() + "," + tag.getId() + ")");
+    }
+
+    private static void updateTag(TagInterface tag, Connection connection) throws SQLException{
+        Statement statement = connection.createStatement();
+        statement.executeUpdate("UPDATE Tags SET name = '" + tag.getText() + "' WHERE tagId = " + tag.getId());
+    }
+
+    private static Connection getConnection() {
+        ConnectionKlasse con = new ConnectionKlasse();
+        return con.getConnection();
     }
 }
