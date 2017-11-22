@@ -73,36 +73,67 @@ public abstract class SourceUtillities {
                     sourceTemplate.add(templateRow);
                 }
             }
-            return sourceTemplate;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return sourceTemplate;
+    }
+
+
+    public static List<ObjectTemplateInterface> getUIGridPane(SourceViewInterface source, GridPane gridPane) {
+        List<ObjectTemplateInterface> template = getTemplateWithClassName(source);
+        //template.removeIf(row -> row.getAttributeName().equals("id"));
+        Label label;
+        TextField text;
+        gridPane.getChildren().remove(0, gridPane.getChildren().size() - 1);
+        gridPane.addColumn(0);
+        gridPane.addColumn(1);
+        moveListItem(template, "<CLASSNAME>", 0);
+        moveListItem(template, "id", 1);
+        moveListItem(template, "title", 2);
+        moveListItem(template, "author", 3);
+        moveListItem(template, "year", 4);
+
+        for (int row = 2; row < template.size(); row++) {
+            label = new Label(template.get(row).getAttributeName());
+            text = new TextField(template.get(row).getAttributeValue().toString());
+            gridPane.add(label, 0, row - 2);
+            gridPane.add(text, 1, row - 2);
+        }
+        return template;
+    }
+
+    public static Object convertUIGridPaneToObject(List<ObjectTemplateInterface> template, GridPane gridPane) {
+        try {
+            Class objectClass = template.get(0).getAttributeClass();
+            template.remove(0);
+            Object object = objectClass.newInstance();
+
+            String setterMethodName;
+            Method method;
+            TextField text;
+
+            for (ObjectTemplateInterface templateRow : template) {
+                setterMethodName = "set" + Character.toUpperCase(templateRow.getAttributeName().charAt(0)) + templateRow.getAttributeName().substring(1);
+
+                method = object.getClass().getDeclaredMethod(setterMethodName, getPrimitiveFromWrapperClass(templateRow.getAttributeClass()));
+                method.invoke(object, templateRow.getAttributeValue());
+            }
+            return object;
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    public static void getUIGridPane(SourceViewInterface source, GridPane gridPane) {
-        List<ObjectTemplateInterface> template = getTemplate(source);
-        template.removeIf(row -> row.getAttributeName().equals("id"));
-        Label label;
-        TextField text;
-        gridPane.getChildren().remove(0, gridPane.getChildren().size() - 1);
-        gridPane.addColumn(0);
-        gridPane.addColumn(1);
-        moveListItem(template, "title", 0);
-        moveListItem(template, "author", 1);
-        moveListItem(template, "year", 2);
-
-        if (template != null) {
-            for (int row = 0; row < template.size(); row++) {
-                label = new Label(template.get(row).getAttributeName());
-                text = new TextField(template.get(row).getAttributeValue().toString());
-                gridPane.add(label, 0, row);
-                gridPane.add(text, 1, row);
-            }
-        }
-//        gridPane.setMinWidth(1000);
-//        gridPane.setMinHeight(1000);
-//        return gridPane;
+    private static List<ObjectTemplateInterface> getTemplateWithClassName(Object object) {
+        List<ObjectTemplateInterface> template = getTemplate(object);
+        ObjectTemplateInterface classRow = new models.ObjectTemplate();
+        classRow.setAttributeClass(object.getClass());
+        classRow.setAttributeName("<CLASSNAME>");
+        classRow.setAttributeValue("");
+        template.add(0, classRow);
+        return template;
     }
 
     private static void moveListItem(List<ObjectTemplateInterface> list, String itemToMove, int moveItemTo) {
@@ -263,7 +294,7 @@ public abstract class SourceUtillities {
                     methodName = "set" + Character.toUpperCase(attributeName.charAt(0)) + attributeName.substring(1);
 
                     //get the method with a fitting method name
-                    method = sourceView.getClass().getDeclaredMethod(methodName, SourceUtillities.getPrimitiveFromWrapperClass(templateRow.getAttributeClass()));
+                    method = sourceView.getClass().getDeclaredMethod(methodName, getPrimitiveFromWrapperClass(templateRow.getAttributeClass()));
 
                     //call the setter method and set the value
                     method.invoke(sourceView, templateRow.getAttributeValue());

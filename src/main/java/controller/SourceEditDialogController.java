@@ -4,25 +4,19 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.RowConstraints;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
-import main_app.MainApp;
-import model.*;
+import models.interfaces.ObjectTemplateInterface;
 import utilities.SourceUtillities;
 import viewmodels.interfaces.QuoteViewInterface;
 import viewmodels.interfaces.SourceViewInterface;
 import viewmodels.interfaces.TagViewInterface;
 
-import java.io.IOException;
+import java.util.List;
 
 import static dao.constants.DB_Constants.*;
 import static controller.constants.SourceEditDialogConstants.*;
@@ -66,6 +60,7 @@ public class SourceEditDialogController {
     private ObservableList<QuoteViewInterface> quoteList;
     private boolean editmode = true;
     private SourceViewInterface editedSource;
+    private List<ObjectTemplateInterface> template;
 
     //all custom textFields
     private TextField herausgeberTextField;
@@ -307,29 +302,29 @@ public class SourceEditDialogController {
 
     SourceViewInterface getUpdatedSource() {
         if (okClicked) {
-            sourceEdited.setTitle(this.titelField.getText());
-            sourceEdited.setAuthor(this.autorField.getText());
-            sourceEdited.setYear(this.jahrField.getText());
-            if (source instanceof Buch) {
-                ((Buch) sourceEdited).setAuflage(this.auflageTextField.getText());
-                ((Buch) sourceEdited).setHerausgeber(this.herausgeberTextField.getText());
-                ((Buch) sourceEdited).setMonat(this.monatTextField.getText());
-                ((Buch) sourceEdited).setIsbn(this.isbnTextField.getText());
-                return this.sourceEdited;
-            } else if (source instanceof Artikel){
-                ((Artikel) sourceEdited).setAusgabe(this.ausgabeTextField.getText());
-                ((Artikel) sourceEdited).setMagazin(this.magazinTextField.getText());
-            } else if (source instanceof Onlinequelle){
-                ((Onlinequelle) sourceEdited).setUrl(this.urlTextField.getText());
-                ((Onlinequelle) sourceEdited).setAufrufdatum(this.aufrufDatumTextField.getText());
-            } else if (source instanceof Anderes) {
-                ((Anderes) sourceEdited).setAuflage(this.auflageTextField.getText());
-                ((Anderes) sourceEdited).setAusgabe(this.ausgabeTextField.getText());
-                ((Anderes) sourceEdited).setHerausgeber(this.herausgeberTextField.getText());
-            } else if (source instanceof  WissenschaftlicheArbeit) {
-                ((WissenschaftlicheArbeit) sourceEdited).setEinrichtung(this.einrichtungsTextField.getText());
-                ((WissenschaftlicheArbeit) sourceEdited).setHerausgeber(this.herausgeberTextField.getText());
-            }
+//            sourceEdited.setTitle(this.titelField.getText());
+//            sourceEdited.setAuthor(this.autorField.getText());
+//            sourceEdited.setYear(this.jahrField.getText());
+//            if (source instanceof Buch) {
+//                ((Buch) sourceEdited).setAuflage(this.auflageTextField.getText());
+//                ((Buch) sourceEdited).setHerausgeber(this.herausgeberTextField.getText());
+//                ((Buch) sourceEdited).setMonat(this.monatTextField.getText());
+//                ((Buch) sourceEdited).setIsbn(this.isbnTextField.getText());
+//                return this.sourceEdited;
+//            } else if (source instanceof Artikel){
+//                ((Artikel) sourceEdited).setAusgabe(this.ausgabeTextField.getText());
+//                ((Artikel) sourceEdited).setMagazin(this.magazinTextField.getText());
+//            } else if (source instanceof Onlinequelle){
+//                ((Onlinequelle) sourceEdited).setUrl(this.urlTextField.getText());
+//                ((Onlinequelle) sourceEdited).setAufrufdatum(this.aufrufDatumTextField.getText());
+//            } else if (source instanceof Anderes) {
+//                ((Anderes) sourceEdited).setAuflage(this.auflageTextField.getText());
+//                ((Anderes) sourceEdited).setAusgabe(this.ausgabeTextField.getText());
+//                ((Anderes) sourceEdited).setHerausgeber(this.herausgeberTextField.getText());
+//            } else if (source instanceof  WissenschaftlicheArbeit) {
+//                ((WissenschaftlicheArbeit) sourceEdited).setEinrichtung(this.einrichtungsTextField.getText());
+//                ((WissenschaftlicheArbeit) sourceEdited).setHerausgeber(this.herausgeberTextField.getText());
+//            }
             return this.sourceEdited;
         }
 
@@ -340,7 +335,7 @@ public class SourceEditDialogController {
     /**
      * Sets the source to be edited in the dialog.
      * 
-     * @param source
+     * @param source this source is shown with it it attributes, Quotes and tags
      */
     public void setSource(SourceViewInterface source) {
         this.source = source;
@@ -365,227 +360,228 @@ public class SourceEditDialogController {
         jahrField.setText(source.getYear());
 
         //adjustGridPane();
-        SourceUtillities.getUIGridPane(source, this.gridPane);
+        this.template = SourceUtillities.getUIGridPane(source, this.gridPane);
+        SourceViewInterface s = (SourceViewInterface)SourceUtillities.convertUIGridPaneToObject(this.template, this.gridPane);
         initializeList();
     }
 
-    private void adjustGridPane() {
-        //Create a RowContraints
-        RowConstraints rowConstraint = new RowConstraints();
-        rowConstraint.setMinHeight(ROW_CONTRAINTS_HEIGHT);
-        rowConstraint.setPrefHeight(ROW_CONTRAINTS_HEIGHT);
-        rowConstraint.setVgrow(Priority.SOMETIMES);
-
-        //check what source it is exactly
-        //the editdialog gets adjusted for every sort of SourceView
-        if (source instanceof Buch) {
-            adjustDialogForBuch(rowConstraint);
-        } else if (source instanceof Artikel){
-            adjustDialogForArtikel(rowConstraint);
-        } else if (source instanceof Onlinequelle){
-            adjustDialogForOnlinequelle(rowConstraint);
-        } else if (source instanceof Anderes) {
-            adjustDialogForAnderes(rowConstraint);
-        } else if (source instanceof  WissenschaftlicheArbeit) {
-            adjustDialogForWissenschaftlicheArbeit(rowConstraint);
-        } else {
-            //normal source
-            this.anchorPane.setPrefHeight(ANCHOR_PANE_SET_PREF_HEIGHT_FOR_QUELLE);
-            this.okButton.setLayoutY(OK_AND_CANCEL_BUTTON_SET_LAYOUT_Y_FOR_QUELLE);
-            this.cancelButton.setLayoutY(OK_AND_CANCEL_BUTTON_SET_LAYOUT_Y_FOR_QUELLE);
-            this.zitatTable.setPrefHeight(ZITAT_AND_TAG_TABLE_SET_PREF_HEIGHT_FOR_QUELLE);
-            this.tagTable.setPrefHeight(ZITAT_AND_TAG_TABLE_SET_PREF_HEIGHT_FOR_QUELLE);
-            this.zitatTable.getScene().getWindow().setHeight(SET_WINDOW_HEIGHT_FOR_QUELLE);
-        }
-    }
-
-    /**
-     * Adds new content to the GridPane
-     * @param constraints RowConstraint to add for the new Row
-     * @param label Label to add
-     * @param textField TextField to add
-     * @param row row to insert
-     * @param col col to insert
-     */
-    private void addContentTOGridPane(RowConstraints constraints, Label label, TextField textField, int row, int col) {
-        //add content to the Gridpane
-        this.gridPane.add(label, col,row);
-        this.gridPane.add(textField, col + 1,row);
-    }
-
-    /**
-     * Adjusts and adds components for the editDialog
-     * @param rowConstraint rowContraint for the Dialog
-     */
-    private void adjustDialogForBuch(RowConstraints rowConstraint) {
-        Buch buch = (Buch)this.source;
-        subCategory.setValue(SC_BUECHER);
-
-        //adjust anchorPane and Buttons for Dialog
-        this.anchorPane.setPrefHeight(ANCHOR_PANE_SET_PREF_HEIGHT_FOR_BUCH);
-        this.okButton.setLayoutY(OK_AND_CANCEL_BUTTON_SET_LAYOUT_Y_FPR_BUCH);
-        this.cancelButton.setLayoutY(OK_AND_CANCEL_BUTTON_SET_LAYOUT_Y_FPR_BUCH);
-        this.zitatTable.setPrefHeight(ZITAT_AND_TAG_TABLE_SET_PREF_HEIGHT_FOR_BUCH);
-        this.tagTable.setPrefHeight(ZITAT_AND_TAG_TABLE_SET_PREF_HEIGHT_FOR_BUCH);
-        System.out.println(this.zitatTable.getScene());
-        this.zitatTable.getScene().getWindow().setHeight(SET_WINDOW_HEIGHT_FOR_BUCH);
-
-        //Create all needed labels for Buch
-        Label herausgeberLabel = new Label(HERAUSGEBER);
-        Label auflageLabel = new Label(AUFLAGE);
-        Label monatLabel = new Label(MONAT);
-        Label isbnLabel = new Label(ISBN);
-
-        //create all needed textfields for Buch
-        this.herausgeberTextField = new TextField(buch.getHerausgeber());
-        this.auflageTextField = new TextField(buch.getAuflage());
-        this.monatTextField = new TextField(buch.getMonat());
-        this.isbnTextField = new TextField(buch.getIsbn());
-
-        //Add the content to the Gridpane
-        addContentTOGridPane(rowConstraint, herausgeberLabel, this.herausgeberTextField, HERAUSGEBER_TEXT_FIELD_ROW,HERAUSGEBER_TEXT_FIELD_COL);
-        addContentTOGridPane(rowConstraint, auflageLabel, this.auflageTextField, AUFLAGE_TEXT_FIELD_ROW,AUFLAGE_TEXT_FIELD_COL);
-        addContentTOGridPane(rowConstraint, monatLabel, this.monatTextField, MONAT_TEXT_FIELD_ROW,MONAT_TEXT_FIELD_COL);
-        addContentTOGridPane(rowConstraint, isbnLabel, this.isbnTextField, ISBN_TEXT_FIELD_ROW,ISBN_TEXT_FIELD_COL);
-        //subCategory.setDisable(true);
-    }
-
-    /**
-     * Adjusts and adds components for the editDialog
-     * @param rowConstraint rowContraint for the Dialog
-     */
-    private void adjustDialogForArtikel(RowConstraints rowConstraint) {
-        Artikel artikel = (Artikel)this.source;
-
-        //adjust anchorPane and Buttons for Dialog
-        this.anchorPane.setPrefHeight(ANCHOR_PANE_SET_PREF_HEIGHT_FOR_ARTIKEL);
-        this.okButton.setLayoutY(OK_AND_CANCEL_BUTTON_SET_LAYOUT_Y_FOR_ARTIKEL);
-        this.cancelButton.setLayoutY(OK_AND_CANCEL_BUTTON_SET_LAYOUT_Y_FOR_ARTIKEL);
-        this.zitatTable.setPrefHeight(ZITAT_AND_TAG_TABLE_SET_PREF_HEIGHT_FOR_ARTIKEL);
-        this.tagTable.setPrefHeight(ZITAT_AND_TAG_TABLE_SET_PREF_HEIGHT_FOR_ARTIKEL);
-        this.zitatTable.getScene().getWindow().setHeight(SET_WINDOW_HEIGHT_FOR_ARTIKEL);
-
-        //Create all needed labels for Artikel
-        Label ausgabeLabel = new Label(AUSGABE);
-        Label magazinLabel = new Label(MAGAZIN);
-
-        //Create all needed textfields for Artikel
-        this.ausgabeTextField = new TextField(artikel.getAusgabe());
-        this.magazinTextField = new TextField(artikel.getMagazin());
-
-        //Add the content to the Gridpane
-        addContentTOGridPane(rowConstraint, ausgabeLabel, this.ausgabeTextField, AUSGABE_TEXT_FIELD_ROW, AUSGABE_DATUM_TEXT_FIELD_COL);
-        addContentTOGridPane(rowConstraint, magazinLabel, this.magazinTextField, MAGAZIN_TEXT_FIELD_ROW, MAGAZIN_TEXT_FIELD_COL);
-        //subCategory.setDisable(true);
-        subCategory.setValue(SC_ARTIKEL);
-    }
-
-
-    /**
-     * Adjusts and adds components for the editDialog
-     * @param rowConstraint rowContraint for the Dialog
-     */
-    private void adjustDialogForOnlinequelle(RowConstraints rowConstraint) {
-        Onlinequelle onlinequelle = (Onlinequelle)this.source;
-
-        //adjust anchorPane and Buttons for Dialog
-        this.anchorPane.setPrefHeight(ANCHOR_PANE_SET_PREF_HEIGHT_FOR_ONLINEQUELLE);
-        this.okButton.setLayoutY(OK_AND_CANCEL_BUTTON_SET_LAYOUT_Y_FOR_ONLINEQUELLE);
-        this.cancelButton.setLayoutY(OK_AND_CANCEL_BUTTON_SET_LAYOUT_Y_FOR_ONLINEQUELLE);
-        this.zitatTable.setPrefHeight(ZITAT_AND_TAG_TABLE_SET_PREF_HEIGHT_FOR_ONLINEQUELLE);
-        this.tagTable.setPrefHeight(ZITAT_AND_TAG_TABLE_SET_PREF_HEIGHT_FOR_ONLINEQUELLE);
-        this.zitatTable.getScene().getWindow().setHeight(SET_WINDOW_HEIGHT_FOR_ONLINEQUELLE);
-
-        //Create all needed labels for Onlinequelle
-        Label aufrufDatumLabel = new Label(AUFRUFDATUM);
-        Label urlLabel = new Label(URL);
-
-        //Create all  needed textfields for Onlinequelle
-        this.aufrufDatumTextField = new TextField(onlinequelle.getAufrufdatum());
-        this.urlTextField = new TextField(onlinequelle.getUrl());
-
-        //Add the content to the Gridpane
-        addContentTOGridPane(rowConstraint, aufrufDatumLabel, this.aufrufDatumTextField, AUFRUF_DATUM_TEXT_FIELD_ROW, AUFRUF_DATUM_TEXT_FIELD_COL);
-        addContentTOGridPane(rowConstraint, urlLabel, this.urlTextField, URL_TEXT_FIELD_ROW, URL_TEXT_FIELD_COL);
-        //subCategory.setDisable(true);
-        subCategory.setValue(SC_OQUELLEN);
-    }
-
-    /**
-     * Adjusts and adds components for the editDialog
-     * @param rowConstraint rowContraint for the Dialog
-     */
-    private void adjustDialogForAnderes(RowConstraints rowConstraint) {
-        Anderes anderes = (Anderes)this.source;
-
-        //adjust anchorPane and Buttons for Dialog
-        this.anchorPane.setPrefHeight(ANCHOR_PANE_SET_PREF_HEIGHT_FOR_ANDERES);
-        this.okButton.setLayoutY(OK_AND_CANCEL_BUTTON_SET_LAYOUT_Y_FOR_ANDERES);
-        this.cancelButton.setLayoutY(OK_AND_CANCEL_BUTTON_SET_LAYOUT_Y_FOR_ANDERES);
-        this.zitatTable.setPrefHeight(ZITAT_AND_TAG_TABLE_SET_PREF_HEIGHT_FOR_ANDERES);
-        this.tagTable.setPrefHeight(ZITAT_AND_TAG_TABLE_SET_PREF_HEIGHT_FOR_ANDERES);
-        this.zitatTable.getScene().getWindow().setHeight(SET_WINDOW_HEIGHT_FOR_ANDERES);
-
-        //Create all needed labels for Buch
-        Label herausgeberLabel = new Label(HERAUSGEBER);
-        Label auflageLabel = new Label(AUFLAGE);
-        Label ausgabeLabel = new Label(AUSGABE);
-
-        //create all needed textfields for Buch
-        this.herausgeberTextField = new TextField(anderes.getHerausgeber());
-        this.auflageTextField = new TextField(anderes.getAuflage());
-        this.ausgabeTextField = new TextField(anderes.getAusgabe());
-
-        //Add the content to the Gridpane
-        addContentTOGridPane(rowConstraint, herausgeberLabel, this.herausgeberTextField, HERAUSGEBER_TEXT_FIELD_ROW,HERAUSGEBER_TEXT_FIELD_COL);
-        addContentTOGridPane(rowConstraint, auflageLabel, this.auflageTextField, AUFLAGE_TEXT_FIELD_ROW,AUFLAGE_TEXT_FIELD_COL);
-        addContentTOGridPane(rowConstraint, ausgabeLabel, this.ausgabeTextField, AUSGABE_TEXT_FIELD_ROW_FOR_ANDERES,AUSGABE_DATUM_TEXT_FIELD_COL);
-        //subCategory.setDisable(true);
-        subCategory.setValue(SC_ANDERES);
-    }
+//    private void adjustGridPane() {
+//        //Create a RowContraints
+//        RowConstraints rowConstraint = new RowConstraints();
+//        rowConstraint.setMinHeight(ROW_CONTRAINTS_HEIGHT);
+//        rowConstraint.setPrefHeight(ROW_CONTRAINTS_HEIGHT);
+//        rowConstraint.setVgrow(Priority.SOMETIMES);
+//
+//        //check what source it is exactly
+//        //the editdialog gets adjusted for every sort of SourceView
+//        if (source instanceof Buch) {
+//            adjustDialogForBuch(rowConstraint);
+//        } else if (source instanceof Artikel){
+//            adjustDialogForArtikel(rowConstraint);
+//        } else if (source instanceof Onlinequelle){
+//            adjustDialogForOnlinequelle(rowConstraint);
+//        } else if (source instanceof Anderes) {
+//            adjustDialogForAnderes(rowConstraint);
+//        } else if (source instanceof  WissenschaftlicheArbeit) {
+//            adjustDialogForWissenschaftlicheArbeit(rowConstraint);
+//        } else {
+//            //normal source
+//            this.anchorPane.setPrefHeight(ANCHOR_PANE_SET_PREF_HEIGHT_FOR_QUELLE);
+//            this.okButton.setLayoutY(OK_AND_CANCEL_BUTTON_SET_LAYOUT_Y_FOR_QUELLE);
+//            this.cancelButton.setLayoutY(OK_AND_CANCEL_BUTTON_SET_LAYOUT_Y_FOR_QUELLE);
+//            this.zitatTable.setPrefHeight(ZITAT_AND_TAG_TABLE_SET_PREF_HEIGHT_FOR_QUELLE);
+//            this.tagTable.setPrefHeight(ZITAT_AND_TAG_TABLE_SET_PREF_HEIGHT_FOR_QUELLE);
+//            this.zitatTable.getScene().getWindow().setHeight(SET_WINDOW_HEIGHT_FOR_QUELLE);
+//        }
+//    }
+//
+//    /**
+//     * Adds new content to the GridPane
+//     * @param constraints RowConstraint to add for the new Row
+//     * @param label Label to add
+//     * @param textField TextField to add
+//     * @param row row to insert
+//     * @param col col to insert
+//     */
+//    private void addContentTOGridPane(RowConstraints constraints, Label label, TextField textField, int row, int col) {
+//        //add content to the Gridpane
+//        this.gridPane.add(label, col,row);
+//        this.gridPane.add(textField, col + 1,row);
+//    }
+//
+//    /**
+//     * Adjusts and adds components for the editDialog
+//     * @param rowConstraint rowContraint for the Dialog
+//     */
+//    private void adjustDialogForBuch(RowConstraints rowConstraint) {
+//        Buch buch = (Buch)this.source;
+//        subCategory.setValue(SC_BUECHER);
+//
+//        //adjust anchorPane and Buttons for Dialog
+//        this.anchorPane.setPrefHeight(ANCHOR_PANE_SET_PREF_HEIGHT_FOR_BUCH);
+//        this.okButton.setLayoutY(OK_AND_CANCEL_BUTTON_SET_LAYOUT_Y_FPR_BUCH);
+//        this.cancelButton.setLayoutY(OK_AND_CANCEL_BUTTON_SET_LAYOUT_Y_FPR_BUCH);
+//        this.zitatTable.setPrefHeight(ZITAT_AND_TAG_TABLE_SET_PREF_HEIGHT_FOR_BUCH);
+//        this.tagTable.setPrefHeight(ZITAT_AND_TAG_TABLE_SET_PREF_HEIGHT_FOR_BUCH);
+//        System.out.println(this.zitatTable.getScene());
+//        this.zitatTable.getScene().getWindow().setHeight(SET_WINDOW_HEIGHT_FOR_BUCH);
+//
+//        //Create all needed labels for Buch
+//        Label herausgeberLabel = new Label(HERAUSGEBER);
+//        Label auflageLabel = new Label(AUFLAGE);
+//        Label monatLabel = new Label(MONAT);
+//        Label isbnLabel = new Label(ISBN);
+//
+//        //create all needed textfields for Buch
+//        this.herausgeberTextField = new TextField(buch.getHerausgeber());
+//        this.auflageTextField = new TextField(buch.getAuflage());
+//        this.monatTextField = new TextField(buch.getMonat());
+//        this.isbnTextField = new TextField(buch.getIsbn());
+//
+//        //Add the content to the Gridpane
+//        addContentTOGridPane(rowConstraint, herausgeberLabel, this.herausgeberTextField, HERAUSGEBER_TEXT_FIELD_ROW,HERAUSGEBER_TEXT_FIELD_COL);
+//        addContentTOGridPane(rowConstraint, auflageLabel, this.auflageTextField, AUFLAGE_TEXT_FIELD_ROW,AUFLAGE_TEXT_FIELD_COL);
+//        addContentTOGridPane(rowConstraint, monatLabel, this.monatTextField, MONAT_TEXT_FIELD_ROW,MONAT_TEXT_FIELD_COL);
+//        addContentTOGridPane(rowConstraint, isbnLabel, this.isbnTextField, ISBN_TEXT_FIELD_ROW,ISBN_TEXT_FIELD_COL);
+//        //subCategory.setDisable(true);
+//    }
+//
+//    /**
+//     * Adjusts and adds components for the editDialog
+//     * @param rowConstraint rowContraint for the Dialog
+//     */
+//    private void adjustDialogForArtikel(RowConstraints rowConstraint) {
+//        Artikel artikel = (Artikel)this.source;
+//
+//        //adjust anchorPane and Buttons for Dialog
+//        this.anchorPane.setPrefHeight(ANCHOR_PANE_SET_PREF_HEIGHT_FOR_ARTIKEL);
+//        this.okButton.setLayoutY(OK_AND_CANCEL_BUTTON_SET_LAYOUT_Y_FOR_ARTIKEL);
+//        this.cancelButton.setLayoutY(OK_AND_CANCEL_BUTTON_SET_LAYOUT_Y_FOR_ARTIKEL);
+//        this.zitatTable.setPrefHeight(ZITAT_AND_TAG_TABLE_SET_PREF_HEIGHT_FOR_ARTIKEL);
+//        this.tagTable.setPrefHeight(ZITAT_AND_TAG_TABLE_SET_PREF_HEIGHT_FOR_ARTIKEL);
+//        this.zitatTable.getScene().getWindow().setHeight(SET_WINDOW_HEIGHT_FOR_ARTIKEL);
+//
+//        //Create all needed labels for Artikel
+//        Label ausgabeLabel = new Label(AUSGABE);
+//        Label magazinLabel = new Label(MAGAZIN);
+//
+//        //Create all needed textfields for Artikel
+//        this.ausgabeTextField = new TextField(artikel.getAusgabe());
+//        this.magazinTextField = new TextField(artikel.getMagazin());
+//
+//        //Add the content to the Gridpane
+//        addContentTOGridPane(rowConstraint, ausgabeLabel, this.ausgabeTextField, AUSGABE_TEXT_FIELD_ROW, AUSGABE_DATUM_TEXT_FIELD_COL);
+//        addContentTOGridPane(rowConstraint, magazinLabel, this.magazinTextField, MAGAZIN_TEXT_FIELD_ROW, MAGAZIN_TEXT_FIELD_COL);
+//        //subCategory.setDisable(true);
+//        subCategory.setValue(SC_ARTIKEL);
+//    }
+//
+//
+//    /**
+//     * Adjusts and adds components for the editDialog
+//     * @param rowConstraint rowContraint for the Dialog
+//     */
+//    private void adjustDialogForOnlinequelle(RowConstraints rowConstraint) {
+//        Onlinequelle onlinequelle = (Onlinequelle)this.source;
+//
+//        //adjust anchorPane and Buttons for Dialog
+//        this.anchorPane.setPrefHeight(ANCHOR_PANE_SET_PREF_HEIGHT_FOR_ONLINEQUELLE);
+//        this.okButton.setLayoutY(OK_AND_CANCEL_BUTTON_SET_LAYOUT_Y_FOR_ONLINEQUELLE);
+//        this.cancelButton.setLayoutY(OK_AND_CANCEL_BUTTON_SET_LAYOUT_Y_FOR_ONLINEQUELLE);
+//        this.zitatTable.setPrefHeight(ZITAT_AND_TAG_TABLE_SET_PREF_HEIGHT_FOR_ONLINEQUELLE);
+//        this.tagTable.setPrefHeight(ZITAT_AND_TAG_TABLE_SET_PREF_HEIGHT_FOR_ONLINEQUELLE);
+//        this.zitatTable.getScene().getWindow().setHeight(SET_WINDOW_HEIGHT_FOR_ONLINEQUELLE);
+//
+//        //Create all needed labels for Onlinequelle
+//        Label aufrufDatumLabel = new Label(AUFRUFDATUM);
+//        Label urlLabel = new Label(URL);
+//
+//        //Create all  needed textfields for Onlinequelle
+//        this.aufrufDatumTextField = new TextField(onlinequelle.getAufrufdatum());
+//        this.urlTextField = new TextField(onlinequelle.getUrl());
+//
+//        //Add the content to the Gridpane
+//        addContentTOGridPane(rowConstraint, aufrufDatumLabel, this.aufrufDatumTextField, AUFRUF_DATUM_TEXT_FIELD_ROW, AUFRUF_DATUM_TEXT_FIELD_COL);
+//        addContentTOGridPane(rowConstraint, urlLabel, this.urlTextField, URL_TEXT_FIELD_ROW, URL_TEXT_FIELD_COL);
+//        //subCategory.setDisable(true);
+//        subCategory.setValue(SC_OQUELLEN);
+//    }
+//
+//    /**
+//     * Adjusts and adds components for the editDialog
+//     * @param rowConstraint rowContraint for the Dialog
+//     */
+//    private void adjustDialogForAnderes(RowConstraints rowConstraint) {
+//        Anderes anderes = (Anderes)this.source;
+//
+//        //adjust anchorPane and Buttons for Dialog
+//        this.anchorPane.setPrefHeight(ANCHOR_PANE_SET_PREF_HEIGHT_FOR_ANDERES);
+//        this.okButton.setLayoutY(OK_AND_CANCEL_BUTTON_SET_LAYOUT_Y_FOR_ANDERES);
+//        this.cancelButton.setLayoutY(OK_AND_CANCEL_BUTTON_SET_LAYOUT_Y_FOR_ANDERES);
+//        this.zitatTable.setPrefHeight(ZITAT_AND_TAG_TABLE_SET_PREF_HEIGHT_FOR_ANDERES);
+//        this.tagTable.setPrefHeight(ZITAT_AND_TAG_TABLE_SET_PREF_HEIGHT_FOR_ANDERES);
+//        this.zitatTable.getScene().getWindow().setHeight(SET_WINDOW_HEIGHT_FOR_ANDERES);
+//
+//        //Create all needed labels for Buch
+//        Label herausgeberLabel = new Label(HERAUSGEBER);
+//        Label auflageLabel = new Label(AUFLAGE);
+//        Label ausgabeLabel = new Label(AUSGABE);
+//
+//        //create all needed textfields for Buch
+//        this.herausgeberTextField = new TextField(anderes.getHerausgeber());
+//        this.auflageTextField = new TextField(anderes.getAuflage());
+//        this.ausgabeTextField = new TextField(anderes.getAusgabe());
+//
+//        //Add the content to the Gridpane
+//        addContentTOGridPane(rowConstraint, herausgeberLabel, this.herausgeberTextField, HERAUSGEBER_TEXT_FIELD_ROW,HERAUSGEBER_TEXT_FIELD_COL);
+//        addContentTOGridPane(rowConstraint, auflageLabel, this.auflageTextField, AUFLAGE_TEXT_FIELD_ROW,AUFLAGE_TEXT_FIELD_COL);
+//        addContentTOGridPane(rowConstraint, ausgabeLabel, this.ausgabeTextField, AUSGABE_TEXT_FIELD_ROW_FOR_ANDERES,AUSGABE_DATUM_TEXT_FIELD_COL);
+//        //subCategory.setDisable(true);
+//        subCategory.setValue(SC_ANDERES);
+//    }
 
     public void setQuoteList(ObservableList<QuoteViewInterface> quoteList) {
         this.quoteList = quoteList;
     }
 
-    /**
-     * Adjusts and adds components for the editDialog
-     * @param rowConstraint rowContraint for the Dialog
-     */
-    public void adjustDialogForWissenschaftlicheArbeit(RowConstraints rowConstraint) {
-        WissenschaftlicheArbeit wissenschaftlicheArbeit = (WissenschaftlicheArbeit)this.source;
-
-        //adjust anchorPane and Buttons for Dialog
-        this.anchorPane.setPrefHeight(ANCHOR_PANE_SET_PREF_HEIGHT_FOR_WISSENSCHAFTLICHE_ARBEIT);
-        this.okButton.setLayoutY(OK_AND_CANCEL_BUTTON_SET_LAYOUT_Y_FOR_WISSENSCHAFTLICHE_ARBEIT);
-        this.cancelButton.setLayoutY(OK_AND_CANCEL_BUTTON_SET_LAYOUT_Y_FOR_WISSENSCHAFTLICHE_ARBEIT);
-        this.zitatTable.setPrefHeight(ZITAT_AND_TAG_TABLE_SET_PREF_HEIGHT_FOR_WISSENSCHAFTLICHE_ARBEIT);
-        this.tagTable.setPrefHeight(ZITAT_AND_TAG_TABLE_SET_PREF_HEIGHT_FOR_WISSENSCHAFTLICHE_ARBEIT);
-        this.zitatTable.getScene().getWindow().setHeight(SET_WINDOW_HEIGHT_FOR_WISSENSCHAFTLICHE_ARBEIT);
-
-        //Create all needed labels for Onlinequelle
-        Label herausgeberLabel = new Label(HERAUSGEBER);
-        Label einrichtungsLabel = new Label(EINRICHTUNG);
-
-        //Create all  needed textfields for Onlinequelle
-        this.herausgeberTextField= new TextField(wissenschaftlicheArbeit.getHerausgeber());
-        this.einrichtungsTextField = new TextField(wissenschaftlicheArbeit.getEinrichtung());
-
-        //Add the content to the Gridpane
-        addContentTOGridPane(rowConstraint, herausgeberLabel, this.herausgeberTextField, HERAUSGEBER_TEXT_FIELD_ROW, HERAUSGEBER_TEXT_FIELD_COL);
-        addContentTOGridPane(rowConstraint, einrichtungsLabel, this.einrichtungsTextField, EINRICHTUNGS_TEXT_FIELD_ROW, EINRICHTUNGS_TEXT_FIELD_COL);
-        //subCategory.setDisable(true);
-        subCategory.setValue(SC_WARBEITEN);
-    }
-
-    /**
-     * Returns true if the user clicked OK, false otherwise.
-     * 
-     * @return
-     */
-    public boolean isOkClicked() {
-        return okClicked;
-    }
+//    /**
+//     * Adjusts and adds components for the editDialog
+//     * @param rowConstraint rowContraint for the Dialog
+//     */
+//    public void adjustDialogForWissenschaftlicheArbeit(RowConstraints rowConstraint) {
+//        WissenschaftlicheArbeit wissenschaftlicheArbeit = (WissenschaftlicheArbeit)this.source;
+//
+//        //adjust anchorPane and Buttons for Dialog
+//        this.anchorPane.setPrefHeight(ANCHOR_PANE_SET_PREF_HEIGHT_FOR_WISSENSCHAFTLICHE_ARBEIT);
+//        this.okButton.setLayoutY(OK_AND_CANCEL_BUTTON_SET_LAYOUT_Y_FOR_WISSENSCHAFTLICHE_ARBEIT);
+//        this.cancelButton.setLayoutY(OK_AND_CANCEL_BUTTON_SET_LAYOUT_Y_FOR_WISSENSCHAFTLICHE_ARBEIT);
+//        this.zitatTable.setPrefHeight(ZITAT_AND_TAG_TABLE_SET_PREF_HEIGHT_FOR_WISSENSCHAFTLICHE_ARBEIT);
+//        this.tagTable.setPrefHeight(ZITAT_AND_TAG_TABLE_SET_PREF_HEIGHT_FOR_WISSENSCHAFTLICHE_ARBEIT);
+//        this.zitatTable.getScene().getWindow().setHeight(SET_WINDOW_HEIGHT_FOR_WISSENSCHAFTLICHE_ARBEIT);
+//
+//        //Create all needed labels for Onlinequelle
+//        Label herausgeberLabel = new Label(HERAUSGEBER);
+//        Label einrichtungsLabel = new Label(EINRICHTUNG);
+//
+//        //Create all  needed textfields for Onlinequelle
+//        this.herausgeberTextField= new TextField(wissenschaftlicheArbeit.getHerausgeber());
+//        this.einrichtungsTextField = new TextField(wissenschaftlicheArbeit.getEinrichtung());
+//
+//        //Add the content to the Gridpane
+//        addContentTOGridPane(rowConstraint, herausgeberLabel, this.herausgeberTextField, HERAUSGEBER_TEXT_FIELD_ROW, HERAUSGEBER_TEXT_FIELD_COL);
+//        addContentTOGridPane(rowConstraint, einrichtungsLabel, this.einrichtungsTextField, EINRICHTUNGS_TEXT_FIELD_ROW, EINRICHTUNGS_TEXT_FIELD_COL);
+//        //subCategory.setDisable(true);
+//        subCategory.setValue(SC_WARBEITEN);
+//    }
+//
+//    /**
+//     * Returns true if the user clicked OK, false otherwise.
+//     *
+//     * @return
+//     */
+//    public boolean isOkClicked() {
+//        return okClicked;
+//    }
 
     /**
      * Called when the user clicks ok.
