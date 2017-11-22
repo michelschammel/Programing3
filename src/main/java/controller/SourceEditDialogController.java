@@ -17,6 +17,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import main_app.MainApp;
 import model.*;
+import utilities.SourceUtillities;
 import viewmodels.interfaces.QuoteViewInterface;
 import viewmodels.interfaces.SourceViewInterface;
 import viewmodels.interfaces.TagViewInterface;
@@ -357,13 +358,14 @@ public class SourceEditDialogController {
 //        } else {
 //            this.sourceEdited = new Quelle(source);
 //        }
-        this.zitatTable.setItems(this.sourceEdited.getQuoteList());
+        this.zitatTable.setItems(this.source.getQuoteList());
 
         autorField.setText(source.getAuthor());
         titelField.setText(source.getTitle());
         jahrField.setText(source.getYear());
 
-        adjustGridPane();
+        //adjustGridPane();
+        SourceUtillities.getUIGridPane(source, this.gridPane);
         initializeList();
     }
 

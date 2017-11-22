@@ -144,7 +144,7 @@ public abstract class SourceDatabaseImpl  {
                                 if (listSource.getId() == resultSet.getInt("id")) {
                                     source.setId(listSource.getId());
                                     source.setAuthor(listSource.getAuthor());
-                                    source.setTitle(listSource.getAuthor());
+                                    source.setTitle(listSource.getTitle());
                                     source.setYear(listSource.getYear());
                                     source.setQuoteList(listSource.getQuoteList());
                                     for (ObjectTemplateInterface templateRow : template) {

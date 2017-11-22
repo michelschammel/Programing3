@@ -80,18 +80,17 @@ public abstract class SourceUtillities {
         return null;
     }
 
-    public static GridPane getUIGridPane(SourceViewInterface source) {
+    public static void getUIGridPane(SourceViewInterface source, GridPane gridPane) {
         List<ObjectTemplateInterface> template = getTemplate(source);
-        //removeBasicAttributes(template);
+        template.removeIf(row -> row.getAttributeName().equals("id"));
         Label label;
         TextField text;
-        GridPane gridPane = new GridPane();
+        gridPane.getChildren().remove(0, gridPane.getChildren().size() - 1);
         gridPane.addColumn(0);
         gridPane.addColumn(1);
-        moveListItem(template, "id", 0);
-        moveListItem(template, "title", 1);
-        moveListItem(template, "author", 2);
-        moveListItem(template, "year", 3);
+        moveListItem(template, "title", 0);
+        moveListItem(template, "author", 1);
+        moveListItem(template, "year", 2);
 
         if (template != null) {
             for (int row = 0; row < template.size(); row++) {
@@ -101,8 +100,9 @@ public abstract class SourceUtillities {
                 gridPane.add(text, 1, row);
             }
         }
-
-        return gridPane;
+//        gridPane.setMinWidth(1000);
+//        gridPane.setMinHeight(1000);
+//        return gridPane;
     }
 
     private static void moveListItem(List<ObjectTemplateInterface> list, String itemToMove, int moveItemTo) {

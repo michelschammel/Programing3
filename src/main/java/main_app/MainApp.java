@@ -59,7 +59,7 @@ public class MainApp extends Application {
         SourceInterface sourceConvert = SourceUtillities.convertSourceViewToSource(sourceView);
         System.out.println(sourceConvert);
 
-        SourceUtillities.getUIGridPane(sourceView);
+//        SourceUtillities.getUIGridPane(sourceView);
 
         ArticleInterface article = (ArticleInterface) SourceFactory.produceSource(SourceFactory.ARTICLE);
         article.setEdition("article edition");
