@@ -2,6 +2,7 @@ package utilities;
 
 import enums.SourceStandardAttributes;
 import enums.SupportedTypes;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
@@ -85,9 +86,7 @@ public abstract class SourceUtillities {
         //template.removeIf(row -> row.getAttributeName().equals("id"));
         Label label;
         TextField text;
-        gridPane.getChildren().remove(0, gridPane.getChildren().size() - 1);
-        gridPane.addColumn(0);
-        gridPane.addColumn(1);
+        gridPane.getChildren().remove(0, gridPane.getChildren().size());
         moveListItem(template, "<CLASSNAME>", 0);
         moveListItem(template, "id", 1);
         moveListItem(template, "title", 2);
@@ -112,6 +111,20 @@ public abstract class SourceUtillities {
             String setterMethodName;
             Method method;
             TextField text;
+            ObjectTemplateInterface row;
+
+            for (int i = 0; i < gridPane.getChildren().size(); i += 2) {
+                for (Node node : gridPane.getChildren()) {
+                    if (gridPane.getRowIndex(node) == (i / 2) && gridPane.getColumnIndex(node) == 1) {
+                        if (node instanceof TextField) {
+                            text = (TextField)node;
+                            row = template.get(i/2);
+                            row.setAttributeValue(castStringToSupportedType(text.getText(), row.getAttributeClass()));
+                            System.out.println(text.getText());
+                        }
+                    }
+                }
+            }
 
             for (ObjectTemplateInterface templateRow : template) {
                 setterMethodName = "set" + Character.toUpperCase(templateRow.getAttributeName().charAt(0)) + templateRow.getAttributeName().substring(1);
@@ -123,6 +136,19 @@ public abstract class SourceUtillities {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return null;
+    }
+
+    private static Object castStringToSupportedType(String object, Class convertTo) {
+        Class myClass = getWrapperclassFromPrimitve(convertTo);
+        if (myClass == String.class) {
+            return object;
+        } else if (myClass == Double.class){
+            return Double.valueOf(object);
+        } else if (myClass == Integer.class) {
+            return Integer.valueOf(object);
+        }
+
         return null;
     }
 
