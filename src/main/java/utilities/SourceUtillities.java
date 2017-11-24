@@ -102,20 +102,19 @@ public abstract class SourceUtillities {
         return template;
     }
 
-    public static Object convertUIGridPaneToObject(List<ObjectTemplateInterface> template, GridPane gridPane) {
+    public static SourceViewInterface convertUIGridPaneToSource(List<ObjectTemplateInterface> template, GridPane gridPane) {
         try {
             Class objectClass = template.get(0).getAttributeClass();
             template.remove(0);
-            Object object = objectClass.newInstance();
-
-            String setterMethodName;
-            Method method;
+            SourceViewInterface object = (SourceViewInterface) objectClass.newInstance();
+            object.setId((Integer)template.get(0).getAttributeValue());
+            template.remove(0);
             TextField text;
             ObjectTemplateInterface row;
 
             for (int i = 0; i < gridPane.getChildren().size(); i += 2) {
                 for (Node node : gridPane.getChildren()) {
-                    if (gridPane.getRowIndex(node) == (i / 2) && gridPane.getColumnIndex(node) == 1) {
+                    if (GridPane.getRowIndex(node) == (i / 2) && GridPane.getColumnIndex(node) == 1) {
                         if (node instanceof TextField) {
                             text = (TextField)node;
                             row = template.get(i/2);
@@ -127,10 +126,7 @@ public abstract class SourceUtillities {
             }
 
             for (ObjectTemplateInterface templateRow : template) {
-                setterMethodName = "set" + Character.toUpperCase(templateRow.getAttributeName().charAt(0)) + templateRow.getAttributeName().substring(1);
-
-                method = object.getClass().getDeclaredMethod(setterMethodName, getPrimitiveFromWrapperClass(templateRow.getAttributeClass()));
-                method.invoke(object, templateRow.getAttributeValue());
+                setObjectValue(templateRow.getAttributeName(), object, templateRow.getAttributeValue());
             }
             return object;
         } catch (Exception e) {

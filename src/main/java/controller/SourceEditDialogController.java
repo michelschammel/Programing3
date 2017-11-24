@@ -361,7 +361,7 @@ public class SourceEditDialogController {
 
         //adjustGridPane();
         this.template = SourceUtillities.getUIGridPane(source, this.gridPane);
-        SourceViewInterface s = (SourceViewInterface)SourceUtillities.convertUIGridPaneToObject(this.template, this.gridPane);
+        SourceViewInterface s = (SourceViewInterface)SourceUtillities.convertUIGridPaneToSource(this.template, this.gridPane);
         initializeList();
     }
 
