@@ -7,7 +7,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
@@ -127,7 +126,7 @@ public class SourceEditDialogController {
 
     private void initializeList() {
         this.quoteList = FXCollections.observableArrayList();
-        quoteList.addAll(source.getQuoteList());
+        quoteList.addAll(sourceEdited.getQuoteList());
     }
 
     void disableSubCategory(boolean disable) {
@@ -191,45 +190,45 @@ public class SourceEditDialogController {
             });
 
             addTag.setOnAction((ActionEvent event) -> {
-//                try {
-//                    // Load the fxml file and create a new stage for the popup dialog.
-//                    FXMLLoader loader = new FXMLLoader();
-//                    loader.setLocation(MainApp.class.getResource(ADD_TAGS_FXML));
-//                    AnchorPane page = loader.load();
-//
-//                    // Create the addTag Stage.
-//                    Stage addTagStage = new Stage();
-//                    addTagStage.setTitle(FUEGE_TAG_HINZU);
-//                    addTagStage.initModality(Modality.WINDOW_MODAL);
-//                    Scene scene = new Scene(page);
-//                    addTagStage.setScene(scene);
-//                    addTagStage.initOwner(dialogStage);
-//
-//                    // Set the source into the controller.
-//                    AddTagsController controller = loader.getController();
-//                    ObservableList<Tag> tagList = FXCollections.observableArrayList();
-//                    controller.setZitat(zitatTable.getSelectionModel().getSelectedItem());
-//                    //prevent duplicates
-//                    quoteList.forEach(zitat ->
-//                            zitat.getTagList().forEach(tag -> {
-//                                boolean addnewTag = true;
-//                                for (Tag aTagList : tagList) {
-//                                    if (tag.getText().equals(aTagList.getText())) {
-//                                        addnewTag = false;
-//                                    }
-//                                }
-//                                if (addnewTag) {
-//                                    tagList.add(tag);
-//                                }
-//                            })
-//                    );
-//                    controller.setTagList(tagList);
-//
-//                    // Show the dialog and wait until the user closes it
-//                    addTagStage.showAndWait();
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
+                try {
+                    // Load the fxml file and create a new stage for the popup dialog.
+                    FXMLLoader loader = new FXMLLoader();
+                    loader.setLocation(MainApp.class.getResource(ADD_TAGS_FXML));
+                    AnchorPane page = loader.load();
+
+                    // Create the addTag Stage.
+                    Stage addTagStage = new Stage();
+                    addTagStage.setTitle(FUEGE_TAG_HINZU);
+                    addTagStage.initModality(Modality.WINDOW_MODAL);
+                    Scene scene = new Scene(page);
+                    addTagStage.setScene(scene);
+                    addTagStage.initOwner(dialogStage);
+
+                    // Set the source into the controller.
+                    AddTagsController controller = loader.getController();
+                    ObservableList<TagViewInterface> tagList = FXCollections.observableArrayList();
+                    controller.setQuote(zitatTable.getSelectionModel().getSelectedItem());
+                    //prevent duplicates
+                    quoteList.forEach(zitat ->
+                            zitat.getTagList().forEach(tag -> {
+                                boolean addnewTag = true;
+                                for (TagViewInterface aTagList : tagList) {
+                                    if (tag.getText().equals(aTagList.getText())) {
+                                        addnewTag = false;
+                                    }
+                                }
+                                if (addnewTag) {
+                                    tagList.add(tag);
+                                }
+                            })
+                    );
+                    controller.setTagList(tagList);
+
+                    // Show the dialog and wait until the user closes it
+                    addTagStage.showAndWait();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             });
         }
     }
@@ -324,7 +323,7 @@ public class SourceEditDialogController {
         this.source = source;
         this.sourceEdited = SourceUtillities.copySourceView(source);
 
-        this.zitatTable.setItems(this.source.getQuoteList());
+        this.zitatTable.setItems(this.sourceEdited.getQuoteList());
 
         autorField.setText(source.getAuthor());
         titelField.setText(source.getTitle());
@@ -365,39 +364,39 @@ public class SourceEditDialogController {
         dialogStage.close();
     }
 
-    /**
-     * Validates the user input in the text fields.
-     * 
-     * @return true if the input is valid
-     */
-    private boolean isInputValid() {
-        String errorMessage = ERROR_MESSAGE;
-
-        if (autorField.getText() == null || autorField.getText().length() == 0) {
-            errorMessage += AUTOR_NICHT_AUSGEFUELLT;
-        }
-        if (titelField.getText() == null || titelField.getText().length() == 0) {
-            errorMessage += TITEL_NICHT_AUSGEFUELLT;
-        }
-        if (jahrField.getText() == null || jahrField.getText().length() == 0) {
-            errorMessage += JAHR_NICHT_AUSGEFUELLT;
-        }
-
-        if (errorMessage.length() == 0) {
-            return true;
-        } else {
-            // Show the error message.
-            Alert alert = new Alert(AlertType.ERROR);
-            alert.initOwner(dialogStage);
-            alert.setTitle(FLASCHE_FELDER);
-            alert.setHeaderText(KORRIGIERE_FALSCHE_FELDER);
-            alert.setContentText(errorMessage);
-
-            alert.showAndWait();
-
-            return false;
-        }
-    }
+//    /**
+//     * Validates the user input in the text fields.
+//     *
+//     * @return true if the input is valid
+//     */
+//    private boolean isInputValid() {
+//        String errorMessage = ERROR_MESSAGE;
+//
+//        if (autorField.getText() == null || autorField.getText().length() == 0) {
+//            errorMessage += AUTOR_NICHT_AUSGEFUELLT;
+//        }
+//        if (titelField.getText() == null || titelField.getText().length() == 0) {
+//            errorMessage += TITEL_NICHT_AUSGEFUELLT;
+//        }
+//        if (jahrField.getText() == null || jahrField.getText().length() == 0) {
+//            errorMessage += JAHR_NICHT_AUSGEFUELLT;
+//        }
+//
+//        if (errorMessage.length() == 0) {
+//            return true;
+//        } else {
+//            // Show the error message.
+//            Alert alert = new Alert(AlertType.ERROR);
+//            alert.initOwner(dialogStage);
+//            alert.setTitle(FLASCHE_FELDER);
+//            alert.setHeaderText(KORRIGIERE_FALSCHE_FELDER);
+//            alert.setContentText(errorMessage);
+//
+//            alert.showAndWait();
+//
+//            return false;
+//        }
+//    }
 
 //    private String getSubCategory() {
 //        return subCategory.getValue();

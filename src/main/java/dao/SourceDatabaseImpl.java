@@ -296,6 +296,7 @@ public abstract class SourceDatabaseImpl  {
                 }
             }
             if (insertQuote) {
+                sourceQuote.setSourceId(source.getId());
                 insertQuote(sourceQuote, connection);
             }
         }
@@ -315,6 +316,9 @@ public abstract class SourceDatabaseImpl  {
     private static void insertQuote(QuoteInterface quote, Connection connection) throws SQLException{
         Statement statement = connection.createStatement();
         statement.execute("INSERT INTO Quote (sourceId, text) VALUES (" + quote.getSourceId() + ",'" + quote.getText()+ "')");
+        ResultSet resultSet = statement.executeQuery("SELECT seq FROM sqlite_sequence WHERE name = 'Tags'");
+        resultSet.next();
+        quote.setId(resultSet.getInt("seq"));
         updateTags(quote, connection);
     }
 

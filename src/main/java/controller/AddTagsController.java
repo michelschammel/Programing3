@@ -8,7 +8,8 @@ import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
-import model.*;
+import viewmodels.interfaces.QuoteViewInterface;
+import viewmodels.interfaces.TagViewInterface;
 
 /**
  * Controller for AddTags.xml
@@ -16,25 +17,25 @@ import model.*;
  */
 public class AddTagsController {
     @FXML
-    private TableView<Tag> tagTable;
+    private TableView<TagViewInterface> tagTable;
     @FXML
-    private TableColumn<Tag, String> tagColumn;
+    private TableColumn<TagViewInterface, String> tagColumn;
     @FXML
     private TextField searchField;
 
-    private ObservableList<Tag> tagList;
-    private Zitat zitat;
-    private ObservableList<Tag> searchTagList;
-    private ObservableList<Tag> tmpList;
+    private ObservableList<TagViewInterface> tagList;
+    private QuoteViewInterface quote;
+    private ObservableList<TagViewInterface> searchTagList;
+    private ObservableList<TagViewInterface> tmpList;
 
     /**
      * Initializes the controller class. This method is automatically called
      * after the fxml file has been loaded.
      */
     @FXML
-    private void initialize() {
-        // Initialize the zitat table with the two columns.
-        this.tagColumn.setCellValueFactory(cellData -> cellData.getValue().textProperty());
+    public void initialize() {
+        // Initialize the quote table with the two columns.
+        this.tagColumn.setCellValueFactory(cellData -> cellData.getValue().getTextProperty());
         this.showTagDeails(null);
 
         // Listen for selection changes and show the quelle details when changed.
@@ -42,7 +43,7 @@ public class AddTagsController {
                 (observable, oldValue, newValue) -> showTagDeails(newValue));
 
         this.tagTable.setRowFactory(tv -> {
-            TableRow<Tag> row = new TableRow<>();
+            TableRow<TagViewInterface> row = new TableRow<>();
             row.setOnMouseClicked((MouseEvent event) ->
                     handleRowMouseClick(event, row)
             );
@@ -53,18 +54,18 @@ public class AddTagsController {
     /**
      *
      */
-    private void handleRowMouseClick(MouseEvent event, TableRow<Tag> row) {
+    private void handleRowMouseClick(MouseEvent event, TableRow<TagViewInterface> row) {
         if (event.getClickCount() == 2 && (!row.isEmpty())) {
-            ObservableList<Tag> tagList = zitat.getTagList();
+            ObservableList<TagViewInterface> tagList = quote.getTagList();
             boolean addTag = true;
 
-            for (Tag tag : tagList) {
+            for (TagViewInterface tag : tagList) {
                 if (tag.getText().equals(tagTable.getSelectionModel().getSelectedItem().getText())) {
                     addTag = false;
                 }
             }
             if (addTag) {
-                zitat.addTag(new Tag(tagTable.getSelectionModel().getSelectedItem()));
+                quote.addTag(new viewmodels.TagView(tagTable.getSelectionModel().getSelectedItem().getText()));
             }
         }
     }
@@ -73,7 +74,7 @@ public class AddTagsController {
      * set the tagList that is later used for AddTags
      * @param tagList tagList used for AddTag
      */
-    public void setTagList(ObservableList<Tag> tagList) {
+    void setTagList(ObservableList<TagViewInterface> tagList) {
         this.tagList = tagList;
         this.tmpList = tagList;
         this.tagTable.setItems(this.tagList);
@@ -83,7 +84,7 @@ public class AddTagsController {
      * Show All Tags
      * @param tag selected tag
      */
-    private void showTagDeails(Tag tag) {
+    private void showTagDeails(TagViewInterface tag) {
         if (tag != null) {
             tagTable.setItems(tagList);
         }
@@ -117,10 +118,10 @@ public class AddTagsController {
     }
 
     /**
-     * Zitat where the selected tags are added
-     * @param zitat
+     * Quote where the selected tags are added
+     * @param quote add the tags to this quote
      */
-    public void setZitat(Zitat zitat) {
-        this.zitat = zitat;
+    public void setQuote(QuoteViewInterface quote) {
+        this.quote = quote;
     }
 }
