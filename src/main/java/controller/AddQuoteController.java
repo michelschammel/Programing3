@@ -7,7 +7,10 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javafx.stage.Window;
-import model.*;
+import viewmodels.QuoteView;
+import viewmodels.interfaces.QuoteViewInterface;
+import viewmodels.interfaces.SourceViewInterface;
+import viewmodels.interfaces.TagViewInterface;
 
 import java.awt.geom.Point2D;
 
@@ -18,16 +21,16 @@ import java.awt.geom.Point2D;
  */
 public class AddQuoteController {
     @FXML
-    private TableView<Zitat> zitatTable;
+    private TableView<QuoteViewInterface> zitatTable;
     @FXML
-    private TableColumn<Zitat, String> zitatColumn;
+    private TableColumn<QuoteViewInterface, String> zitatColumn;
     @FXML
     private TextField searchField;
 
-    private ObservableList<Zitat> zitatList;
-    private ObservableList<Zitat> searchZitatList;
-    private ObservableList<Zitat> tmpList;
-    private Quelle quelle;
+    private ObservableList<QuoteViewInterface> zitatList;
+    private ObservableList<QuoteViewInterface> searchZitatList;
+    private ObservableList<QuoteViewInterface> tmpList;
+    private SourceViewInterface quelle;
     private Stage addZitatStage;
     private ContextMenu tagContextMenu;
     private double yMouseCoordinate;
@@ -38,9 +41,9 @@ public class AddQuoteController {
      * after the fxml file has been loaded.
      */
     @FXML
-    private void initialize() {
+    public void initialize() {
         // Initialize the zitat table with the two columns.
-        this.zitatColumn.setCellValueFactory(cellData -> cellData.getValue().textProperty());
+        this.zitatColumn.setCellValueFactory(cellData -> cellData.getValue().getTextProperty());
         this.showZitatDeails(null);
 
         //Create a new Contextmenu for zitattags
@@ -56,7 +59,7 @@ public class AddQuoteController {
         });
 
         this.zitatTable.setRowFactory(tv -> {
-            TableRow<Zitat> row = new TableRow<>();
+            TableRow<QuoteViewInterface> row = new TableRow<>();
 
             row.hoverProperty().addListener((observable) ->
                 rowHover(row)
@@ -71,15 +74,15 @@ public class AddQuoteController {
 
     /**
      * Show all zitate
-     * @param zitat selected zitat
+     * @param quote selected zitat
      */
-    private void showZitatDeails(Zitat zitat) {
-        if (zitat != null) {
+    private void showZitatDeails(QuoteViewInterface quote) {
+        if (quote != null) {
             zitatTable.setItems(zitatList);
         }
     }
 
-    private void handleRowDoubleClick(MouseEvent event, TableRow<Zitat> row) {
+    private void handleRowDoubleClick(MouseEvent event, TableRow<QuoteViewInterface> row) {
         if (event.getClickCount() == 2 && (!row.isEmpty())) {
             boolean isNewZitat = true;
             boolean isNewTag;
@@ -87,20 +90,20 @@ public class AddQuoteController {
             String zitatText = zitatTable.getSelectionModel().getSelectedItem().getText();
 
             //check if a zitat like this already exists in quelle
-            for (Zitat zitat: quelle.getZitatList()) {
-                if (zitat.getText().toLowerCase().equals(zitatText.toLowerCase())) {
+            for (QuoteViewInterface quote: quelle.getQuoteList()) {
+                if (quote.getText().toLowerCase().equals(zitatText.toLowerCase())) {
                     isNewZitat = false;
                     //the zitat exists already in quelle
                     //check if the zitat has new tags that the zitat of quelle doesnt have
-                    for(Tag newZitatTag: zitatTable.getSelectionModel().getSelectedItem().getTagList()) {
+                    for(TagViewInterface newQuoteTag: zitatTable.getSelectionModel().getSelectedItem().getTagList()) {
                         isNewTag = true;
-                        for (Tag quelleTag: zitat.getTagList()) {
-                            if (newZitatTag.getText().toLowerCase().equals(quelleTag.getText().toLowerCase())) {
+                        for (TagViewInterface sourceTag: quote.getTagList()) {
+                            if (newQuoteTag.getText().toLowerCase().equals(sourceTag.getText().toLowerCase())) {
                                 isNewTag = false;
                             }
                         }
                         if (isNewTag) {
-                            zitat.addTag(new Tag(newZitatTag.getText()));
+                            quote.addTag(new viewmodels.TagView(newQuoteTag.getText()));
                         }
                     }
                 }
@@ -108,26 +111,26 @@ public class AddQuoteController {
 
             if (isNewZitat) {
                 //create new zitat
-                Zitat zitat = new Zitat(zitatTable.getSelectionModel().getSelectedItem().getText(), quelle.getId());
+                QuoteViewInterface quote = new QuoteView(zitatTable.getSelectionModel().getSelectedItem().getText(), quelle.getId());
                 //set every tagId to 0
                 zitatTable.getSelectionModel().getSelectedItem().getTagList().forEach(tag ->
-                        zitat.getTagList().add(new Tag(tag.getText()))
+                        quote.getTagList().add(new viewmodels.TagView(tag.getText()))
                 );
-                quelle.getZitatList().add(zitat);
+                quelle.getQuoteList().add(quote);
             }
         }
     }
 
-    private void rowHover(TableRow<Zitat> row) {
-        final Zitat zitat = row.getItem();
+    private void rowHover(TableRow<QuoteViewInterface> row) {
+        final QuoteViewInterface quote = row.getItem();
         tagContextMenu.getItems().clear();
 
-        if (row.isHover() && zitat != null) {
-            Tooltip zitatToolTip = new Tooltip(zitat.getText());
+        if (row.isHover() && quote != null) {
+            Tooltip zitatToolTip = new Tooltip(quote.getText());
             zitatToolTip.setWrapText(true);
             zitatToolTip.setMaxWidth(160);
             row.setTooltip(zitatToolTip);
-            zitat.getTagList().forEach( tag -> {
+            quote.getTagList().forEach( tag -> {
                 MenuItem tagMenu = new MenuItem(tag.getText());
                 tagContextMenu.getItems().add(tagMenu);
             });
@@ -188,24 +191,24 @@ public class AddQuoteController {
      * Set the Stage
      * @param stage stage
      */
-    public void setStage(Stage stage) {
+    void setStage(Stage stage) {
         this.addZitatStage = stage;
     }
 
     /**
-     * set the zitatlist that is later displayed
-     * @param zitatList contains all zitate with tags
+     * set the quoteList that is later displayed
+     * @param quoteList contains all quotes with tags
      */
-    public void setZitatList(ObservableList<Zitat> zitatList) {
-        this.zitatList = zitatList;
-        this.tmpList = zitatList;
+    void setZitatList(ObservableList<QuoteViewInterface> quoteList) {
+        this.zitatList = quoteList;
+        this.tmpList = quoteList;
         this.zitatTable.setItems(this.zitatList);
     }
 
     /**
-     * @param quelle add zitate to this quelle
+     * @param source add quote to this source
      */
-    public void setQuelle(Quelle quelle) {
-        this.quelle = quelle;
+    public void setQuelle(SourceViewInterface source) {
+        this.quelle = source;
     }
 }

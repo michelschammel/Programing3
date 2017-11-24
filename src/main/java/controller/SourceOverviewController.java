@@ -192,6 +192,10 @@ public class SourceOverviewController {
     }
 
     private void showEditSource(String title, SourceViewInterface selectedSource, boolean editmode, boolean subcategory) {
+        int index = this.sourceList.indexOf(selectedSource);
+        if (index < 0) {
+            index = 0;
+        }
         try {
             // Load the fxml file and create a new stage for the popup dialog.
             FXMLLoader loader = new FXMLLoader();
@@ -214,16 +218,18 @@ public class SourceOverviewController {
 
             ObservableList<QuoteViewInterface> quoteList = FXCollections.observableArrayList();
 
-            sourceList.forEach( source ->
+            this.sourceList.forEach( source ->
                 quoteList.addAll(source.getQuoteList())
             );
 
             controller.setQuoteList(quoteList);
 
             dialogStage.showAndWait();
-            sourceList.remove(selectedSource);
+            this.sourceList.remove(selectedSource);
             SourceViewInterface source = controller.getUpdatedSource();
-            sourceList.add(source);
+            this.sourceList.add(index, source);
+            this.sourceTable.setItems(this.sourceList);
+            SourceService.updateSource(source);
 //            SourceDatabaseInterface quellenService = new SourceDatabaseImpl();
 //            quellenService.updateQuery(quelle);
 

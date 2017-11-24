@@ -14,6 +14,10 @@ public class TagView implements TagViewInterface{
         this.text = new SimpleStringProperty(EMPTY);
     }
 
+    public TagView(String text) {
+        this.text = new SimpleStringProperty(text);
+    }
+
     @Override
     public void setText(String text) {
         this.text.setValue(text);

@@ -1,16 +1,11 @@
 package main_app;
 
 import controller.RootLayoutController;
-import dao.SourceDatabaseImpl;
-import factories.SourceFactory;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import models.interfaces.*;
-import utilities.SourceUtillities;
-import viewmodels.interfaces.*;
 
 import static main_app.constants.MainAppConstants.*;
 
@@ -30,104 +25,7 @@ public class MainApp extends Application {
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle(WISSENSCHAFTLICHE_QUELLEN);
 
-        testall();
         initRootLayout();
-    }
-
-    private void testall() {
-//        List<SourceInterface> list = SourceDatabaseImpl.getAllSourcesFromDatabase();
-//        Quote quote = new Quote(1, "source text", 1);
-//        Quote quote1 = new Quote(2, "source1 text", 1);
-//        Quote quote2 = new Quote(3, "source2 text", 1);
-//        Quote quote3 = new Quote(4, "source3 text", 1);
-//        TagInterface tag = new models.Tag("tag", 1);
-//        TagInterface tag1 = new models.Tag("tag2", 2);
-//        quote.addTag(tag);
-//        quote.addTag(tag1);
-
-        SourceInterface source = SourceFactory.produceSource(SourceFactory.SOURCE);
-        source.setTitle("source title");
-        source.setAuthor("source author");
-        source.setId(41);
-        source.setYear("source year");
-//        source.addQuote(quote);
-//        source.addQuote(quote1);
-//        source.addQuote(quote2);
-//        source.addQuote(quote3);
-        SourceViewInterface sourceView = SourceUtillities.convertSourceToSourceView(source);
-        System.out.println(sourceView);
-        SourceInterface sourceConvert = SourceUtillities.convertSourceViewToSource(sourceView);
-        System.out.println(sourceConvert);
-
-//        SourceUtillities.getUIGridPane(sourceView);
-
-        ArticleInterface article = (ArticleInterface) SourceFactory.produceSource(SourceFactory.ARTICLE);
-        article.setEdition("article edition");
-        article.setMagazine("article magazine");
-        article.setId(42);
-        article.setTitle("article title");
-        article.setAuthor("article author");
-        article.setYear("article year");
-        ArticleViewInterface articleView = (ArticleViewInterface) SourceUtillities.convertSourceToSourceView(article);
-        System.out.println(articleView);
-
-        BookInterface book = (BookInterface) SourceFactory.produceSource(SourceFactory.BOOK);
-        book.setEdition("book edition");
-        book.setIsbn("book ISBN");
-        book.setMonth("book month");
-        book.setPublisher("book publisher");
-        book.setId(43);
-        book.setTitle("book title");
-        book.setAuthor("book author");
-        book.setYear("book year");
-        BookViewInterface bookView = (BookViewInterface) SourceUtillities.convertSourceToSourceView(book);
-        System.out.println(bookView);
-
-        OnlineSourceInterface onlineSource = (OnlineSourceInterface) SourceFactory.produceSource(SourceFactory.ONLINE_SOURCE);
-        onlineSource.setPollingDate("online polling date");
-        onlineSource.setUrl("online url");
-        onlineSource.setAuthor("online author");
-        onlineSource.setId(44);
-        onlineSource.setTitle("online title");
-        onlineSource.setYear("online year");
-        OnlinesourceViewInterface onlinesourceView = (OnlinesourceViewInterface) SourceUtillities.convertSourceToSourceView(onlineSource);
-        System.out.println(onlinesourceView);
-
-        OthersInterface others = (OthersInterface) SourceFactory.produceSource(SourceFactory.OTHERS);
-        others.setEdition("other edition");
-        others.setPublisher("other publisher");
-        others.setAuthor("other author");
-        others.setId(45);
-        others.setTitle("other title");
-        others.setYear("other year");
-        OthersViewInterface othersView = (OthersViewInterface) SourceUtillities.convertSourceToSourceView(others);
-        System.out.println(othersView);
-
-//        Quote quote4 = new Quote(12, "hier sollte geupdated werde", 24);
-//        TagInterface tag5 = new Tag();
-//        tag5.setText("update");
-//        tag5.setId(14);
-//        Quote quote5 = new Quote(0, "dies wird eingefügt", 24);
-//        quote4.addTag(tag5);
-
-        ScientificWorkInterface scientificWork = (ScientificWorkInterface) SourceFactory.produceSource(SourceFactory.SCIENTIFIC_WORK);
-        scientificWork.setInstitution("work institution33");
-        scientificWork.setPublisher("work publisher33");
-        scientificWork.setAuthor("work author334");
-        scientificWork.setId(46);
-        scientificWork.setTitle("work title33");
-        scientificWork.setYear("work year33");
-//        scientificWork.addQuote(quote4);
-//        scientificWork.addQuote(quote5);
-        ScientificWorkViewInterface scientificWorkView = (ScientificWorkViewInterface) SourceUtillities.convertSourceToSourceView(scientificWork);
-        System.out.println(scientificWorkView);
-
-        SourceDatabaseImpl.insertOrUpdateSource(source);
-        SourceDatabaseImpl.insertOrUpdateSource(article);
-        SourceDatabaseImpl.insertOrUpdateSource(book);
-        SourceDatabaseImpl.insertOrUpdateSource(onlineSource);
-        SourceDatabaseImpl.insertOrUpdateSource(others);
-        SourceDatabaseImpl.insertOrUpdateSource(scientificWork);
     }
 
     /**

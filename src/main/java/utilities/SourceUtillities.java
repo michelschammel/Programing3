@@ -103,10 +103,11 @@ public abstract class SourceUtillities {
     }
 
     public static SourceViewInterface convertUIGridPaneToSource(List<ObjectTemplateInterface> template, GridPane gridPane) {
+        SourceViewInterface object = null;
         try {
             Class objectClass = template.get(0).getAttributeClass();
             template.remove(0);
-            SourceViewInterface object = (SourceViewInterface) objectClass.newInstance();
+            object = (SourceViewInterface) objectClass.newInstance();
             object.setId((Integer)template.get(0).getAttributeValue());
             template.remove(0);
             TextField text;
@@ -128,11 +129,33 @@ public abstract class SourceUtillities {
             for (ObjectTemplateInterface templateRow : template) {
                 setObjectValue(templateRow.getAttributeName(), object, templateRow.getAttributeValue());
             }
-            return object;
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return null;
+        return object;
+    }
+
+    public static SourceViewInterface copySourceView(SourceViewInterface sourceView) {
+        SourceViewInterface sourceCopy = null;
+        try {
+            List<ObjectTemplateInterface> template = getTemplate(sourceView);
+            sourceCopy = sourceView.getClass().newInstance();
+            for (ObjectTemplateInterface templateRow : template) {
+                setObjectValue(templateRow.getAttributeName(), sourceCopy, templateRow.getAttributeValue());
+            }
+
+            for (QuoteViewInterface quote : sourceView.getQuoteList()) {
+                QuoteViewInterface quoteCopy = new QuoteView();
+                quoteCopy.setId(quote.getId());
+                quoteCopy.setSourceId(quote.getSourceId());
+                quoteCopy.setText(quote.getText());
+                sourceCopy.addQuote(quoteCopy);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return sourceCopy;
     }
 
     private static Object castStringToSupportedType(String object, Class convertTo) {
@@ -196,7 +219,7 @@ public abstract class SourceUtillities {
         attribute = Character.toUpperCase(attribute.charAt(0)) + attribute.substring(1);
         setterMethodName = "set" + attribute;
         try {
-            method = object.getClass().getDeclaredMethod(setterMethodName, value.getClass());
+            method = object.getClass().getDeclaredMethod(setterMethodName, getPrimitiveFromWrapperClass(value.getClass()));
             method.invoke(object, value);
         } catch (Exception e) {
             e.printStackTrace();
