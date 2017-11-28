@@ -3,7 +3,6 @@ package controller;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -13,8 +12,8 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 import main_app.MainApp;
+import models.GridPaneContent;
 import models.interfaces.ObjectTemplateInterface;
 import utilities.SourceUtillities;
 import viewmodels.interfaces.QuoteViewInterface;
@@ -102,7 +101,8 @@ public class SourceEditDialogController {
             row.hoverProperty().addListener((observable) -> {
                 final QuoteViewInterface quote = row.getItem();
                 if (row.isHover() && quote != null) {
-                    Tooltip zitatToolTip = new Tooltip(quote.getText());
+                    Tooltip zitatToolTip;
+                    zitatToolTip = new Tooltip(quote.getText());
                     zitatToolTip.setWrapText(true);
                     zitatToolTip.setMaxWidth(160);
                     row.setTooltip(zitatToolTip);
@@ -131,10 +131,6 @@ public class SourceEditDialogController {
         if (quote != null) {
             tagTable.setItems(quote.getTagList());
         }
-    }
-
-    void setEditmode(boolean enable) {
-        boolean editmode = enable;
     }
 
     /**
@@ -294,7 +290,6 @@ public class SourceEditDialogController {
         if (okClicked) {
             SourceViewInterface source = SourceUtillities.convertUIGridPaneToSource(this.template, this.gridPane);
             source.getQuoteList().addAll(this.sourceEdited.getQuoteList());
-//            return SourceUtillities.convertUIGridPaneToSource(this.template, this.gridPane);
             return source;
         }
 
@@ -317,11 +312,12 @@ public class SourceEditDialogController {
         titelField.setText(source.getTitle());
         jahrField.setText(source.getYear());
 
+        GridPaneContent label = new GridPaneContent(new Label("Kategorie"), 3, 0);
+        GridPaneContent dropDownMenu = new GridPaneContent(subCategory, 3, 1);
 
-        this.template = SourceUtillities.getUIGridPane(source, this.gridPane);
-        //SourceViewInterface s = (SourceViewInterface)SourceUtillities.convertUIGridPaneToSource(this.template, this.gridPane);
+        this.template = SourceUtillities.getUIGridPane(source, this.gridPane, label, dropDownMenu);
+
         initializeList();
-        this.gridPane.setGridLinesVisible(true);
         dialogStage.setOnShown(event -> adjustLayout());
     }
 
@@ -330,20 +326,17 @@ public class SourceEditDialogController {
     }
 
 
+
     /**
      * Called when the user clicks ok.
      */
     @FXML
     private void handleOk() {
-//        if (isInputValid()) {
-            source.setAuthor(autorField.getText());
-            source.setTitle(titelField.getText());
-            source.setYear(jahrField.getText());
-            //source.setUnterkategorie(getSubCategory());
-
-            okClicked = true;
-            dialogStage.close();
-//        }
+        //source.setAuthor(autorField.getText());
+        //source.setTitle(titelField.getText());
+        //source.setYear(jahrField.getText());
+        okClicked = true;
+        dialogStage.close();
     }
 
     /**
@@ -355,10 +348,15 @@ public class SourceEditDialogController {
     }
 
     private void adjustLayout() {
+
         this.zitatTable.getScene().getWindow().setHeight(this.gridPane.getHeight() + 85);
         this.zitatTable.setPrefHeight(this.gridPane.getHeight());
         this.tagTable.setPrefHeight(this.gridPane.getHeight());
         this.okButton.setLayoutY(this.gridPane.getHeight() + 17);
         this.cancelButton.setLayoutY(this.gridPane.getHeight() + 17);
+    }
+
+    boolean isOkClicked() {
+        return this.okClicked;
     }
 }

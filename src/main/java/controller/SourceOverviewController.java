@@ -212,24 +212,26 @@ public class SourceOverviewController {
 
             SourceEditDialogController controller = loader.getController();
             controller.disableSubCategory(!subcategory);
-            controller.setEditmode(editmode);
+            //controller.setEditmode(editmode);
             controller.setDialogStage(dialogStage);
             controller.setSource(selectedSource);
 
             ObservableList<QuoteViewInterface> quoteList = FXCollections.observableArrayList();
 
-            this.sourceList.forEach( source ->
-                quoteList.addAll(source.getQuoteList())
+            this.sourceList.forEach(source ->
+                    quoteList.addAll(source.getQuoteList())
             );
 
             controller.setQuoteList(quoteList);
 
             dialogStage.showAndWait();
-            this.sourceList.remove(selectedSource);
-            SourceViewInterface source = controller.getUpdatedSource();
-            this.sourceList.add(index, source);
-            this.sourceTable.setItems(this.sourceList);
-            SourceService.updateSource(source);
+            if (controller.isOkClicked()) {
+                this.sourceList.remove(selectedSource);
+                SourceViewInterface source = controller.getUpdatedSource();
+                this.sourceList.add(index, source);
+                this.sourceTable.setItems(this.sourceList);
+                SourceService.updateSource(source);
+            }
 //            SourceDatabaseInterface quellenService = new SourceDatabaseImpl();
 //            quellenService.updateQuery(quelle);
 

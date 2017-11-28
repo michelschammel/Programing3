@@ -1,11 +1,11 @@
 package utilities;
-
 import enums.SourceStandardAttributes;
 import enums.SupportedTypes;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import models.GridPaneContent;
 import models.ObjectTemplate;
 import models.interfaces.ObjectTemplateInterface;
 import models.interfaces.QuoteInterface;
@@ -19,8 +19,7 @@ import viewmodels.interfaces.TagViewInterface;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public abstract class SourceUtillities {
     private static final String VIEW = "View";
@@ -81,9 +80,9 @@ public abstract class SourceUtillities {
     }
 
 
-    public static List<ObjectTemplateInterface> getUIGridPane(SourceViewInterface source, GridPane gridPane) {
+    public static List<ObjectTemplateInterface> getUIGridPane(SourceViewInterface source, GridPane gridPane, GridPaneContent... extraContent) {
         List<ObjectTemplateInterface> template = getTemplateWithClassName(source);
-        //template.removeIf(row -> row.getAttributeName().equals("id"));
+        List<GridPaneContent> extraContentList = new ArrayList<>(Arrays.asList(extraContent));
         Label label;
         TextField text;
         gridPane.getChildren().remove(0, gridPane.getChildren().size());
@@ -93,11 +92,35 @@ public abstract class SourceUtillities {
         moveListItem(template, "author", 3);
         moveListItem(template, "year", 4);
 
-        for (int row = 2; row < template.size(); row++) {
-            label = new Label(template.get(row).getAttributeName());
-            text = new TextField(template.get(row).getAttributeValue().toString());
-            gridPane.add(label, 0, row - 2);
-            gridPane.add(text, 1, row - 2);
+        //int row = 2;
+        int templateRow = 2;
+        int gridPaneRow = 0;
+        boolean countTemplateRowUp;
+        while (templateRow < template.size() || extraContentList.size() != 0) {
+            countTemplateRowUp = true;
+//            for (GridPaneContent content : extraContent) {
+//                if (content.getRow() == gridPaneRow) {
+//                    gridPane.add(content.getNode(), content.getCol(), gridPaneRow);
+//                    countTemplateRowUp = false;
+//                }
+//            }
+
+            for (ListIterator<GridPaneContent> iterator = extraContentList.listIterator(); iterator.hasNext();) {
+                GridPaneContent contentRow = iterator.next();
+                if (contentRow.getRow() == gridPaneRow) {
+                    gridPane.add(contentRow.getNode(), contentRow.getCol(), gridPaneRow);
+                    countTemplateRowUp = false;
+                    iterator.remove();
+                }
+            }
+            if (countTemplateRowUp) {
+                label = new Label(template.get(templateRow).getAttributeName());
+                text = new TextField(template.get(templateRow).getAttributeValue().toString());
+                gridPane.add(label, 0, gridPaneRow);
+                gridPane.add(text, 1, gridPaneRow);
+                templateRow++;
+            }
+            gridPaneRow++;
         }
         return template;
     }
@@ -113,14 +136,16 @@ public abstract class SourceUtillities {
             TextField text;
             ObjectTemplateInterface row;
 
+            int templateRowIndex = 0;
             for (int i = 0; i < gridPane.getChildren().size(); i += 2) {
                 for (Node node : gridPane.getChildren()) {
                     if (GridPane.getRowIndex(node) == (i / 2) && GridPane.getColumnIndex(node) == 1) {
                         if (node instanceof TextField) {
                             text = (TextField)node;
-                            row = template.get(i/2);
+                            row = template.get(templateRowIndex);
                             row.setAttributeValue(castStringToSupportedType(text.getText(), row.getAttributeClass()));
                             System.out.println(text.getText());
+                            templateRowIndex++;
                         }
                     }
                 }
