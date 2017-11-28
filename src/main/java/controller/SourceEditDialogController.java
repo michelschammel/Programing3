@@ -3,6 +3,7 @@ package controller;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -12,6 +13,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import main_app.MainApp;
 import models.interfaces.ObjectTemplateInterface;
 import utilities.SourceUtillities;
@@ -40,12 +42,10 @@ public class SourceEditDialogController {
     private TextField jahrField;
     @FXML
     private GridPane gridPane;
-//    @FXML
-//    private AnchorPane anchorPane;
-//    @FXML
-//    private Button okButton;
-//    @FXML
-//    private Button cancelButton;
+    @FXML
+    private Button okButton;
+    @FXML
+    private Button cancelButton;
     @FXML
     private TableView<QuoteViewInterface> zitatTable;
     @FXML
@@ -62,19 +62,7 @@ public class SourceEditDialogController {
     private SourceViewInterface sourceEdited;
     private boolean okClicked = false;
     private ObservableList<QuoteViewInterface> quoteList;
-    //    private SourceViewInterface editedSource;
     private List<ObjectTemplateInterface> template;
-
-    //all custom textFields
-//    private TextField herausgeberTextField;
-//    private TextField auflageTextField;
-//    private TextField monatTextField;
-//    private TextField isbnTextField;
-//    private TextField ausgabeTextField;
-//    private TextField aufrufDatumTextField;
-//    private TextField urlTextField;
-//    private TextField einrichtungsTextField;
-//    private TextField magazinTextField;
 
     /**
      * Initializes the controller class. This method is automatically called
@@ -104,7 +92,7 @@ public class SourceEditDialogController {
 
         //set up a ChangeListener to choicebox
         subCategory.getSelectionModel().selectedItemProperty().addListener(
-                ((observable, oldValue, newValue) -> adjustNewDialog(newValue))
+                ((observable, oldValue, newValue) -> adjustLayout())
         );
 
         //Set Rowfactory for zitatTable
@@ -329,10 +317,12 @@ public class SourceEditDialogController {
         titelField.setText(source.getTitle());
         jahrField.setText(source.getYear());
 
-        //adjustGridPane();
+
         this.template = SourceUtillities.getUIGridPane(source, this.gridPane);
         //SourceViewInterface s = (SourceViewInterface)SourceUtillities.convertUIGridPaneToSource(this.template, this.gridPane);
         initializeList();
+        this.gridPane.setGridLinesVisible(true);
+        dialogStage.setOnShown(event -> adjustLayout());
     }
 
     public void setQuoteList(ObservableList<QuoteViewInterface> quoteList) {
@@ -364,94 +354,11 @@ public class SourceEditDialogController {
         dialogStage.close();
     }
 
-//    /**
-//     * Validates the user input in the text fields.
-//     *
-//     * @return true if the input is valid
-//     */
-//    private boolean isInputValid() {
-//        String errorMessage = ERROR_MESSAGE;
-//
-//        if (autorField.getText() == null || autorField.getText().length() == 0) {
-//            errorMessage += AUTOR_NICHT_AUSGEFUELLT;
-//        }
-//        if (titelField.getText() == null || titelField.getText().length() == 0) {
-//            errorMessage += TITEL_NICHT_AUSGEFUELLT;
-//        }
-//        if (jahrField.getText() == null || jahrField.getText().length() == 0) {
-//            errorMessage += JAHR_NICHT_AUSGEFUELLT;
-//        }
-//
-//        if (errorMessage.length() == 0) {
-//            return true;
-//        } else {
-//            // Show the error message.
-//            Alert alert = new Alert(AlertType.ERROR);
-//            alert.initOwner(dialogStage);
-//            alert.setTitle(FLASCHE_FELDER);
-//            alert.setHeaderText(KORRIGIERE_FALSCHE_FELDER);
-//            alert.setContentText(errorMessage);
-//
-//            alert.showAndWait();
-//
-//            return false;
-//        }
-//    }
-
-//    private String getSubCategory() {
-//        return subCategory.getValue();
-//    }
-
-    private void adjustNewDialog(String category) {
-//        //child node count
-//        int count = this.gridPane.getChildren().size();
-//        //Create a RowContraints
-//        RowConstraints rowConstraint = new RowConstraints();
-//        rowConstraint.setMinHeight(ROW_CONTRAINTS_HEIGHT);
-//        rowConstraint.setPrefHeight(ROW_CONTRAINTS_HEIGHT);
-//        rowConstraint.setVgrow(Priority.SOMETIMES);
-//        //Remove all items from another source
-//        if (!editmode) {
-//            if (count >= 8) {
-//                this.gridPane.getChildren().remove(8, count);
-//            }
-//            switch (category) {
-//                case SC_ARTIKEL:
-//                    this.source = new Artikel(0, "", "", "", "", "", this.sourceEdited.getZitatList());
-//                    this.sourceEdited = new Artikel((Artikel)this.source);
-//                    this.adjustGridPane();
-//                    break;
-//
-//                case SC_BUECHER:
-//                    this.source = new Buch(0, "",  "", "", "", "", "", "", this.sourceEdited.getZitatList());
-//                    this.sourceEdited = new Buch((Buch)this.source);
-//                    this.adjustGridPane();
-//                    break;
-//
-//                case SC_OQUELLEN:
-//                    this.source = new Onlinequelle(0, "", "", "", "", "", this.sourceEdited.getZitatList());
-//                    this.sourceEdited = new Onlinequelle((Onlinequelle)this.source);
-//                    this.adjustGridPane();
-//                    break;
-//
-//                case SC_WARBEITEN:
-//                    this.source = new WissenschaftlicheArbeit(0, "", "", "", "", "", this.sourceEdited.getZitatList());
-//                    this.sourceEdited = new WissenschaftlicheArbeit((WissenschaftlicheArbeit)this.source);
-//                    this.adjustGridPane();
-//                    break;
-//
-//                case SC_ANDERES:
-//                    this.source = new Anderes("", "", "", "", "", "");
-//                    this.sourceEdited = new Anderes((Anderes)this.source);
-//                    this.adjustGridPane();
-//                    break;
-//
-//                case SC_NONE:
-//                    this.source = new Quelle("", "", "");
-//                    this.source.setZitatListe(this.sourceEdited.getZitatList());
-//                    this.sourceEdited = new Quelle(this.source);
-//                    this.adjustGridPane();
-//            }
-//        }
+    private void adjustLayout() {
+        this.zitatTable.getScene().getWindow().setHeight(this.gridPane.getHeight() + 85);
+        this.zitatTable.setPrefHeight(this.gridPane.getHeight());
+        this.tagTable.setPrefHeight(this.gridPane.getHeight());
+        this.okButton.setLayoutY(this.gridPane.getHeight() + 17);
+        this.cancelButton.setLayoutY(this.gridPane.getHeight() + 17);
     }
 }

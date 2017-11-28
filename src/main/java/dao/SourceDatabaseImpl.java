@@ -211,16 +211,17 @@ public abstract class SourceDatabaseImpl  {
 
         try (Connection connection = getConnection()){
             //If the id of the source is 0 it has to be inserted, otherwise just update the source
-            ResultSet resultSet;
             Statement statement = connection.createStatement();
             boolean updateSource;
             connection.setAutoCommit(false);
             if (source.getId() == 0) {
+                ResultSet resultSet;
                 String insertSource = String.format(INSERT_BASE_SOURCE, source.getTitle(), source.getYear(), source.getAuthor());
                 statement.execute(insertSource);
                 Statement getSourceId = connection.createStatement();
                 resultSet = getSourceId.executeQuery(GET_SOURCE_ID);
                 resultSet.next();
+                resultSet.close();
                 source.setId(resultSet.getInt(1));
                 updateSource = false;
             } else {
@@ -284,6 +285,7 @@ public abstract class SourceDatabaseImpl  {
             quote.setText(resultSet.getString("text"));
             databaseQuotes.add(quote);
         }
+        resultSet.close();
         boolean insertQuote;
         for (QuoteInterface sourceQuote : source.getQuoteList()) {
             insertQuote = true;
@@ -316,9 +318,11 @@ public abstract class SourceDatabaseImpl  {
     private static void insertQuote(QuoteInterface quote, Connection connection) throws SQLException{
         Statement statement = connection.createStatement();
         statement.execute("INSERT INTO Quote (sourceId, text) VALUES (" + quote.getSourceId() + ",'" + quote.getText()+ "')");
-        ResultSet resultSet = statement.executeQuery("SELECT seq FROM sqlite_sequence WHERE name = 'Tags'");
+        Statement statementGetId = connection.createStatement();
+        ResultSet resultSet = statementGetId.executeQuery("SELECT seq FROM sqlite_sequence WHERE name = 'Tags'");
         resultSet.next();
         quote.setId(resultSet.getInt("seq"));
+        resultSet.close();
         updateTags(quote, connection);
     }
 
@@ -340,7 +344,7 @@ public abstract class SourceDatabaseImpl  {
             tag.setText(resultSet.getString("name"));
             databaseTags.add(tag);
         }
-
+        resultSet.close();
         boolean insertTag;
         for (TagInterface quoteTag : quote.getTagList()) {
             insertTag = true;
@@ -378,6 +382,7 @@ public abstract class SourceDatabaseImpl  {
         resultSet.next();
         //set the id
         tag.setId(resultSet.getInt("seq"));
+        resultSet.close();
         //insert the connection between quote and tag
         statement.execute("INSERT INTO QuoteTags VALUES (" + quote.getId() + "," + tag.getId() + ")");
     }

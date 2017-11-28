@@ -42,7 +42,7 @@
          </children>
       </GridPane>
       <Button fx:id="okButton" layoutX="409.0" layoutY="212.0" mnemonicParsing="false" onAction="#handleOk" text="OK" />
-      <Button fx:id="cancelButton" layoutX="473.0" layoutY="212.0" mnemonicParsing="false" onAction="#handleCancel" text="Abbrechen" />
+      <Button fx:id="cancelButton" layoutX="451.0" layoutY="212.0" mnemonicParsing="false" onAction="#handleCancel" text="Abbrechen" />
       <TableView fx:id="zitatTable" editable="true" layoutX="409.0" layoutY="7.0" onContextMenuRequested="#contextMenuZitatTable" prefHeight="196.0" prefWidth="426.0">
           <placeholder><Label>Keine Zitate gefunden</Label></placeholder>
         <columns>

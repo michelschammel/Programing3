@@ -149,6 +149,12 @@ public abstract class SourceUtillities {
                 quoteCopy.setId(quote.getId());
                 quoteCopy.setSourceId(quote.getSourceId());
                 quoteCopy.setText(quote.getText());
+                for (TagViewInterface tag : quote.getTagList()) {
+                    TagViewInterface tagCopy = new TagView();
+                    tagCopy.setText(tag.getText());
+                    tagCopy.setId(tag.getId());
+                    quoteCopy.addTag(tagCopy);
+                }
                 sourceCopy.addQuote(quoteCopy);
             }
         } catch (Exception e) {
